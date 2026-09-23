@@ -1,0 +1,319 @@
+<nav class="toc" aria-label="목차">
+  <a href="#review">지난 시간 복습</a>
+  <a href="#sample">표본평균·표본분산</a>
+  <a href="#dof">자유도와 n−1</a>
+  <a href="#prob">확률</a>
+  <a href="#cond">조건부확률</a>
+  <a href="#indep">독립과 배반</a>
+  <a href="#practice">연습문제</a>
+</nav>
+
+<main>
+
+<section id="review">
+  <div class="sec-head"><h2>지난 시간 복습</h2><span class="slide-tag">슬라이드 2–6</span></div>
+
+  <h3>모수와 통계량</h3>
+  <p>모수는 모집단의 특성을 나타내는 대푯값이에요. 모수를 안다는 건 분포를 아는 것과 비슷해요. 어떤 분포인지 알고 모수까지 알면 분포를 다 아는 셈이라서 "비슷하다"고 했어요.</p>
+  <p>그런데 모수는 보통 알 수 없어요. 그래서 모집단 대신 표본을 골고루 잘 뽑고(SRS), 표본의 대푯값인 <b>통계량</b>을 구해서 모수를 <b>추정</b>해요. 예를 들어 표본평균 \(\htmlClass{c-xb}{\bar x}\)는 표본의 평균이 궁금해서 구하는 게 아니라 모평균 \(\htmlClass{c-mu}{\mu}\)를 추정하려고 구하는 값이에요. 앞으로 나오는 "표본○○"은 전부 모수를 추정하기 위한 것이라고 생각하면 됩니다.</p>
+  <p>모수는 이미 정해져 있지만 우리가 모르는 <b>상수</b>이고, 통계량은 표본을 뽑을 때마다 새로 구해지는 값이에요. 운이 좋으면 모수를 잘 맞히는 표본을, 운이 나쁘면 잘 못 맞히는 표본을 뽑을 수도 있어요.</p>
+
+  <h3>대문자 \(\bar X\)와 소문자 \(\bar x\)</h3>
+  <div class="compare">
+    <div><p class="compare-sym">\(\bar X\)</p><p class="compare-label">표본 뽑기 전</p><p>무엇이 나올지 모르는 상태. 뒤에서 배울 <b>확률변수</b>예요.</p></div>
+    <div><p class="compare-sym">\(\bar x\)</p><p class="compare-label">표본 뽑은 후</p><p>이미 뽑아서 정해진 <b>숫자</b>예요.</p></div>
+  </div>
+  <p>동전으로 긁는 즉석복권을 떠올려 보세요. 1등 확률이 500만 분의 1이라면, 복권을 사기 전의 나는 500만 분의 1 확률로 당첨될 수 있어요. 하지만 하나를 사고 나면 긁지 않았더라도 당첨인지 아닌지는 이미 종이에 적혀 있어요. 더 이상 확률이 아니라 둘 중 하나로 정해진 거예요. 통계학에서 가장 헷갈리는 포인트라 여기서 잘 잡아 두면 뒤에서 덜 헷갈려요.</p>
+
+  <h3>모평균, 모분산, 모표준편차</h3>
+  <div class="formula-grid">
+    <div><p class="fg-label">모평균 (이산형)</p>\[\htmlClass{c-mu}{\mu}=\sum x\,p(x)\]</div>
+    <div><p class="fg-label">모평균 (연속형)</p>\[\htmlClass{c-mu}{\mu}=\int_{-\infty}^{\infty} x\,p(x)\,dx\]</div>
+    <div><p class="fg-label">모분산 = (편차)²의 평균</p>\[\sigma^2=\sum (x-\htmlClass{c-mu}{\mu})^2\,p(x)\]</div>
+    <div><p class="fg-label">모표준편차</p>\[\sigma=\sqrt{\sigma^2}\]</div>
+  </div>
+  <p>평균은 "특성값 × 상대도수"를 모두 더한 것이에요. 연속형에서는 \(p(x)\)가 밀도곡선의 <b>높이</b>일 뿐이라서, 폭 \(dx\)를 곱한 작은 조각의 넓이 \(p(x)\,dx\)가 되어야 "얼마나 차지하는지", 즉 상대도수에 대응돼요. 그래서 \(dx\)를 빼먹으면 안 돼요. 분산은 평균 식의 특성값 자리에 (편차)²을 넣은 것이고, 제곱 때문에 단위가 망가지니까 루트를 씌워 원래 스케일로 돌려놓은 것이 표준편차예요.</p>
+</section>
+
+<section id="sample">
+  <div class="sec-head"><h2>표본평균과 표본분산</h2><span class="slide-tag">슬라이드 7–8</span></div>
+  <p class="key">표본○○은 모○○을 맞추기 위해 구하는 것이다.</p>
+
+  <h3>표본평균</h3>
+  \[\hat\mu=\htmlClass{c-xb}{\bar x}=\frac1n\sum_{i=1}^{n}x_i\]
+  <p>표본평균은 모평균을 맞추려고 구한 표본의 평균이에요. 표본평균은 따로 보정하지 않고 그냥 평균을 내도 <b>평균적으로</b> 모평균을 맞혀요. 나중에 "불편추정량"이라는 이름으로 다시 나와요.</p>
+
+  <h3>표본분산</h3>
+  \[\hat\sigma^2=s^2=\frac{1}{\htmlClass{c-red}{n-1}}\sum_{i=1}^{n}(x_i-\htmlClass{c-xb}{\bar x})^2\]
+  <p>표본분산도 모분산을 맞추려고 표본에서 구하는 분산이에요. 그런데 식을 보면 표본의 크기 \(n\)이 아니라 <b>\(n-1\)로 나눠요</b>. 왜 그런지가 이번 시간 2장의 핵심이고, 그 전에 "표본○○은 모○○을 맞추는 게 목적"이라는 걸 기억해 두세요.</p>
+  <p>참고로 \(n-1\)로 나누기 때문에 모분산의 간편계산식 \(\sigma^2=E(X^2)-\{E(X)\}^2\)을 표본분산에 그대로 쓸 수는 없어요. 표본분산용 간편계산식은 따로 있어요.</p>
+  \[s^2=\frac{1}{n-1}\left(\sum_{i=1}^{n}x_i^2-n\bar x^2\right)\]
+</section>
+
+<section id="dof">
+  <div class="sec-head"><h2>자유도와 n−1</h2><span class="slide-tag">슬라이드 9–12</span></div>
+  <p>표본분산의 \(n-1\)을 이해하려면 <b>자유도</b>(degree of freedom)를 먼저 알아야 해요. 자유도는 통계학 밖에서도 많이 쓰이고, 통계학 후반부에서도 계속 나오는 중요한 개념이에요.</p>
+
+  <div class="figs">
+    <figure class="plate"><img src="{{IMG:line_2d}}" alt="2차원 좌표평면 위의 직선 ax+by+c=0" width="900" height="726"><figcaption>2차원: 직선 \(ax+by+c=0\)</figcaption></figure>
+    <figure class="plate"><img src="{{IMG:plane_3d}}" alt="3차원 공간 위의 평면 ax+by+cz+d=0" width="900" height="760"><figcaption>3차원: 평면 \(ax+by+cz+d=0\)</figcaption></figure>
+  </div>
+
+  <p>2차원 직선 \(ax+by+c=0\)을 생각해 보세요. \(x\)를 아무렇게나 정해도 등호를 참으로 만드는 \(y\)가 딱 하나 있어요. 뒤집어 말하면, 문자는 두 개지만 "식을 만족해야 한다"는 제약 때문에 자유롭게 정할 수 있는 건 하나뿐이에요.</p>
+  <p>3차원 평면 \(ax+by+cz+d=0\)에서는 \(x\)를 정해도 문자가 두 개나 남아 있어서 \(y\)까지 마음대로 정할 수 있어요. \(x\)와 \(y\)를 정하고 나서야 \(z\)가 자동으로 정해져요. 문자는 3개, 자유롭게 정할 수 있는 건 2개예요.</p>
+  <p class="key">자유도 = 제약조건 아래에서 자유롭게 정할 수 있는 문자의 수 = (문자의 수) − (제약조건의 수)</p>
+  <p>3차원에서 아무것도 안 정했을 때는 자유도가 2이고, 하나를 정하면 자유로운 문자 하나를 써버린 거라 1, 하나 더 정하면 0이 되어 남은 문자는 식을 맞추기 위해 정해져요. 이 과정을 기억해 두세요.</p>
+
+  <h3>그래서 왜 n−1로 나눌까</h3>
+  <div class="formula-grid two">
+    <div><p class="fg-label">모분산: \(N\)으로 나눔</p>\[\sigma^2=\frac{1}{N}\sum_{i=1}^{N}(x_i-\htmlClass{c-mu}{\mu})^2\]</div>
+    <div><p class="fg-label">표본분산: \(n-1\)로 나눔</p>\[s^2=\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\htmlClass{c-xb}{\bar x})^2\]</div>
+  </div>
+  <p>모분산은 데이터가 \(N\)개면 \(N\)으로 나눠서 평균을 냈어요. 원래 분산은 모평균 \(\htmlClass{c-mu}{\mu}\)를 기준으로 재야 하는데, \(\mu\)는 모수라서 모르잖아요. 그래서 아쉬운 대로 표본평균 \(\htmlClass{c-xb}{\bar x}\)를 기준으로 써요. 표본분산이라는 추정을 하기도 전에, 한 번 추정한 표본평균 위에 또 추정을 하는 셈이에요.</p>
+  <p>그런데 <b>표본평균으로 잰 편차 \(n\)개는 합이 반드시 0</b>이에요. 이 제약조건 하나 때문에 자유롭게 움직일 수 있는 편차는 \(n-1\)개뿐이고, 그래서 자유도가 \(n-1\)이 되어 \(n-1\)로 나눠요. 문자가 3개인 평면에서 자유도가 \(3-1=2\)였던 것과 같은 구조예요. 아래에서 직접 확인해 보세요.</p>
+
+  <div class="panel" id="w1">
+    <div class="panel-head">
+      <p class="panel-title">편차 5개 중 몇 개가 자유로울까?</p>
+      <div class="seg" role="group" aria-label="기준 선택">
+        <button type="button" id="w1-xbar" class="on" aria-pressed="true">표본평균 \(\bar x\)로 잴 때</button>
+        <button type="button" id="w1-mu" aria-pressed="false">모평균 \(\mu\)로 잴 때</button>
+      </div>
+    </div>
+    <svg id="w1-svg" viewBox="0 0 560 270" role="img" aria-label="편차 다섯 개의 막대그래프"></svg>
+    <div class="sliders" id="w1-sliders"></div>
+    <p class="panel-note" id="w1-note"></p>
+  </div>
+
+  <p>수업 노트에 있던 예시로도 확인할 수 있어요. 모평균이 \(\mu=6\)인 모집단에서 표본 2, 4, 4, 5, 10을 뽑았다고 해 볼게요. 표본평균은 \(\bar x=5\)예요.</p>
+  <div class="table-scroll">
+  <table class="dev">
+    <thead><tr><th scope="col">표본</th><td>2</td><td>4</td><td>4</td><td>5</td><td>10</td><th scope="col">합</th><th scope="col">제곱합</th></tr></thead>
+    <tbody>
+      <tr class="row-mu"><th scope="row">\(\mu=6\)으로 잰 편차</th><td>−4</td><td>−2</td><td>−2</td><td>−1</td><td>4</td><td class="em">−5</td><td>41</td></tr>
+      <tr class="row-xb"><th scope="row">\(\bar x=5\)로 잰 편차</th><td>−3</td><td>−1</td><td>−1</td><td>0</td><td>5</td><td class="em">0</td><td>36</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>모평균으로 잰 편차는 합이 0이 아니어도 되지만, 표본평균으로 잰 편차는 합이 꼭 0이에요.</p>
+
+  <h3>n으로 나누면 작게 나오는 느낌</h3>
+  <figure class="plate wide"><img src="{{IMG:1b_pop_sample_feel}}" alt="모집단 히스토그램 위에 더 좁게 퍼진 표본 히스토그램이 겹쳐 있고, n으로 나누면 퍼짐이 조금 좁게, n−1로 나누면 살짝 넓혀서 맞춘다는 화살표" width="1400" height="716"><figcaption>표본은 평균적으로 모집단보다 조금 덜 퍼져 있다</figcaption></figure>
+  <p>엄밀하진 않지만 간단하게 생각하면, 그림처럼 표본은 평균적으로 모집단보다 덜 퍼져 있어서 \(n\)으로 나누면 분산을 작게 잡는 <b>경향</b>이 있어요. 표본분산은 모분산을 맞추는 게 목적이니까 \(n-1\)로 나눠서 그만큼 보정해 준다고 생각할 수도 있어요.</p>
+  <p>정확하게는 모평균 대신 표본평균을 써서 제곱합이 작아지기 때문이에요. <b>\(\bar x\)로 잰 제곱합은 \(\mu\)로 잰 제곱합보다 항상 작거나 같아요.</b> 위 표에서도 36이 41보다 작죠. 그래서 \(n\)으로 나누면 평균적으로 작게 나와요. 표본을 많이 뽑아서 직접 확인해 볼게요.</p>
+
+  <div class="panel" id="w2">
+    <div class="panel-head">
+      <p class="panel-title">주사위로 표본을 수천 번 뽑아 보기</p>
+      <div class="seg" role="group" aria-label="표본 크기">
+        <button type="button" data-n="2" aria-pressed="false">n = 2</button>
+        <button type="button" data-n="5" class="on" aria-pressed="true">n = 5</button>
+        <button type="button" data-n="10" aria-pressed="false">n = 10</button>
+      </div>
+    </div>
+    <p class="panel-sub">주사위를 \(n\)번 던진 결과를 표본 하나로 보고, 표본마다 분산을 두 가지 방법으로 계산해 평균을 냈어요. 주사위 눈 전체(모집단)의 분산은 \(\sigma^2=35/12\approx2.917\)이에요.</p>
+    <div class="bars" id="w2-bars"></div>
+    <div class="panel-actions">
+      <button type="button" id="w2-more" class="btn">1,000개 더 뽑기</button>
+      <button type="button" id="w2-reset" class="btn ghost">처음부터</button>
+      <span class="count" id="w2-count" aria-live="polite"></span>
+    </div>
+    <p class="panel-note" id="w2-note"></p>
+  </div>
+
+  <aside class="aside">
+    <p class="aside-q">모평균 \(\mu\)를 알고 있다면요?</p>
+    <p>그때는 \(\mu\)로 편차를 재면 되고, \(\mu\)로 잰 편차에는 "합이 0"이라는 제약이 없으니 \(n\)으로 나누면 돼요. \(n-1\)은 \(\mu\) 대신 \(\bar x\)를 써서 생긴 손해를 메우는 장치예요. 다만 실제로는 \(\mu\)를 아는 경우가 거의 없어요.</p>
+  </aside>
+
+  <h3>표본표준편차</h3>
+  \[\hat\sigma=s=\sqrt{s^2}=\sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar x)^2}\]
+  <p>표준편차는 언제나 분산의 스케일을 되돌리려고 루트를 씌운 것이니까, 표본표준편차는 표본분산에 루트를 씌우면 돼요. 여기까지가 2장이에요.</p>
+</section>
+
+<section id="prob">
+  <div class="sec-head"><h2>확률은 "차지하는 비율"</h2><span class="slide-tag">슬라이드 14–16</span></div>
+  <div class="chain">
+    <p>확률 = 경우의 수 / 경우의 수</p>
+    <p>= 집합 원소의 수 / 집합 원소의 수</p>
+    <p class="chain-strong">= 표본공간에서 사건이 얼마나 차지하는가</p>
+  </div>
+  <p>확률의 고전적·경험적·공리적 정의는 수업에서 열심히 했을 테니 넘어가고, 확률을 볼 때 중요한 시선 하나를 제안하고 싶어요.</p>
+  <p>고등학교 확률과 통계 때문에 확률을 "경우의 수 / 경우의 수" 정도로만 생각하는 경우가 꽤 있어요. 틀린 건 아니지만, 통계를 하려면 \({}_n\mathrm{P}_r\), \({}_n\mathrm{C}_r\)로 경우의 수를 구해 비율을 낸 것이라고 보기보다 <b>집합과 사건</b>의 관점으로 보는 게 좋아요.</p>
+  <p>어떤 시행에서 나올 수 있는 모든 경우를 원소로 가진 집합이 <b>표본공간</b>, 그 부분집합 중 내가 관심 있는 경우들을 모은 집합이 <b>사건</b>이에요. 그러면 관심 있는 일이 일어날 확률은 표본공간 중에서 사건이 얼마나 차지하느냐, 곧 (사건의 원소 수) / (표본공간의 원소 수)예요.</p>
+  <p class="caution"><span class="caution-label">주의</span>이 계산은 표본공간의 모든 원소가 <b>똑같은 가능성</b>으로 일어날 때만 쓸 수 있어요. 예를 들어 동전 2개를 던질 때 "앞면 개수는 0, 1, 2 세 가지니까 앞면이 1개일 확률은 1/3"이라고 하면 틀려요. 표본공간은 {앞앞, 앞뒤, 뒤앞, 뒤뒤}이고, 답은 2/4예요.</p>
+
+  <h3>주사위와 동전을 동시에 던질 때</h3>
+  <p>주사위는 3의 배수, 동전은 앞면이 나올 확률을 구해 볼게요. 표본공간은 아래 12칸이고, 모든 칸은 나올 가능성이 같아요. 사건은 색칠된 2칸이에요.</p>
+  <div class="table-scroll">
+  <div class="grid12" role="img" aria-label="주사위 1부터 6과 동전 앞뒤의 조합 12칸 중 (3, 앞)과 (6, 앞) 두 칸이 색칠됨">
+    <span class="g-corner"></span><span class="g-h">1</span><span class="g-h">2</span><span class="g-h">3</span><span class="g-h">4</span><span class="g-h">5</span><span class="g-h">6</span>
+    <span class="g-r">앞</span><span>1·앞</span><span>2·앞</span><span class="hit">3·앞</span><span>4·앞</span><span>5·앞</span><span class="hit">6·앞</span>
+    <span class="g-r">뒤</span><span>1·뒤</span><span>2·뒤</span><span>3·뒤</span><span>4·뒤</span><span>5·뒤</span><span>6·뒤</span>
+  </div>
+  </div>
+  \[P=\frac{\text{사건의 원소 수}}{\text{표본공간의 원소 수}}=\frac{2}{12}=\frac16\]
+  <p>우리가 흔히 \(\dfrac{2\times1}{6\times2}\)처럼 곱해서 계산하던 건, 사실 이 집합의 원소를 규칙적으로 세려고 했던 거예요. 본질은 집합이에요. 또 사건은 표본공간의 부분집합이라 아무리 커도 표본공간과 같은 게 최대이고, 그래서 확률의 최댓값은 1이에요.</p>
+
+  <h3>확률 1/6의 뜻</h3>
+  <div class="compare">
+    <div class="no"><p class="compare-label">✕ 틀린 해석</p><p>6번 던지면 1번은 6이 나온다</p></div>
+    <div class="yes"><p class="compare-label">○ 맞는 해석</p><p>한 번 던질 때 가능한 세계는 6개이고, 그중 내가 관심 있는 건 1개뿐이다</p></div>
+  </div>
+  <p>주사위를 던져 6이 나올 확률이 1/6이라는 걸 일상에서 "6번 던지면 1번은 6이 나온다"는 식으로 많이 말하는데, 이건 확률을 제대로 이해한 게 아니에요. 그 말이 맞다면 6번 던졌는데 6이 한 번도 안 나오거나 두 번 이상 나오면 뭔가 잘못된 거겠죠?</p>
+  <p>"6번 던지면 1번"은 뒤에서 배울 이항분포의 기댓값과 더 관련이 있어요. 지금은 1/6을 "한 번 던질 때 1부터 6까지 나오는 6개의 가능세계 중 내가 관심 있는 건 하나뿐"이라고 이해하면 좋아요. 물론 던지는 횟수를 늘리면 6이 나오는 <b>비율</b>은 1/6에 가까워져요. 이 미묘한 차이를 캐치해 주세요.</p>
+</section>
+
+<section id="cond">
+  <div class="sec-head"><h2>조건부확률은 표본공간의 축소</h2><span class="slide-tag">슬라이드 17–18</span></div>
+  <figure class="venn">
+    <svg viewBox="0 0 640 270" role="img" aria-label="왼쪽은 전체 표본공간 안의 두 원 A와 B, 오른쪽은 표본공간이 B로 줄어들고 A와 B가 겹친 부분만 칠해진 그림">
+      <defs>
+        <clipPath id="clipB1"><circle cx="190" cy="120" r="72"/></clipPath>
+        <clipPath id="clipB2"><circle cx="490" cy="120" r="72"/></clipPath>
+      </defs>
+      <rect class="v-space" x="20" y="18" width="280" height="204" rx="12"/>
+      <circle class="v-a" cx="130" cy="120" r="72"/>
+      <circle class="v-b" cx="190" cy="120" r="72"/>
+      <circle class="v-ab" cx="130" cy="120" r="72" clip-path="url(#clipB1)"/>
+      <text class="v-t" x="98" y="44">A</text><text class="v-t" x="214" y="44">B</text>
+      <text class="v-cap" x="160" y="254">전체 중 A가 차지하는 비율 = P(A)</text>
+      <rect class="v-space dim" x="340" y="18" width="280" height="204" rx="12"/>
+      <circle class="v-a-ghost" cx="430" cy="120" r="72"/>
+      <circle class="v-b strong" cx="490" cy="120" r="72"/>
+      <circle class="v-ab solid" cx="430" cy="120" r="72" clip-path="url(#clipB2)"/>
+      <text class="v-t muted" x="398" y="44">A</text><text class="v-t" x="514" y="44">B</text>
+      <text class="v-cap" x="480" y="254">B 안에서 A∩B가 차지하는 비율 = P(A|B)</text>
+    </svg>
+  </figure>
+  \[P(A\mid B)=\frac{P(A\cap B)}{P(B)}\qquad(P(B)>0)\]
+  <p>앞에서 말한 경우의 수 관점이 아니라 사건과 집합 관점을 이어 오면 조건부확률은 아주 당연해져요. \(P(A\mid B)\)는 "\(B\)가 이미 일어났다"는 상황이라 표본공간이 \(B\)로 <b>축소</b>돼요. 전체가 \(B\)로 줄었고, 분자는 새 표본공간(\(B\))의 부분집합이어야 하니까 \(A\) 중에서 \(B\) 안에 있는 부분, 곧 \(A\cap B\)가 분자가 돼요.</p>
+
+  <h3>곱셈법칙</h3>
+  <p>조건부확률 식을 조금 정리하면 아래 식을 얻는데, 이걸 곱셈법칙이라고 불러요.</p>
+  \[P(A\cap B)=P(A\mid B)\,P(B)=P(B\mid A)\,P(A)\]
+  <p>이 식은 베이즈 정리의 토대가 되기도 해요. 베이즈 정리는 \(P(A\mid B)\)와 \(P(B\mid A)\)를 연결해 주는데, 보통 둘 중 하나는 구하기 어렵고 하나는 쉬운 경우가 많아서 굉장히 유용해요. 분반마다 다루지 않을 수도 있어요.</p>
+  \[P(A\mid B)=\frac{P(B\mid A)\,P(A)}{P(B)}\]
+</section>
+
+<section id="indep">
+  <div class="sec-head"><h2>독립과 배반은 다르다</h2><span class="slide-tag">슬라이드 19</span></div>
+  <p>통계에서는 "독립"이 굉장히 중요한데, 두 사건의 독립은 이렇게 정의돼요.</p>
+  \[\begin{aligned}&P(A\cap B)=P(A)\,P(B)\\[2pt]\Longleftrightarrow\;\;&\htmlClass{c-red}{P(A\mid B)=P(A)}\end{aligned}\]
+  <p>양변을 \(P(B)\)로 나누면 오른쪽 식이 되는데(\(P(B)>0\)일 때), \(P(A\mid B)\)와 \(P(A)\)가 같다는 건 <b>\(B\)가 일어났는지 여부가 \(A\)가 일어날 확률에 전혀 영향을 주지 않는다</b>는 뜻이에요.</p>
+  <div class="compare">
+    <div><p class="compare-label">배반</p><p><b>집합</b> 이야기. 교집합이 공집합, 곧 안 겹친다.</p>\[A\cap B=\varnothing\]</div>
+    <div><p class="compare-label">독립</p><p><b>확률</b> 이야기. 서로 영향을 주지 않는다.</p>\[P(A\mid B)=P(A)\]</div>
+  </div>
+  <p>일상에서 "독립적이다"라고 하면 따로따로, 서로 관계없다는 뜻이라 "안 겹친다"는 뉘앙스가 생겨요. 그래서 통계에서 배반과 독립이 헷갈려요. 하지만 통계의 독립은 서로 영향을 주지 않는다는 뜻이지 안 겹친다는 뜻이 아니에요. 안 겹치는 건 배반이에요.</p>
+  <p>주사위 눈이 짝수인 사건을 \(A\), 홀수인 사건을 \(B\), 3의 배수인 사건을 \(C\)라고 하면, \(A\)와 \(B\)는 배반이지만 \(A\)와 \(C\), \(B\)와 \(C\)는 각각 독립이에요. 아래에서 사건을 바꿔 가며 확인해 보세요.</p>
+
+  <div class="panel" id="w3">
+    <div class="panel-head">
+      <p class="panel-title">주사위 한 번 던지기</p>
+      <div class="selects">
+        <label for="w3-a"><span class="lab-a">사건 A</span>
+          <select id="w3-a"></select></label>
+        <label for="w3-b"><span class="lab-b">조건 B</span>
+          <select id="w3-b"></select></label>
+      </div>
+    </div>
+    <div class="dice" id="w3-dice" aria-hidden="true"></div>
+    <div class="w3-out" id="w3-out" aria-live="polite"></div>
+  </div>
+  <p>짝수와 홀수처럼 배반인 두 사건은 오히려 강하게 영향을 줘요. 홀수가 나왔다는 걸 알면 짝수일 확률은 0으로 바뀌니까요. 그래서 확률이 0이 아닌 두 사건이 배반이면 독립일 수 없어요.</p>
+</section>
+
+<section id="practice">
+  <div class="sec-head"><h2>연습문제</h2><span class="slide-tag">슬라이드 20–23</span></div>
+  <p>중간고사 예시 문제와 비슷한 형태로 만든 문제예요. 먼저 풀어 보고 풀이를 열어 보세요.</p>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">1</span>두 사건 \(A,\ B\)에 대하여 \(P(A)=0.4,\ P(B)=0.5,\ P(A\cup B)=0.7\)이다.</p>
+    <ol class="q-sub">
+      <li>(1) \(P(A\cap B)\)를 구하시오.</li>
+      <li>(2) \(P(A\mid B)\)를 구하시오.</li>
+      <li>(3) \(A\)와 \(B\)는 서로 독립인가? 서로 배반인가? 각각 그 이유는 무엇인가?</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) 덧셈법칙에 의해 \(P(A\cap B)=P(A)+P(B)-P(A\cup B)=0.4+0.5-0.7=0.2\)</p>
+      <p>(2) \(P(A\mid B)=\dfrac{P(A\cap B)}{P(B)}=\dfrac{0.2}{0.5}=0.4\)</p>
+      <p>(3) \(P(A)P(B)=0.4\times0.5=0.2=P(A\cap B)\)이므로 독립이다. \(P(A\mid B)=0.4=P(A)\)로 확인해도 된다. 한편 \(P(A\cap B)=0.2\neq0\)이므로 배반은 아니다.</p>
+      <p class="sol-note">독립은 \(P(A\cap B)=P(A)P(B)\)인지를, 배반은 \(P(A\cap B)=0\)인지를 보는 것으로 서로 다른 개념이다. 만약 \(P(A\cup B)=0.9\)였다면 \(P(A\cap B)=0\)이므로 배반이지만, \(P(A)P(B)=0.2\neq0\)이므로 독립은 아니다.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">2</span>어느 강의 수강생 200명의 학년과 과제 제출 여부를 조사한 결과이다. 이 중 한 명을 랜덤하게 뽑는다.</p>
+    <div class="table-scroll">
+    <table class="plain">
+      <thead><tr><th scope="col"></th><th scope="col">제출</th><th scope="col">미제출</th><th scope="col">합계</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">1학년</th><td>60</td><td>20</td><td>80</td></tr>
+        <tr><th scope="row">2학년</th><td>45</td><td>5</td><td>50</td></tr>
+        <tr><th scope="row">3학년 이상</th><td>45</td><td>25</td><td>70</td></tr>
+        <tr><th scope="row">합계</th><td>150</td><td>50</td><td>200</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <ol class="q-sub">
+      <li>(1) \(P(\text{제출})\)을 구하시오.</li>
+      <li>(2) \(P(\text{제출}\mid\text{1학년})\)과 \(P(\text{제출}\mid\text{2학년})\)을 각각 구하시오.</li>
+      <li>(3) 사건 {1학년}과 {제출}은 서로 독립인가? {2학년}과 {제출}은? 각각 그 이유는 무엇인가?</li>
+      <li>(4) \(P(\text{1학년}\cap\text{제출})\)과 \(P(\text{1학년})\,P(\text{제출})\)을 비교하시오. 2학년에 대해서도 같은 비교를 하시오.</li>
+      <li>(5) {1학년}과 {2학년}은 서로 배반이다. 이 두 사건은 독립인가?</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) \(P(\text{제출})=\dfrac{150}{200}=0.75\)</p>
+      <p>(2) \(P(\text{제출}\mid\text{1학년})=\dfrac{60}{80}=0.75,\quad P(\text{제출}\mid\text{2학년})=\dfrac{45}{50}=0.9\)</p>
+      <p>(3) \(P(\text{제출}\mid\text{1학년})=0.75=P(\text{제출})\)이므로 {1학년}과 {제출}은 독립이다. \(P(\text{제출}\mid\text{2학년})=0.9\neq0.75\)이므로 {2학년}과 {제출}은 독립이 아니다.</p>
+      <p>(4) \(P(\text{1학년}\cap\text{제출})=\dfrac{60}{200}=0.3\)이고 \(P(\text{1학년})P(\text{제출})=0.4\times0.75=0.3\)이므로 같다. \(P(\text{2학년}\cap\text{제출})=\dfrac{45}{200}=0.225\)이고 \(P(\text{2학년})P(\text{제출})=0.25\times0.75=0.1875\)이므로 곱보다 크다.</p>
+      <p>(5) \(P(\text{1학년}\cap\text{2학년})=0\)이지만 \(P(\text{1학년})P(\text{2학년})=0.4\times0.25=0.1\)이므로 독립이 아니다.</p>
+      <p class="sol-note">독립이면 어느 학년으로 표본공간을 줄여도 제출 비율이 전체 비율 0.75와 같다. 교집합의 확률이 곱보다 크면 두 사건이 함께 일어나는 경향이, 작으면 함께 일어나지 않는 경향이 있다. 같은 표에서도 {1학년}은 독립이고 {2학년}은 아니므로, 독립 여부는 사건 쌍마다 따로 확인해야 한다.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">3</span>상자에 제품 10개가 들어 있고, 그중 3개가 불량품이다. 제품을 하나씩 두 번 꺼낼 때, 첫 번째 제품이 불량품인 사건을 \(A\), 두 번째 제품이 불량품인 사건을 \(B\)라 하자.</p>
+    <ol class="q-sub">
+      <li>(1) 꺼낸 제품을 다시 넣지 않을 때(비복원추출), 첫 번째가 불량품이었다면 두 번째가 불량품일 확률 \(P(B\mid A)\)를 구하시오. 첫 번째가 양품이었다면 두 번째가 불량품일 확률은 얼마인가?</li>
+      <li>(2) 비복원추출일 때 \(P(A\cap B)\)를 구하시오.</li>
+      <li>(3) 꺼낸 제품을 다시 넣을 때(복원추출), \(P(B\mid A)\)와 \(P(A\cap B)\)를 구하시오.</li>
+      <li>(4) 비복원추출과 복원추출 각각에서 \(A\)와 \(B\)는 서로 독립인가? 그 이유는 무엇인가?</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) 첫 번째로 불량품을 꺼냈다면 남은 9개 중 불량품은 2개이므로 \(P(B\mid A)=\dfrac{2}{9}\)이다. 첫 번째로 양품을 꺼냈다면(이 사건을 \(A^c\)라 하자) 남은 9개 중 불량품은 3개이므로 \(P(B\mid A^c)=\dfrac{3}{9}=\dfrac{1}{3}\)이다.</p>
+      <p>(2) 곱셈법칙에 의해 \(P(A\cap B)=P(A)\,P(B\mid A)=\dfrac{3}{10}\times\dfrac{2}{9}=\dfrac{1}{15}\)</p>
+      <p>(3) 상자가 매번 처음과 같으므로 \(P(B\mid A)=\dfrac{3}{10},\quad P(A\cap B)=\dfrac{3}{10}\times\dfrac{3}{10}=\dfrac{9}{100}\)</p>
+      <p>(4) 비복원추출에서 \(P(B)\)는 첫 번째가 불량품인 경우와 양품인 경우로 나누어 구한다.</p>
+      \[P(B)=P(A)\,P(B\mid A)+P(A^c)\,P(B\mid A^c)=\frac{3}{10}\cdot\frac{2}{9}+\frac{7}{10}\cdot\frac{3}{9}=\frac{6}{90}+\frac{21}{90}=\frac{3}{10}\]
+      <p>\(P(B\mid A)=\dfrac{2}{9}\neq\dfrac{3}{10}=P(B)\)이므로 독립이 아니다. 곱으로 보아도 \(P(A)P(B)=\dfrac{9}{100}\neq\dfrac{1}{15}\)이다. 복원추출에서는 \(P(B\mid A)=\dfrac{3}{10}=P(B)\)이므로 독립이다.</p>
+      <p class="sol-note">비복원추출이라도 첫 번째 결과를 모르면 두 번째가 불량품일 확률은 \(\tfrac{3}{10}\)으로 첫 번째와 같다(제비뽑기의 원리). 독립이 아닌 것은 첫 번째 결과를 알고 나면 이 확률이 \(\tfrac{2}{9}\) 또는 \(\tfrac{1}{3}\)로 바뀌기 때문이다. 곱셈법칙 \(P(A\cap B)=P(A)P(B\mid A)\)는 항상 성립하며, 독립일 때에만 \(P(A)P(B)\)로 단순해진다.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">4</span>체리 가지 하나에 달리는 체리의 개수와 그 확률이 다음과 같다. 체리 가지 2개를 무작위로 골랐고, 두 가지의 체리 개수는 서로 독립이다.</p>
+    <div class="table-scroll">
+    <table class="plain">
+      <tbody>
+        <tr><th scope="row">체리 개수</th><td>1</td><td>2</td><td>3</td></tr>
+        <tr><th scope="row">확률</th><td>0.2</td><td>0.5</td><td>0.3</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <ol class="q-sub">
+      <li>(1) 두 가지 모두 체리가 3개일 확률을 구하시오.</li>
+      <li>(2) 두 가지의 체리 개수의 합이 4일 확률을 구하시오.</li>
+      <li>(3) 첫 번째 가지에 체리가 1개였을 때, 두 번째 가지에 체리가 3개일 조건부확률을 구하시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) 두 가지의 체리 개수는 독립이므로 \(0.3\times0.3=0.09\)</p>
+      <p>(2) 합이 4인 경우는 (1, 3), (3, 1), (2, 2)이고 서로 배반이므로 각 확률을 더한다. \(0.2\times0.3+0.3\times0.2+0.5\times0.5=0.06+0.06+0.25=0.37\)</p>
+      <p>(3) \(\dfrac{P(\text{첫째 1개}\cap\text{둘째 3개})}{P(\text{첫째 1개})}=\dfrac{0.06}{0.2}=0.3\)으로, 독립이므로 조건이 없을 때의 확률 0.3과 같다.</p>
+      <p class="sol-note">(1, 3)과 (3, 1)은 서로 다른 경우이므로 따로 세어야 한다.</p>
+    </details>
+  </article>
+</section>
+
+</main>
