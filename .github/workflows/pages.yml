@@ -1,0 +1,56 @@
+name: Build and deploy to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 배포는 한 번에 하나씩. 진행 중인 배포를 중간에 끊지 않는다.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: source/package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 폰트 서브셋(pyftsubset)에 필요
+      - run: pip install fonttools brotli
+
+      - run: npm ci
+        working-directory: source
+
+      - run: node build.js
+        working-directory: source
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: source/out
+
+  # build가 실패하면 needs 조건이 막아서 배포되지 않는다.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

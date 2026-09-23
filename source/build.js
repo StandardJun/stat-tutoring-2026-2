@@ -9,9 +9,9 @@
  *       각 파일은 이미지·폰트·수식까지 모두 품은 단독 파일
  */
 const fs = require('fs'), path = require('path'), { execSync } = require('child_process');
-const katex = require('/home/claude/ws/node_modules/katex');
-const KDIR = '/home/claude/ws/node_modules/katex/dist/';
-const FDIR = '/home/claude/fonts/package/src/';
+const katex = require('katex');
+const KDIR = path.dirname(require.resolve('katex/package.json')) + '/dist/';
+const FDIR = path.dirname(require.resolve('@kfonts/nanum-barun-gothic/package.json')) + '/src/';
 const conf = JSON.parse(fs.readFileSync('weeks.json', 'utf8'));
 const baseCss = fs.readFileSync('base.css', 'utf8');
 const out = 'out';
@@ -44,7 +44,7 @@ function fontFaces(text, tag){
   let css = '';
   for (const [file, w] of [['NanumBarunGothic', 400], ['NanumBarunGothicBold', 700]]){
     const o = `.${tag}-${w}.woff2`;
-    execSync(`pyftsubset ${FDIR}${file}.ttf --text-file=.chars.txt --flavor=woff2 --layout-features='*' --no-hinting --output-file=${o}`);
+    execSync(`pyftsubset "${FDIR}${file}.ttf" --text-file=.chars.txt --flavor=woff2 --layout-features='*' --no-hinting --output-file=${o}`);
     css += `@font-face{font-family:"NBG";font-weight:${w};font-style:normal;font-display:swap;src:url(data:font/woff2;base64,${fs.readFileSync(o).toString('base64')}) format("woff2")}`;
     fs.unlinkSync(o);
   }

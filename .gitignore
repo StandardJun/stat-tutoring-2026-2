@@ -1,5 +1,6 @@
 .DS_Store
-source.zip
-source/out/
-source/.chars.txt
 node_modules/
+source/out/
+source/.venv/
+source/.chars.txt
+source.zip
