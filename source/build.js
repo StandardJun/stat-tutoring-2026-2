@@ -44,7 +44,7 @@ function fontFaces(text, tag){
   let css = '';
   for (const [file, w] of [['NanumBarunGothic', 400], ['NanumBarunGothicBold', 700]]){
     const o = `.${tag}-${w}.woff2`;
-    execSync(`pyftsubset "${FDIR}${file}.ttf" --text-file=.chars.txt --flavor=woff2 --layout-features='*' --no-hinting --output-file=${o}`);
+    execSync(`pyftsubset "${FDIR}${file}.ttf" --text-file=.chars.txt --flavor=woff2 --layout-features='*' --no-hinting --output-file="${o}"`);
     css += `@font-face{font-family:"NBG";font-weight:${w};font-style:normal;font-display:swap;src:url(data:font/woff2;base64,${fs.readFileSync(o).toString('base64')}) format("woff2")}`;
     fs.unlinkSync(o);
   }
@@ -113,6 +113,24 @@ const cards = conf.weeks.map(w => {
     <p class="card-slides">${w.slides}</p>`;
   return w.ready ? `<a class="card" href="${w.file}">${inner}</a>` : `<div class="card off">${inner}</div>`;
 }).join('\n');
+const ready = {};
+conf.weeks.forEach(function(w){ if (w.ready) ready[w.n] = w; });
+const planRows = (conf.plan || []).map(r => {
+  if (r.exam) return `<tr class="exam"><th scope="row">${r.exam}</th><td class="pd">${r.date}</td><td></td></tr>`;
+  const w = ready[r.n];
+  const label = w ? `<a href="${w.file}">${r.n}회차</a>` : `${r.n}회차`;
+  return `<tr${w ? ' class="done"' : ''}><th scope="row">${label}</th><td class="pd">${r.date}</td><td>${r.topic}</td></tr>`;
+}).join('\n');
+const planBlock = (conf.plan || []).length ? `<section class="plan">
+  <div class="sec-head"><h2>${conf.planTitle}</h2></div>
+  <div class="table-scroll"><table class="sched">
+  <thead><tr><th scope="col">회차</th><th scope="col">날짜</th><th scope="col">다룰 내용</th></tr></thead>
+  <tbody>
+${planRows}
+  </tbody></table></div>
+  <p class="plan-note">${conf.planNote || ''}</p>
+</section>` : '';
+
 const hubBody = `<header class="hero">
   <p class="eyebrow">${conf.term} · ${conf.course}</p>
   <h1>${conf.hubTitle}</h1>
@@ -121,6 +139,7 @@ const hubBody = `<header class="hero">
 <div class="cards">
 ${cards}
 </div>
+${planBlock}
 <footer class="foot"><p>${conf.term} ${conf.course} · 회차가 끝날 때마다 하나씩 올라와요.</p></footer>`;
 const hubStyle = fontFaces(hubBody, 'hub') + baseCss;
 fs.writeFileSync(path.join(out, 'index.html'), page({

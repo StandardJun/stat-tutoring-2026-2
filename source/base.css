@@ -307,3 +307,16 @@ table.plain tbody th{background:var(--surface)}
 .mark{stroke-width:2.5;stroke-dasharray:5 4}
 .mark.mean{stroke:var(--blue)}
 .mark.med{stroke:var(--orange)}
+
+/* 진도 계획 */
+.plan{padding-top:48px}
+table.sched{width:100%;font-size:0.94rem}
+table.sched th,table.sched td{border-bottom:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}
+table.sched thead th{font-size:0.82rem;color:var(--muted);font-weight:400;white-space:nowrap}
+table.sched tbody th{font-weight:700;white-space:nowrap;width:5.2em}
+table.sched td.pd{white-space:nowrap;color:var(--muted);width:4.6em;font-variant-numeric:tabular-nums}
+table.sched tbody th a{text-decoration:none}
+table.sched tr.done th a:hover{text-decoration:underline}
+table.sched tr.exam th{color:var(--red)}
+table.sched tr.exam td.pd{color:var(--red)}
+.plan-note{font-size:0.88rem;color:var(--muted);margin-top:10px}
