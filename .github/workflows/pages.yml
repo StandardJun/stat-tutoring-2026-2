@@ -2,8 +2,10 @@ name: Build and deploy to Pages
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch:
+    branches: [main]      # 빌드만 한다(배포 안 함). 소스가 깨지지 않았는지 바로 확인용.
+  schedule:
+    - cron: '0 11 * * *'  # 매일 11:00 UTC = 20:00 KST. 실제 공개는 이때 일어난다.
+  workflow_dispatch:      # 즉시 배포하고 싶을 때 수동 실행
 
 permissions:
   contents: read
@@ -45,8 +47,11 @@ jobs:
           path: source/out
 
   # build가 실패하면 needs 조건이 막아서 배포되지 않는다.
+  # push로 들어온 실행은 빌드까지만 하고 배포하지 않는다.
+  # 실제 공개는 매일 20:00 KST의 schedule 실행(또는 수동 실행)에서만 일어난다.
   deploy:
     needs: build
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

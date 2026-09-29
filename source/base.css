@@ -320,3 +320,22 @@ table.sched tr.done th a:hover{text-decoration:underline}
 table.sched tr.exam th{color:var(--red)}
 table.sched tr.exam td.pd{color:var(--red)}
 .plan-note{font-size:0.88rem;color:var(--muted);margin-top:10px}
+
+/* 3회차 전용 */
+table.plain .mg{color:var(--red);font-weight:700}
+table.plain td.mg.hl{background:var(--orange-tint)}
+table.jt-table td{padding:0}
+.jt-cell{font:inherit;width:100%;border:0;background:none;color:var(--ink);padding:5px 0;cursor:pointer;font-variant-numeric:tabular-nums}
+.jt-cell:hover{background:var(--blue-tint)}
+.jt-cell.sel{background:var(--blue);color:var(--ground);font-weight:700}
+#jt .seg button,#clt-w .seg button{white-space:normal;text-align:left}
+#cr-svg,#clt-svg{width:100%;height:auto;display:block;background:var(--ground);border-radius:10px;margin-top:6px}
+.cr-frame{fill:none;stroke:var(--rule)}
+.cr-mean{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:5 4}
+.cr-pos{fill:var(--blue);opacity:.8}
+.cr-neg{fill:var(--red);opacity:.8}
+.cr-tick{text-anchor:end;font-size:11px}
+.sl-one .val{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;min-width:2.6em;text-align:right}
+#clt-n{margin-bottom:6px}
+.clt-pop{fill:var(--blue);opacity:.8}
+.clt-bar{fill:var(--orange)}
