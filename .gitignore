@@ -4,3 +4,6 @@ source/out/
 source/.venv/
 source/.chars.txt
 source.zip
+
+# 회차별 전달 폴더(260930 등) — 소스는 source/ 에만 둔다
+/[0-9][0-9][0-9][0-9][0-9][0-9]/
