@@ -1,0 +1,92 @@
+name: Publish pending week
+
+# .github/pending/ 에 예약해 둔 회차를 정해진 시각이 지나면 공개한다.
+#
+#   .github/pending/publish-at   공개 시각 한 줄 (예: 2026-10-07T19:45:00+09:00)
+#   .github/pending/weeks.json   그때 source/weeks.json 을 대체할 내용
+#
+# 시각이 아직 안 됐으면 아무것도 하지 않는다.
+# 시각이 지났으면 source/weeks.json 을 바꾸고 커밋·푸시한 뒤 배포를 실행한다.
+#
+# 회차 본문(weeks/wN.html)과 그림은 미리 source/ 에 넣어 둬도 된다.
+# build.js 는 weeks.json 에 적힌 회차만 만들기 때문에, weeks.json 이 바뀌는
+# 순간에 비로소 그 회차가 사이트에 생긴다.
+
+on:
+  schedule:
+    # GitHub의 schedule은 누락될 수 있어 20분 간격으로 세 번 시도한다.
+    # 각 시도는 바로 뒤의 pages.yml 예약(10:45 / 11:05 / 11:25)보다 5분 앞선다.
+    - cron: '40 10 * * *'  # 19:40 KST
+    - cron: '0 11 * * *'   # 20:00 KST
+    - cron: '20 11 * * *'  # 20:20 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write   # source/weeks.json 커밋·푸시
+  actions: write    # pages.yml 수동 실행
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: check
+        name: 공개 시각이 됐는지 확인
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import os, shutil, pathlib
+          from datetime import datetime, timezone
+
+          pending = pathlib.Path('.github/pending')
+          at = pending / 'publish-at'
+          src = pending / 'weeks.json'
+
+          if not at.exists() or not src.exists():
+              print('due=false')
+              print('reason=예약된 회차 없음')
+              raise SystemExit(0)
+
+          when = datetime.fromisoformat(at.read_text().strip())
+          if when.tzinfo is None:
+              when = when.replace(tzinfo=timezone.utc)
+          now = datetime.now(timezone.utc)
+
+          if now < when:
+              print('due=false')
+              print(f'reason=아직 {when.isoformat()} 전 (현재 {now.isoformat()})')
+              raise SystemExit(0)
+
+          shutil.copyfile(src, 'source/weeks.json')
+          shutil.rmtree(pending)
+          print('due=true')
+          print(f'reason={when.isoformat()} 도달 — 공개한다')
+          PY
+
+      - name: 결과 출력
+        run: echo "${{ steps.check.outputs.reason }}"
+
+      - name: 커밋·푸시
+        if: steps.check.outputs.due == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "변경 없음"
+            exit 0
+          fi
+          git commit -m "예약된 회차 공개"
+          git push
+
+      # GITHUB_TOKEN으로 푸시한 커밋은 다른 워크플로를 자동으로 트리거하지 않는다.
+      # 그래서 배포를 명시적으로 실행한다.
+      - name: 배포 실행
+        if: steps.check.outputs.due == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main
