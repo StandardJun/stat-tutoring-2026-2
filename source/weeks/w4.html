@@ -11,6 +11,7 @@
   <a href="#table">분포표 읽기</a>
   <a href="#map">큰 그림 다시</a>
   <a href="#practice">연습문제</a>
+  <a href="#qna">그날 나온 질문</a>
 </nav>
 
 <main>
@@ -595,6 +596,29 @@
       \[\begin{aligned}P\big(\chi^2(1)<4\big)&=P(|Z|<2)\\&=2(0.9772)-1=0.9544\end{aligned}\]
       <p class="sol-note">완전제곱 → 표준화 → \(Z^2\sim\chi^2(1)\) 순서예요. \(\chi^2(1)\)은 \(|Z|\)로 바꿔 표준정규분포표로도 풀 수 있어요.</p>
     </details>
+  </article>
+</section>
+
+<section id="qna">
+  <div class="sec-head"><h2>그날 나온 질문</h2><span class="slide-tag">4주차</span></div>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">Q</span>확률변수는 표본공간의 원소를 숫자에 대응시킨 것인데, 표본평균이라는 확률변수의 표본공간은 무엇인가요?</p>
+    <p>가능한 표본평균 숫자들은 표본평균이라는 확률변수가 대응시킨 값, 곧 확률변수의 <b>치역</b>이에요. 표본공간은 확률변수의 <b>정의역</b>이고요.</p>
+    <p>유한모집단 \(\{2,\ 2,\ 4,\ 5\}\)에서 비복원추출로 2개를 뽑는 경우로 생각해 볼게요. 2가 두 개라서 구분하기 위해 각각 \(2_a,\ 2_b\)라고 하면, 아래가 표본공간이 돼요.</p>
+    \[\begin{aligned}S=\{&(2_a,2_b),\ (2_a,4),\ (2_a,5),\\&(2_b,4),\ (2_b,5),\ (4,5)\}\end{aligned}\]
+    <p>표본평균 \(\bar X\)는 이 표본 하나하나에 평균값을 대응시켜요. 왼쪽 열이 정의역(표본공간), 오른쪽 열에 나오는 값 \(2,\ 3,\ 3.5,\ 4.5\)가 치역이에요.</p>
+    <div class="table-scroll"><table class="dev">
+      <thead><tr><th>표본 (표본공간의 원소)</th><th>표본평균 \(\bar x\)</th></tr></thead>
+      <tbody>
+        <tr><td>\((2_a,\ 2_b)\)</td><td>\(2\)</td></tr>
+        <tr><td>\((2_a,\ 4)\)</td><td>\(3\)</td></tr>
+        <tr><td>\((2_a,\ 5)\)</td><td>\(3.5\)</td></tr>
+        <tr><td>\((2_b,\ 4)\)</td><td>\(3\)</td></tr>
+        <tr><td>\((2_b,\ 5)\)</td><td>\(3.5\)</td></tr>
+        <tr><td>\((4,\ 5)\)</td><td>\(4.5\)</td></tr>
+      </tbody>
+    </table></div>
   </article>
 </section>
 
