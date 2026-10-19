@@ -401,3 +401,17 @@ table.xt td.hit{background:var(--orange);color:var(--ground);font-weight:700}
 .w4-num{font-size:11px}
 .q-sub .katex-display{text-indent:0}
 #hy-out sub{font-size:0.75em}
+
+/* 글이 들어가는 비교표 — table.plain(숫자 격자)과 구분 */
+table.info{width:100%;line-height:1.6;word-break:keep-all}
+table.info th,table.info td{border-bottom:1px solid var(--rule);padding:11px 14px;text-align:left;vertical-align:top}
+table.info thead th{background:var(--surface);font-weight:700;white-space:nowrap;border-bottom:2px solid var(--rule)}
+table.info tbody th{font-weight:700;white-space:nowrap;width:1%;padding-right:22px;color:var(--ink)}
+table.info tbody tr:last-child th,table.info tbody tr:last-child td{border-bottom:0}
+table.info .katex{white-space:nowrap}
+@media (max-width:520px){
+  table.info th,table.info td{padding:9px 10px;font-size:0.92rem}
+  table.info tbody th{padding-right:12px}
+}
+table.info:not(:has(thead)) tbody tr:first-child>*{border-top:2px solid var(--rule)}
+.nw{white-space:nowrap}
