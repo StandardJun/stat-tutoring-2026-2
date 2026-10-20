@@ -1,6 +1,7 @@
 {
   "title": "자료실",
   "lede": "중간고사 대비 자료를 모아 둔 곳이에요. 버튼을 누르면 PDF 파일이 바로 내려받아져요.",
+  "notice": "이 자료는 공유하지 않아주시길 바랍니다! 제가 가지고 있는 문제들을 변형한 것인데, 문제 저작권 이슈가 생길 수 있기 때문에 우리끼리만 보는 걸로 합시다!",
   "sections": [
     {
       "id": "mock",
@@ -10,53 +11,144 @@
         {
           "title": "공통",
           "items": [
-            { "name": "공통 0회 (수업용)", "meta": "권장 풀이 시간 70~80분 · 100점 (공통 70 + 선택 30)",
+            {
+              "name": "공통 0회 (수업용)",
+              "meta": "권장 풀이 시간 70~80분 · 100점 (공통 70 + 선택 30)",
               "files": [
-                { "label": "문제", "path": "files/mock/common-0.pdf", "save": "모의시험_공통_0회.pdf", "pages": 12 },
-                { "label": "풀이", "path": "files/mock/common-0-sol.pdf", "save": "모의시험_공통_0회_풀이.pdf", "pages": 4 }
-              ] }
+                {
+                  "label": "문제",
+                  "path": "files/mock/common-0.pdf",
+                  "save": "모의시험_공통_0회.pdf",
+                  "pages": 12
+                },
+                {
+                  "label": "풀이",
+                  "path": "files/mock/common-0-sol.pdf",
+                  "save": "모의시험_공통_0회_풀이.pdf",
+                  "pages": 4
+                }
+              ]
+            }
           ]
         },
         {
           "title": "통계학",
           "note": "범위: 1장 ~ 6장 모평균의 t-검정(모분산을 모를 때)까지",
           "items": [
-            { "name": "통계학 제1회", "meta": "시험 시간 90분 · 100점",
+            {
+              "name": "통계학 제1회",
+              "meta": "시험 시간 90분 · 100점",
               "files": [
-                { "label": "문제", "path": "files/mock/stat-1.pdf", "save": "모의시험_통계학_1회.pdf", "pages": 11 },
-                { "label": "풀이", "path": "files/mock/stat-1-sol.pdf", "save": "모의시험_통계학_1회_풀이.pdf", "pages": 3 }
-              ] },
-            { "name": "통계학 제2회", "meta": "시험 시간 90분 · 100점",
+                {
+                  "label": "문제",
+                  "path": "files/mock/stat-1.pdf",
+                  "save": "모의시험_통계학_1회.pdf",
+                  "pages": 11
+                },
+                {
+                  "label": "풀이",
+                  "path": "files/mock/stat-1-sol.pdf",
+                  "save": "모의시험_통계학_1회_풀이.pdf",
+                  "pages": 3
+                }
+              ]
+            },
+            {
+              "name": "통계학 제2회",
+              "meta": "시험 시간 90분 · 100점",
               "files": [
-                { "label": "문제", "path": "files/mock/stat-2.pdf", "save": "모의시험_통계학_2회.pdf", "pages": 10 },
-                { "label": "풀이", "path": "files/mock/stat-2-sol.pdf", "save": "모의시험_통계학_2회_풀이.pdf", "pages": 4 }
-              ] },
-            { "name": "통계학 제3회", "meta": "시험 시간 90분 · 100점",
+                {
+                  "label": "문제",
+                  "path": "files/mock/stat-2.pdf",
+                  "save": "모의시험_통계학_2회.pdf",
+                  "pages": 10
+                },
+                {
+                  "label": "풀이",
+                  "path": "files/mock/stat-2-sol.pdf",
+                  "save": "모의시험_통계학_2회_풀이.pdf",
+                  "pages": 4
+                }
+              ]
+            },
+            {
+              "name": "통계학 제3회",
+              "meta": "시험 시간 90분 · 100점",
               "files": [
-                { "label": "문제", "path": "files/mock/stat-3.pdf", "save": "모의시험_통계학_3회.pdf", "pages": 11 },
-                { "label": "풀이", "path": "files/mock/stat-3-sol.pdf", "save": "모의시험_통계학_3회_풀이.pdf", "pages": 4 }
-              ] }
+                {
+                  "label": "문제",
+                  "path": "files/mock/stat-3.pdf",
+                  "save": "모의시험_통계학_3회.pdf",
+                  "pages": 11
+                },
+                {
+                  "label": "풀이",
+                  "path": "files/mock/stat-3-sol.pdf",
+                  "save": "모의시험_통계학_3회_풀이.pdf",
+                  "pages": 4
+                }
+              ]
+            }
           ]
         },
         {
           "title": "인문사회계열을 위한 통계학",
           "note": "범위: 1장 ~ 5장 추정(점추정·구간추정)까지",
           "items": [
-            { "name": "인사통 제1회", "meta": "시험 시간 90분 · 100점",
+            {
+              "name": "인사통 제1회",
+              "meta": "시험 시간 90분 · 100점",
               "files": [
-                { "label": "문제", "path": "files/mock/humsoc-1.pdf", "save": "모의시험_인사통_1회.pdf", "pages": 11 },
-                { "label": "풀이", "path": "files/mock/humsoc-1-sol.pdf", "save": "모의시험_인사통_1회_풀이.pdf", "pages": 3 }
-              ] },
-            { "name": "인사통 제2회", "meta": "시험 시간 90분 · 100점",
+                {
+                  "label": "문제",
+                  "path": "files/mock/humsoc-1.pdf",
+                  "save": "모의시험_인사통_1회.pdf",
+                  "pages": 11
+                },
+                {
+                  "label": "풀이",
+                  "path": "files/mock/humsoc-1-sol.pdf",
+                  "save": "모의시험_인사통_1회_풀이.pdf",
+                  "pages": 3
+                }
+              ]
+            },
+            {
+              "name": "인사통 제2회",
+              "meta": "시험 시간 90분 · 100점",
               "files": [
-                { "label": "문제", "path": "files/mock/humsoc-2.pdf", "save": "모의시험_인사통_2회.pdf", "pages": 11 },
-                { "label": "풀이", "path": "files/mock/humsoc-2-sol.pdf", "save": "모의시험_인사통_2회_풀이.pdf", "pages": 3 }
-              ] },
-            { "name": "인사통 제3회", "meta": "시험 시간 90분 · 100점",
+                {
+                  "label": "문제",
+                  "path": "files/mock/humsoc-2.pdf",
+                  "save": "모의시험_인사통_2회.pdf",
+                  "pages": 11
+                },
+                {
+                  "label": "풀이",
+                  "path": "files/mock/humsoc-2-sol.pdf",
+                  "save": "모의시험_인사통_2회_풀이.pdf",
+                  "pages": 3
+                }
+              ]
+            },
+            {
+              "name": "인사통 제3회",
+              "meta": "시험 시간 90분 · 100점",
               "files": [
-                { "label": "문제", "path": "files/mock/humsoc-3.pdf", "save": "모의시험_인사통_3회.pdf", "pages": 11 },
-                { "label": "풀이", "path": "files/mock/humsoc-3-sol.pdf", "save": "모의시험_인사통_3회_풀이.pdf", "pages": 3 }
-              ] }
+                {
+                  "label": "문제",
+                  "path": "files/mock/humsoc-3.pdf",
+                  "save": "모의시험_인사통_3회.pdf",
+                  "pages": 11
+                },
+                {
+                  "label": "풀이",
+                  "path": "files/mock/humsoc-3-sol.pdf",
+                  "save": "모의시험_인사통_3회_풀이.pdf",
+                  "pages": 3
+                }
+              ]
+            }
           ]
         }
       ]
@@ -68,10 +160,18 @@
       "groups": [
         {
           "items": [
-            { "name": "통계학 정리 (중간고사)", "meta": "",
+            {
+              "name": "통계학 정리 (중간고사)",
+              "meta": "",
               "files": [
-                { "label": "PDF", "path": "files/notes/midterm-notes.pdf", "save": "통계학 정리_중간고사.pdf", "pages": 15 }
-              ] }
+                {
+                  "label": "PDF",
+                  "path": "files/notes/midterm-notes.pdf",
+                  "save": "통계학 정리_중간고사.pdf",
+                  "pages": 15
+                }
+              ]
+            }
           ]
         }
       ]

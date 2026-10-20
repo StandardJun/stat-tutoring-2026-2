@@ -179,6 +179,7 @@ if (lib){
   <h1>${lib.title}</h1>
   <p class="lede">${lib.lede}</p>
 </header>
+${lib.notice ? `<p class="caution"><span class="caution-label">부탁</span>${lib.notice}</p>` : ''}
 ${sections}
 <footer class="foot"><p>${conf.term} ${conf.course} · 자료실</p></footer>`;
   fs.writeFileSync(path.join(out, 'library.html'), page({
