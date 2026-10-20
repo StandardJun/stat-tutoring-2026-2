@@ -63,7 +63,7 @@ function weekBar(current){
   ${items}
 </nav>`;
 }
-function page({ title, desc, style, body, script }){
+function page({ title, desc, style, body, script, robots }){
   return `<!doctype html>
 <html lang="ko">
 <head>
@@ -71,7 +71,7 @@ function page({ title, desc, style, body, script }){
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${title}</title>
 <meta name="description" content="${desc}">
-<style>${style}</style>
+${robots ? `<meta name="robots" content="${robots}">\n` : ''}<style>${style}</style>
 </head>
 <body>
 <div class="wrap">
@@ -159,7 +159,7 @@ console.log('index.html', (fs.statSync(path.join(out, 'index.html')).size / 1024
 
 /* ---- 자료실 페이지 ---- */
 if (lib){
-  const btn = f => `<a class="dl" href="${f.path}" download="${f.save}">${f.label}<span class="dl-meta">${f.pages}쪽 · ${kb(f.path)}</span></a>`;
+  const btn = f => `<a class="dl" href="${f.path}" download="${f.save}" rel="nofollow">${f.label}<span class="dl-meta">${f.pages}쪽 · ${kb(f.path)}</span></a>`;
   const item = it => `<li class="lib-item">
       <div class="lib-text"><p class="lib-name">${it.name}</p>${it.meta ? `<p class="lib-meta">${it.meta}</p>` : ''}</div>
       <div class="lib-btns">${it.files.map(btn).join('')}</div>
@@ -184,7 +184,7 @@ ${sections}
 <footer class="foot"><p>${conf.term} ${conf.course} · 자료실</p></footer>`;
   fs.writeFileSync(path.join(out, 'library.html'), page({
     title: `${lib.title} · ${conf.hubTitle}`, desc: `${conf.course} 자료실`,
-    style: fontFaces(libBody, 'lib') + baseCss, body: libBody, script: ''
+    style: fontFaces(libBody, 'lib') + baseCss, body: libBody, script: '', robots: 'noindex, nofollow'
   }));
   console.log('library.html', (fs.statSync(path.join(out, 'library.html')).size / 1024).toFixed(0) + 'KB');
   fs.cpSync('files', path.join(out, 'files'), { recursive: true });
