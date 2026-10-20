@@ -159,7 +159,7 @@ console.log('index.html', (fs.statSync(path.join(out, 'index.html')).size / 1024
 
 /* ---- 자료실 페이지 ---- */
 if (lib){
-  const btn = f => `<a class="dl" href="${f.path}" download="${f.save}" rel="nofollow">${f.label}<span class="dl-meta">${f.pages}쪽 · ${kb(f.path)}</span></a>`;
+  const btn = f => `<div class="dl-wrap"><a class="dl" href="${f.path}" download="${f.save}" rel="nofollow">${f.label}<span class="dl-meta">${f.pages}쪽 · ${kb(f.path)}</span></a>${f.updated ? `<span class="dl-upd">${f.updated}</span>` : ''}</div>`;
   const item = it => `<li class="lib-item">
       <div class="lib-text"><p class="lib-name">${it.name}</p>${it.meta ? `<p class="lib-meta">${it.meta}</p>` : ''}</div>
       <div class="lib-btns">${it.files.map(btn).join('')}</div>
@@ -172,6 +172,7 @@ if (lib){
   <div class="sec-head"><h2>${sec.title}</h2></div>
   ${sec.note ? `<p>${sec.note}</p>` : ''}
   ${sec.groups.map(group).join('\n  ')}
+  ${sec.figure ? `<figure class="lib-fig"><a href="${sec.figure.src}" target="_blank" rel="nofollow"><img src="${sec.figure.src}" alt="${sec.figure.alt}" loading="lazy"></a><figcaption>${sec.figure.caption}</figcaption></figure>` : ''}
 </section>`).join('\n');
   const libBody = `${weekBar(0)}
 <header class="hero">

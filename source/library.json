@@ -19,13 +19,15 @@
                   "label": "문제",
                   "path": "files/mock/common-0.pdf",
                   "save": "모의시험_공통_0회.pdf",
-                  "pages": 12
+                  "pages": 12,
+                  "updated": "10/21 수정"
                 },
                 {
                   "label": "풀이",
                   "path": "files/mock/common-0-sol.pdf",
                   "save": "모의시험_공통_0회_풀이.pdf",
-                  "pages": 4
+                  "pages": 4,
+                  "updated": "10/21 수정"
                 }
               ]
             }
@@ -43,13 +45,15 @@
                   "label": "문제",
                   "path": "files/mock/stat-1.pdf",
                   "save": "모의시험_통계학_1회.pdf",
-                  "pages": 11
+                  "pages": 11,
+                  "updated": "10/21 수정"
                 },
                 {
                   "label": "풀이",
                   "path": "files/mock/stat-1-sol.pdf",
                   "save": "모의시험_통계학_1회_풀이.pdf",
-                  "pages": 3
+                  "pages": 3,
+                  "updated": "10/21 수정"
                 }
               ]
             },
@@ -79,13 +83,15 @@
                   "label": "문제",
                   "path": "files/mock/stat-3.pdf",
                   "save": "모의시험_통계학_3회.pdf",
-                  "pages": 11
+                  "pages": 11,
+                  "updated": "10/21 수정"
                 },
                 {
                   "label": "풀이",
                   "path": "files/mock/stat-3-sol.pdf",
                   "save": "모의시험_통계학_3회_풀이.pdf",
-                  "pages": 4
+                  "pages": 4,
+                  "updated": "10/21 수정"
                 }
               ]
             }
@@ -103,13 +109,15 @@
                   "label": "문제",
                   "path": "files/mock/humsoc-1.pdf",
                   "save": "모의시험_인사통_1회.pdf",
-                  "pages": 11
+                  "pages": 11,
+                  "updated": "10/21 수정"
                 },
                 {
                   "label": "풀이",
                   "path": "files/mock/humsoc-1-sol.pdf",
                   "save": "모의시험_인사통_1회_풀이.pdf",
-                  "pages": 3
+                  "pages": 3,
+                  "updated": "10/21 수정"
                 }
               ]
             },
@@ -121,13 +129,15 @@
                   "label": "문제",
                   "path": "files/mock/humsoc-2.pdf",
                   "save": "모의시험_인사통_2회.pdf",
-                  "pages": 11
+                  "pages": 11,
+                  "updated": "10/21 수정"
                 },
                 {
                   "label": "풀이",
                   "path": "files/mock/humsoc-2-sol.pdf",
                   "save": "모의시험_인사통_2회_풀이.pdf",
-                  "pages": 3
+                  "pages": 3,
+                  "updated": "10/21 수정"
                 }
               ]
             },
@@ -139,19 +149,26 @@
                   "label": "문제",
                   "path": "files/mock/humsoc-3.pdf",
                   "save": "모의시험_인사통_3회.pdf",
-                  "pages": 11
+                  "pages": 11,
+                  "updated": "10/21 수정"
                 },
                 {
                   "label": "풀이",
                   "path": "files/mock/humsoc-3-sol.pdf",
                   "save": "모의시험_인사통_3회_풀이.pdf",
-                  "pages": 3
+                  "pages": 3,
+                  "updated": "10/21 수정"
                 }
               ]
             }
           ]
         }
-      ]
+      ],
+      "figure": {
+        "src": "files/mock/changes-1021.png",
+        "alt": "10월 21일 중간고사 모의시험 수정 사항: 문구 수정, 소문항 교체, 풀이 수정 목록",
+        "caption": "10월 21일 수정 사항이에요. 버튼 아래에 '10/21 수정'이 붙은 파일이 바뀐 파일이고, 통계학 2회는 바뀐 것이 없어요. 전에 받아 둔 파일이 있다면 다시 내려받아 주세요."
+      }
     },
     {
       "id": "notes",
