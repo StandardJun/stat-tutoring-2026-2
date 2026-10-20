@@ -131,11 +131,21 @@ ${planRows}
   <p class="plan-note">${conf.planNote || ''}</p>
 </section>` : '';
 
+/* ---- 자료실 설정 (library.json — weeks.json과 분리해 둔다) ---- */
+const lib = fs.existsSync('library.json') ? JSON.parse(fs.readFileSync('library.json', 'utf8')) : null;
+function kb(f){ const b = fs.statSync(f).size; return b >= 1048576 ? (b / 1048576).toFixed(1) + 'MB' : Math.round(b / 1024) + 'KB'; }
+const libCard = lib ? `<a class="card lib-card" href="library.html">
+  <p class="card-no">${lib.title}</p>
+  <p class="card-title">${lib.sections.map(x => x.title).join(' · ')}</p>
+  <p class="card-sum">PDF로 바로 내려받을 수 있어요.</p>
+</a>` : '';
+
 const hubBody = `<header class="hero">
   <p class="eyebrow">${conf.term} · ${conf.course}</p>
   <h1>${conf.hubTitle}</h1>
   <p class="lede">${conf.hubLede}</p>
 </header>
+${libCard ? `<div class="cards lib-top">\n${libCard}\n</div>` : ''}
 <div class="cards">
 ${cards}
 </div>
@@ -146,3 +156,36 @@ fs.writeFileSync(path.join(out, 'index.html'), page({
   title: conf.hubTitle, desc: `${conf.course} 회차별 학습 노트`, style: hubStyle, body: hubBody, script: ''
 }));
 console.log('index.html', (fs.statSync(path.join(out, 'index.html')).size / 1024).toFixed(0) + 'KB');
+
+/* ---- 자료실 페이지 ---- */
+if (lib){
+  const btn = f => `<a class="dl" href="${f.path}" download="${f.save}">${f.label}<span class="dl-meta">${f.pages}쪽 · ${kb(f.path)}</span></a>`;
+  const item = it => `<li class="lib-item">
+      <div class="lib-text"><p class="lib-name">${it.name}</p>${it.meta ? `<p class="lib-meta">${it.meta}</p>` : ''}</div>
+      <div class="lib-btns">${it.files.map(btn).join('')}</div>
+    </li>`;
+  const group = g => `${g.title ? `<h3 class="lib-group">${g.title}</h3>` : ''}${g.note ? `<p class="lib-note">${g.note}</p>` : ''}
+  <ul class="lib-list">
+    ${g.items.map(item).join('\n    ')}
+  </ul>`;
+  const sections = lib.sections.map(sec => `<section id="${sec.id}">
+  <div class="sec-head"><h2>${sec.title}</h2></div>
+  ${sec.note ? `<p>${sec.note}</p>` : ''}
+  ${sec.groups.map(group).join('\n  ')}
+</section>`).join('\n');
+  const libBody = `${weekBar(0)}
+<header class="hero">
+  <p class="eyebrow">${conf.term} · ${conf.course}</p>
+  <h1>${lib.title}</h1>
+  <p class="lede">${lib.lede}</p>
+</header>
+${sections}
+<footer class="foot"><p>${conf.term} ${conf.course} · 자료실</p></footer>`;
+  fs.writeFileSync(path.join(out, 'library.html'), page({
+    title: `${lib.title} · ${conf.hubTitle}`, desc: `${conf.course} 자료실`,
+    style: fontFaces(libBody, 'lib') + baseCss, body: libBody, script: ''
+  }));
+  console.log('library.html', (fs.statSync(path.join(out, 'library.html')).size / 1024).toFixed(0) + 'KB');
+  fs.cpSync('files', path.join(out, 'files'), { recursive: true });
+  console.log('files/ 복사', lib.sections.flatMap(x => x.groups.flatMap(g => g.items.flatMap(i => i.files))).length + '개');
+}

@@ -54,6 +54,13 @@ python3 -m venv .venv && .venv/bin/pip install fonttools brotli   # 최초 1회
 `build.sh`는 `.venv`가 있으면 PATH에 얹어 `pyftsubset`을 찾습니다.
 `source/out/`은 커밋하지 않습니다.
 
+## 자료실
+
+`source/library.json`에 목록, `source/files/`에 PDF를 둔다. 빌드하면 `library.html`이
+생기고 홈에 자료실 카드가 붙는다. 파일은 `files/...` 주소로 바로 내려받아지며,
+저장 이름은 `library.json`의 `save` 값이다. (weeks.json과 분리해 둔 이유: 회차 추가 때
+weeks.json이 통째로 교체되기 때문)
+
 ## 주의
 
 - 결과물(`weekN.html`)을 직접 고치지 마세요. 다음 빌드 때 사라집니다.
