@@ -53,7 +53,7 @@ function fontFaces(text, tag){
 }
 function weekBar(current){
   const items = conf.weeks.map(w => {
-    const label = w.n + '회차';
+    const label = w.label || w.n + '회차';
     if (!w.ready) return `<span class="wk off" aria-disabled="true">${label}</span>`;
     if (w.n === current) return `<span class="wk on" aria-current="page">${label}</span>`;
     return `<a class="wk" href="${w.file}">${label}</a>`;
@@ -98,7 +98,7 @@ for (const w of conf.weeks){
   const body = weekBar(w.n) + '\n' + hero + '\n' + frag + '\n' + foot;
   const style = fontFaces(body + js, 'w' + w.n) + getKatexCss() + baseCss;
   fs.writeFileSync(path.join(out, w.file), page({
-    title: `${w.title} · ${w.n}회차`,
+    title: `${w.title} · ${w.label || w.n + '회차'}`,
     desc: `${conf.course} ${w.n}회차 (${w.date}) — ${w.summary}`,
     style, body, script: js
   }));
@@ -107,19 +107,24 @@ for (const w of conf.weeks){
 
 /* ---- 회차 목록(홈) ---- */
 const cards = conf.weeks.map(w => {
-  const inner = `<p class="card-no">${w.n}회차 <span class="card-date">${w.date}</span></p>
+  const inner = `<p class="card-no">${w.label || w.n + '회차'} <span class="card-date">${w.date}</span></p>
     <p class="card-title">${w.ready ? w.title : '준비 중'}</p>
     <p class="card-sum">${w.summary}</p>
     <p class="card-slides">${w.slides}</p>`;
-  return w.ready ? `<a class="card" href="${w.file}">${inner}</a>` : `<div class="card off">${inner}</div>`;
+  return w.ready ? `<a class="card${w.kind ? ' ' + w.kind : ''}" href="${w.file}">${inner}</a>` : `<div class="card off">${inner}</div>`;
 }).join('\n');
 const ready = {};
 conf.weeks.forEach(function(w){ if (w.ready) ready[w.n] = w; });
 const planRows = (conf.plan || []).map(r => {
   if (r.exam) return `<tr class="exam"><th scope="row">${r.exam}</th><td class="pd">${r.date}</td><td></td></tr>`;
-  const w = ready[r.n];
-  const label = w ? `<a href="${w.file}">${r.n}회차</a>` : `${r.n}회차`;
-  return `<tr${w ? ' class="done"' : ''}><th scope="row">${label}</th><td class="pd">${r.date}</td><td>${r.topic}</td></tr>`;
+  // week: 연결할 회차 페이지 번호 (기본은 n, null이면 연결 안 함) · link: 직접 지정한 주소
+  // label: '5회차' 대신 쓸 이름 · kind: 행에 붙일 클래스(skip 등) · done: 페이지 없이 수업 완료 표시
+  const w = ready['week' in r ? r.week : r.n];
+  const href = r.link || (w && w.file);
+  const text = r.label || `${r.n}회차`;
+  const label = href ? `<a href="${href}">${text}</a>` : text;
+  const cls = [(w || r.done) && 'done', r.kind].filter(Boolean).join(' ');
+  return `<tr${cls ? ` class="${cls}"` : ''}><th scope="row">${label}</th><td class="pd">${r.date}</td><td>${r.topic}</td></tr>`;
 }).join('\n');
 const planBlock = (conf.plan || []).length ? `<section class="plan">
   <div class="sec-head"><h2>${conf.planTitle}</h2></div>

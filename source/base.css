@@ -439,3 +439,9 @@ table.info:not(:has(thead)) tbody tr:first-child>*{border-top:2px solid var(--ru
 .lib-fig img{display:block;width:100%;height:auto;border:1px solid var(--rule);border-radius:10px;background:#fff}
 .lib-fig figcaption{color:var(--muted);font-size:0.86rem;margin-top:8px}
 @media (max-width:520px){.lib-btns .dl-wrap{flex:1}.lib-btns .dl-wrap .dl{width:100%}}
+/* 진도표: 수업 없이 자료만 올린 회차 */
+table.sched tr.skip th,table.sched tr.skip td{background:var(--orange-tint)}
+table.sched tr.skip th,table.sched tr.skip th a{color:var(--orange)}
+.card.skip{background:var(--orange-tint);border-color:transparent}
+.card.skip:hover{border-color:var(--orange)}
+.card.skip .card-no{color:var(--orange);font-weight:700}
