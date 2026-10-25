@@ -1,0 +1,501 @@
+<nav class="toc" aria-label="목차">
+  <a href="#before">시작 전에</a>
+  <a href="#bayes">베이즈 정리</a>
+  <a href="#coin">동전 예시</a>
+  <a href="#mlemap">MLE와 MAP</a>
+  <a href="#evidence">P(D): 합과 적분</a>
+  <a href="#log">로그와 손실함수</a>
+  <a href="#normal">정규분포에서</a>
+  <a href="#use">어디에 쓰나</a>
+  <a href="#summary">정리</a>
+  <a href="#practice">확인 문제</a>
+  <a href="#next">더 나아가려면</a>
+</nav>
+
+<main>
+
+<section id="before">
+  <div class="sec-head"><h2>시작 전에</h2></div>
+  <p class="caution"><span class="caution-label">선택 자료</span>시험 범위가 아니에요. 실험, 연구실 인턴, 머신러닝처럼 통계를 실제로 쓰게 될 사람을 위해 만든 자료예요.</p>
+  <p>2주차의 베이즈 정리에서 출발해서, 데이터로 모르는 값을 추정하는 두 가지 방법인 <b>MLE</b>와 <b>MAP</b>를 소개해요. 그다음 이 둘이 실험 데이터 처리와 머신러닝에서 어떻게 쓰이는지 보여 줄게요.</p>
+  <p>2주차 조건부확률, 4주차 이항분포와 정규분포, 5주차 추정까지 알면 전부 읽혀요. 미분이 나오는 유도는 접어 두었으니 결과만 읽어도 괜찮아요. 그림과 위젯은 직접 움직여 보세요.</p>
+  <p>이 자료에서는 세 단어를 영어 그대로 쓸게요. MLE, MAP라는 이름이 이 단어들에서 나왔기 때문이에요.</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>영어</th><th>한국어</th><th>한 줄 뜻</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" class="c-pr">prior</th><td class="nw">사전확률</td><td>데이터를 보기 <b>전</b>에 알고 있던 것</td></tr>
+      <tr><th scope="row" class="c-lk">likelihood</th><td class="nw">가능도 또는 우도</td><td>"값이 이거라면, 지금 이 데이터가 나올 확률"</td></tr>
+      <tr><th scope="row" class="c-po">posterior</th><td class="nw">사후확률</td><td>데이터를 보고 <b>난 뒤</b>에 업데이트한 것</td></tr>
+    </tbody>
+  </table></div>
+  <p class="where">색도 이 셋에 맞춰 칠했어요. <b class="c-pr">prior는 파랑</b>, <b class="c-lk">likelihood는 주황</b>, <b class="c-po">posterior는 초록</b>이에요.</p>
+</section>
+
+<section id="bayes">
+  <div class="sec-head"><h2>베이즈 정리에 새 이름표 붙이기</h2><span class="slide-tag">2주차 복습</span></div>
+  <p>2주차에 곱셈법칙을 배웠어요. 교집합의 확률은 두 가지 방법으로 쓸 수 있었죠.</p>
+  \[P(A\cap B)=P(A\mid B)\,P(B)=P(B\mid A)\,P(A)\]
+  <p>가운데와 오른쪽이 같으니까, 양변을 \(P(B)\)로 나누면 베이즈 정리가 바로 나와요.</p>
+  \[P(A\mid B)=\frac{P(B\mid A)\,P(A)}{P(B)}\]
+  <p>베이즈 정리가 쓸모 있는 이유는 <b>구하기 쉬운 쪽에서 구하기 어려운 쪽으로 뒤집어 준다</b>는 데 있어요. 실험에서는 이렇게 생각하면 돼요.</p>
+  <ul>
+    <li>알고 싶은 건 보통 눈에 보이지 않는 <b>참값</b>이에요. 새 촉매의 진짜 성공률, 시료의 진짜 농도 같은 거예요. 5주차에서처럼 이걸 <b>모수</b> \(\theta\)라고 부를게요.</li>
+    <li>손에 쥔 건 측정 결과예요. 이걸 <b>데이터</b> \(D\)라고 부를게요.</li>
+  </ul>
+  <p>"참값이 \(\theta\)라면 이런 데이터가 나올 확률" \(P(D\mid\theta)\)는 계산하기 쉬워요. 하지만 정말 알고 싶은 건 반대 방향인 "이 데이터를 봤을 때 참값이 \(\theta\)일 확률" \(P(\theta\mid D)\)예요. 그래서 \(A\) 자리에 \(\theta\)를, \(B\) 자리에 \(D\)를 넣어요.</p>
+  \[\underbrace{\htmlClass{c-po}{P(\theta\mid D)}}_{\text{posterior}}=\frac{\overbrace{\htmlClass{c-lk}{P(D\mid\theta)}}^{\text{likelihood}}\ \times\ \overbrace{\htmlClass{c-pr}{P(\theta)}}^{\text{prior}}}{\underbrace{P(D)}_{\text{evidence}}}\]
+  <div class="formula-grid two">
+    <div><p class="fg-label"><b class="c-pr">prior</b> \(P(\theta)\)</p><p>데이터를 보기 전에 \(\theta\)에 대해 알고 있던 것</p></div>
+    <div><p class="fg-label"><b class="c-lk">likelihood</b> \(P(D\mid\theta)\)</p><p>\(\theta\)가 이 값이라고 쳤을 때, 지금 손에 쥔 데이터가 나올 확률</p></div>
+    <div><p class="fg-label"><b class="c-po">posterior</b> \(P(\theta\mid D)\)</p><p>데이터를 보고 난 뒤 \(\theta\)에 대해 알게 된 것</p></div>
+    <div><p class="fg-label"><b>evidence</b> \(P(D)\)</p><p>\(\theta\)가 무엇이든 상관없이, 이 데이터가 나올 전체 확률</p></div>
+  </div>
+  <p>분모 \(P(D)\)에는 \(\theta\)가 들어 있지 않아요. 어떤 \(\theta\)를 넣어 계산하든 똑같은 수로 나누는 셈이에요. 그래서 "어느 \(\theta\)가 가장 그럴듯한가"만 따질 때는 분모를 빼고 이렇게 줄여 써요(\(\propto\)는 "비례한다").</p>
+  <p class="key">posterior \(\ \propto\ \) likelihood \(\times\) prior</p>
+  <p>말로 하면 "데이터를 본 뒤의 생각 = 데이터가 말해 주는 것 × 원래 알던 것"이에요. 추상적이니 바로 예시로 가 볼게요.</p>
+</section>
+
+<section id="coin">
+  <div class="sec-head"><h2>예시: 이 동전, 조작된 걸까?</h2><span class="slide-tag">2주차 + 4주차 이항분포</span></div>
+  <p class="key">주머니에 동전이 100개 있어요. 99개는 공정한 동전(앞면 확률 0.5)이고, 1개는 조작된 동전(앞면 확률 0.8)이에요. 하나를 아무거나 꺼내서 5번 던졌더니 <b>5번 모두 앞면</b>이 나왔어요. 이 동전은 조작된 동전일까요?</p>
+  <p>"5번 연속 앞면이면 조작이지!"라는 느낌이 들 거예요. 계산으로 확인해 볼게요. 여섯 단계로 나눠서 갈게요.</p>
+
+  <h3>① 모르는 값 \(\theta\)와 데이터 \(D\) 정하기</h3>
+  <p>모르는 건 "꺼낸 동전이 어떤 동전인가"예요. 이걸 그 동전의 앞면 확률로 나타내서 \(\theta\)라고 할게요. \(\theta\)는 \(0.5\)(공정) 아니면 \(0.8\)(조작), 둘 중 하나예요.</p>
+  <p>데이터는 \(D=\) "5번 던져서 5번 모두 앞면"이에요.</p>
+
+  <h3>② <span class="c-pr">prior</span>: 던지기 전에 이미 아는 것</h3>
+  <p>동전을 던지기 전에도 알고 있는 게 있어요. 100개 중 1개만 조작이니까, 아무거나 꺼냈을 때 조작 동전일 확률은 1%예요.</p>
+  \[\htmlClass{c-pr}{P(\theta=0.5)=0.99},\qquad \htmlClass{c-pr}{P(\theta=0.8)=0.01}\]
+
+  <h3>③ <span class="c-lk">likelihood</span>: 그 동전이라면 이 데이터가 나올 확률</h3>
+  <p>각 동전이라고 <b>쳤을 때</b> 5번 연속 앞면이 나올 확률을 구해요. 던질 때마다 결과는 서로 영향을 주지 않으니까(독립) 확률을 곱하면 돼요.</p>
+  \[\htmlClass{c-lk}{P(D\mid\theta=0.5)}=0.5\times0.5\times0.5\times0.5\times0.5=0.5^5=0.03125\]
+  \[\htmlClass{c-lk}{P(D\mid\theta=0.8)}=0.8^5=0.32768\]
+  <p>조작 동전이라면 5연속 앞면이 나올 확률이 약 33%, 공정한 동전이라면 약 3%예요. 조작 동전 쪽이 \(0.32768/0.03125\approx10.5\)배 커요. likelihood는 <b>"어느 쪽이 지금 데이터를 더 잘 설명하는가"</b>를 재는 셈이에요. 여기까지만 보면 조작 동전이 훨씬 그럴듯해요.</p>
+
+  <h3>④ likelihood × prior: 곱셈법칙으로 "둘 다 일어날 확률"</h3>
+  <p>그런데 우리가 처음부터 조작 동전을 꺼냈을 가능성 자체가 1%밖에 안 됐어요. 그래서 두 가지를 같이 따져야 해요. 2주차 곱셈법칙 \(P(\theta\cap D)=P(D\mid\theta)\,P(\theta)\)를 쓰면 돼요.</p>
+  \[P(\text{공정 동전을 꺼냄}\ \cap\ D)=0.03125\times0.99=0.0309375\]
+  \[P(\text{조작 동전을 꺼냄}\ \cap\ D)=0.32768\times0.01=0.0032768\]
+
+  <h3>⑤ evidence \(P(D)\): 5연속 앞면이 나올 전체 확률</h3>
+  <p>5연속 앞면이 나오는 길은 딱 두 가지예요. 공정한 동전을 꺼내서 나오거나, 조작 동전을 꺼내서 나오거나. 두 길은 동시에 일어날 수 없으니까 더하면 돼요. 4주차에서 비복원추출의 두 번째 확률을 "첫 번째가 당첨인 경우 + 꽝인 경우"로 나눠 더했던 것과 같은 방법이에요.</p>
+  \[P(D)=0.0309375+0.0032768=0.0342143\]
+
+  <h3>⑥ <span class="c-po">posterior</span>: 각 경우가 전체에서 차지하는 비율</h3>
+  <p>마지막으로 ④를 ⑤로 나누면 베이즈 정리 그대로예요.</p>
+  \[\htmlClass{c-po}{P(\theta=0.8\mid D)}=\frac{0.0032768}{0.0342143}\approx0.096,\qquad \htmlClass{c-po}{P(\theta=0.5\mid D)}=\frac{0.0309375}{0.0342143}\approx0.904\]
+  <p class="key"><span class="c-red">5번 연속 앞면을 봤는데도, 이 동전이 조작일 확률은 약 9.6%밖에 안 돼요.</span></p>
+
+  <h3>숫자가 직관과 다를 때: 10만 번 해 봤다고 상상하기</h3>
+  <p>확률보다 "몇 번"으로 세면 훨씬 와닿아요. 이 실험(동전을 하나 꺼내서 5번 던지기)을 10만 번 했다고 상상해 볼게요.</p>
+  <figure class="btree">
+    <svg viewBox="0 0 560 360" role="img" aria-label="10만 번 중 공정 동전 99,000번, 조작 동전 1,000번. 공정 동전 중 5연속 앞면은 약 3,094번, 조작 동전 중 5연속 앞면은 약 328번. 5연속 앞면 3,422번 중 조작은 328번으로 약 9.6%">
+      <line class="bt-e" x1="280" y1="54" x2="140" y2="112"/><line class="bt-e" x1="280" y1="54" x2="420" y2="112"/>
+      <line class="bt-e" x1="140" y1="164" x2="72" y2="226"/><line class="bt-e" x1="140" y1="164" x2="210" y2="226"/>
+      <line class="bt-e" x1="420" y1="164" x2="350" y2="226"/><line class="bt-e" x1="420" y1="164" x2="488" y2="226"/>
+      <rect class="bt-box" x="180" y="12" width="200" height="42" rx="10"/>
+      <text class="bt-t" x="280" y="39">10만 번 꺼냄</text>
+      <text class="bt-lab pr" x="198" y="80" style="text-anchor:end">× 0.99</text><text class="bt-lab pr" x="362" y="80" style="text-anchor:start">× 0.01</text>
+      <rect class="bt-box" x="65" y="112" width="150" height="52" rx="10"/>
+      <text class="bt-t" x="140" y="134">공정 동전</text><text class="bt-t bt-n" x="140" y="155">99,000번</text>
+      <rect class="bt-box" x="345" y="112" width="150" height="52" rx="10"/>
+      <text class="bt-t" x="420" y="134">조작 동전</text><text class="bt-t bt-n" x="420" y="155">1,000번</text>
+      <text class="bt-lab lk" x="92" y="196" style="text-anchor:end">× 0.5⁵</text><text class="bt-lab lk" x="372" y="196" style="text-anchor:end">× 0.8⁵</text>
+      <rect class="bt-box hit" x="8" y="226" width="128" height="52" rx="10"/>
+      <text class="bt-t" x="72" y="248">5연속 앞면</text><text class="bt-t bt-n" x="72" y="269">약 3,094번</text>
+      <rect class="bt-box dim" x="146" y="226" width="128" height="52" rx="10"/>
+      <text class="bt-t muted" x="210" y="248">그 외</text><text class="bt-t muted" x="210" y="269">약 95,906번</text>
+      <rect class="bt-box hit" x="286" y="226" width="128" height="52" rx="10"/>
+      <text class="bt-t" x="350" y="248">5연속 앞면</text><text class="bt-t bt-n" x="350" y="269">약 328번</text>
+      <rect class="bt-box dim" x="424" y="226" width="128" height="52" rx="10"/>
+      <text class="bt-t muted" x="488" y="248">그 외</text><text class="bt-t muted" x="488" y="269">약 672번</text>
+      <path class="bt-br" d="M72 286 V302 H350 V286"/>
+      <text class="bt-t" x="211" y="326">5연속 앞면 3,422번 중 조작 동전은 328번</text>
+      <text class="bt-t bt-n po" x="211" y="350">328 ÷ 3,422 ≈ 9.6%</text>
+    </svg>
+  </figure>
+  <p>조작 동전은 5연속 앞면을 아주 잘 만들어 내요(1,000번 중 328번). 하지만 애초에 1,000번밖에 안 뽑혀요. 공정한 동전은 5연속 앞면을 잘 못 만들지만(99,000번 중 3,094번), 워낙 많이 뽑히니까 결국 5연속 앞면의 대부분을 차지해요.</p>
+  <p>그림의 각 숫자가 베이즈 정리의 어디에 해당하는지 짝지어 보면 이래요.</p>
+  <ul>
+    <li>첫 갈림길의 비율(파랑) = prior</li>
+    <li>두 번째 갈림길의 비율(주황) = likelihood</li>
+    <li>초록 칸 두 개를 더한 3,422번 = evidence \(P(D)\)</li>
+    <li>초록 칸 중 조작 쪽의 비율 9.6% = posterior</li>
+  </ul>
+
+  <div class="panel" id="cn-w">
+    <div class="panel-head"><p class="panel-title">동전 예시 직접 바꿔 보기</p></div>
+    <p class="panel-sub">조작 동전의 비율(prior), 던진 횟수, 앞면 수를 바꾸면 네 줄이 다시 계산돼요. 막대 길이는 줄마다 큰 쪽을 기준으로 맞췄어요.</p>
+    <div class="sliders three">
+      <label class="sl mu"><span>조작 동전 비율</span> <span class="val" id="cn-pv"></span><input type="range" id="cn-p" min="0" max="8" step="1" value="2" aria-label="조작 동전 비율"></label>
+      <label class="sl"><span>던진 횟수 \(n\)</span> <span class="val" id="cn-nv"></span><input type="range" id="cn-n" min="1" max="20" step="1" value="5" aria-label="던진 횟수"></label>
+      <label class="sl"><span>앞면 수 \(k\)</span> <span class="val" id="cn-kv"></span><input type="range" id="cn-k" min="0" max="5" step="1" value="5" aria-label="앞면 수"></label>
+    </div>
+    <div class="bx-rows" id="cn-rows"></div>
+    <div class="verdict" id="cn-pills"></div>
+    <p class="panel-note" id="cn-note"></p>
+  </div>
+  <p>해 볼 것: 비율은 1%로 두고 \(n\)과 \(k\)를 같이 6, 7, 8, …로 올려 보세요. <b>10번 연속</b> 앞면이 나와야 posterior도 조작 쪽이 커져요. 그다음 조작 비율을 20%로 바꿔 보면, 같은 5연속 앞면인데도 결론이 달라져요.</p>
+  <aside class="aside">
+    <p class="aside-q">앞면이 일부만 나오면 likelihood에 \(\binom{n}{k}\)가 붙지 않나요?</p>
+    <p>맞아요. "\(n\)번 중 \(k\)번 앞면"의 확률은 4주차 이항분포 \(\binom{n}{k}\theta^k(1-\theta)^{n-k}\)예요. 위젯도 이 식으로 계산해요. 그런데 \(\binom{n}{k}\)는 공정 동전이든 조작 동전이든 똑같이 붙으니까, 어느 쪽이 더 큰지를 비교할 때나 posterior를 구할 때는 약분돼서 사라져요.</p>
+  </aside>
+</section>
+
+<section id="mlemap">
+  <div class="sec-head"><h2>MLE와 MAP</h2></div>
+  <p>동전 예시에서 "그래서 어느 동전이라고 볼까?"를 정하는 방법이 두 가지 있었어요. likelihood만 보면 조작, posterior를 보면 공정이었죠. 이 두 방법에 붙은 이름이 MLE와 MAP예요.</p>
+  <p>먼저 기호 두 개만 짚을게요. \(\hat\theta\)("세타 햇")은 5주차에서처럼 \(\theta\)의 <b>추정값</b>이에요. \(\arg\max_\theta\)는 "뒤에 오는 값을 가장 크게 만드는 \(\theta\)"라는 뜻이에요. 최댓값 자체가 아니라, 최댓값을 만드는 <b>\(\theta\)의 위치</b>를 돌려줘요.</p>
+  <div class="compare">
+    <div>
+      <p class="compare-label c-lk">MLE · Maximum Likelihood Estimation</p>
+      \[\hat\theta_{\text{MLE}}=\arg\max_\theta\ \htmlClass{c-lk}{P(D\mid\theta)}\]
+      <p>likelihood를 가장 크게 만드는 \(\theta\). 지금 데이터를 가장 잘 설명하는 값이에요. <b>데이터만</b> 봐요.</p>
+      <p class="fg-label">동전 예시 → \(\theta=0.8\) (조작)</p>
+    </div>
+    <div>
+      <p class="compare-label c-po">MAP · Maximum A Posteriori</p>
+      \[\hat\theta_{\text{MAP}}=\arg\max_\theta\ \htmlClass{c-po}{P(\theta\mid D)}\]
+      <p>posterior를 가장 크게 만드는 \(\theta\). <b>데이터 + prior</b>를 합쳐서 가장 그럴듯한 값이에요.</p>
+      <p class="fg-label">동전 예시 → \(\theta=0.5\) (공정)</p>
+    </div>
+  </div>
+  <p>이름도 그대로예요. MLE는 "likelihood를 최대로 하는 추정", MAP의 a posteriori는 라틴어로 "나중의", 곧 posterior를 뜻해요.</p>
+  <h3>MAP를 구할 때 \(P(D)\)는 필요 없어요</h3>
+  <p>posterior는 "likelihood × prior"를 모든 후보에 대해 <b>똑같은 수</b> \(P(D)\)로 나눈 거예요. 같은 수로 나누면 값의 크기는 바뀌어도 순서는 안 바뀌어요. 동전 예시에서 ④의 두 값(0.0309, 0.0033)과 ⑥의 두 값(0.904, 0.096)은 크기가 다르지만, 둘 다 공정 쪽이 커요.</p>
+  \[\hat\theta_{\text{MAP}}=\arg\max_\theta\ \frac{P(D\mid\theta)\,P(\theta)}{P(D)}=\arg\max_\theta\ \htmlClass{c-lk}{P(D\mid\theta)}\,\htmlClass{c-pr}{P(\theta)}\]
+  <p>그래서 실제로 MAP를 계산할 때는 분모를 신경 쓰지 않아요. 분모는 posterior 값 자체가 필요할 때(예: "조작일 확률이 몇 %인가")만 계산해요.</p>
+  <div class="formula-grid two">
+    <div><p class="fg-label">prior가 모든 후보에 같으면</p><p>likelihood × (같은 수)라서 MAP = MLE</p></div>
+    <div><p class="fg-label">prior가 한쪽으로 쏠려 있으면</p><p>likelihood가 그걸 이길 만큼 커야 MAP가 넘어가요</p></div>
+  </div>
+</section>
+
+<section id="evidence">
+  <div class="sec-head"><h2>\(P(D)\) 다시 보기: 합에서 적분으로</h2><span class="slide-tag">3주차 확률밀도함수</span></div>
+  <p>동전 예시에서 \(P(D)\)는 "공정인 경우 + 조작인 경우"를 더한 값이었어요. 왜 더하면 되는지 2주차의 벤다이어그램으로 보면 바로 보여요.</p>
+  <div class="figs vb-figs">
+    <figure class="venn">
+      <svg viewBox="0 0 320 256" role="img" aria-label="전체 사각형을 공정 동전 영역과 조작 동전 영역으로 세로로 나누고, 사건 D(5연속 앞면) 타원이 경계선에 걸쳐 있다. D는 공정 쪽 조각 0.0309와 조작 쪽 조각 0.0033으로 나뉘고, 둘을 더하면 P(D)=0.0342">
+        <defs>
+          <clipPath id="vbL1"><rect x="14" y="34" width="196" height="170"/></clipPath>
+          <clipPath id="vbR1"><rect x="210" y="34" width="96" height="170"/></clipPath>
+        </defs>
+        <text class="vb-title" x="160" y="20">동전 예시: 후보 2개</text>
+        <rect class="v-space" x="14" y="34" width="292" height="170" rx="12"/>
+        <line class="vb-div" x1="210" y1="34" x2="210" y2="204"/>
+        <text class="vb-name" x="112" y="58">공정 동전</text><text class="vb-pr" x="112" y="76">prior 0.99</text>
+        <text class="vb-name" x="258" y="58">조작 동전</text><text class="vb-pr" x="258" y="76">prior 0.01</text>
+        <ellipse class="vb-piece" cx="200" cy="146" rx="86" ry="44" clip-path="url(#vbL1)"/>
+        <ellipse class="vb-piece alt" cx="200" cy="146" rx="86" ry="44" clip-path="url(#vbR1)"/>
+        <ellipse class="vb-d" cx="200" cy="146" rx="86" ry="44"/>
+        <text class="vb-dl" x="104" y="112">D</text>
+        <text class="vb-num" x="162" y="151">0.0309</text>
+        <text class="vb-num" x="249" y="151">0.0033</text>
+        <text class="v-cap" x="160" y="226">P(D) = 0.0309 + 0.0033 = 0.0342</text>
+        <text class="vb-note" x="160" y="246">조각 크기는 실제 비율과 다르게 그렸어요</text>
+      </svg>
+    </figure>
+    <figure class="venn">
+      <svg viewBox="0 0 320 256" role="img" aria-label="전체 사각형을 θ1부터 θ4까지 네 영역으로 세로로 나누고, 사건 D 타원이 네 영역에 모두 걸쳐 있다. D는 네 조각으로 나뉘고, 조각을 모두 더하면 P(D)">
+        <defs>
+          <clipPath id="vbA"><rect x="14" y="34" width="73" height="170"/></clipPath>
+          <clipPath id="vbB"><rect x="87" y="34" width="73" height="170"/></clipPath>
+          <clipPath id="vbC"><rect x="160" y="34" width="73" height="170"/></clipPath>
+          <clipPath id="vbD"><rect x="233" y="34" width="73" height="170"/></clipPath>
+        </defs>
+        <text class="vb-title" x="160" y="20">후보 4개</text>
+        <rect class="v-space" x="14" y="34" width="292" height="170" rx="12"/>
+        <line class="vb-div" x1="87" y1="34" x2="87" y2="204"/><line class="vb-div" x1="160" y1="34" x2="160" y2="204"/><line class="vb-div" x1="233" y1="34" x2="233" y2="204"/>
+        <text class="vb-name" x="50.5" y="62">θ<tspan class="vb-sub" dy="4">1</tspan></text><text class="vb-name" x="123.5" y="62">θ<tspan class="vb-sub" dy="4">2</tspan></text><text class="vb-name" x="196.5" y="62">θ<tspan class="vb-sub" dy="4">3</tspan></text><text class="vb-name" x="269.5" y="62">θ<tspan class="vb-sub" dy="4">4</tspan></text>
+        <ellipse class="vb-piece" cx="160" cy="146" rx="128" ry="44" clip-path="url(#vbA)"/>
+        <ellipse class="vb-piece alt" cx="160" cy="146" rx="128" ry="44" clip-path="url(#vbB)"/>
+        <ellipse class="vb-piece" cx="160" cy="146" rx="128" ry="44" clip-path="url(#vbC)"/>
+        <ellipse class="vb-piece alt" cx="160" cy="146" rx="128" ry="44" clip-path="url(#vbD)"/>
+        <ellipse class="vb-d" cx="160" cy="146" rx="128" ry="44"/>
+        <text class="vb-dl" x="30" y="108">D</text>
+        <text class="v-cap" x="160" y="226">P(D) = 네 조각의 확률을 모두 더한 값</text>
+      </svg>
+    </figure>
+  </div>
+  <p>사각형 전체가 모든 경우이고, 세로선이 후보별로 칸을 나눠요. 꺼낸 동전은 공정이면서 동시에 조작일 수 없으니까 칸들은 서로 <b>배반</b>이고(2주차: 안 겹친다), 칸을 다 모으면 전체가 돼요. 초록 타원이 "5연속 앞면"이라는 사건 \(D\)예요.</p>
+  <p>\(D\)는 칸 경계에 걸쳐 있어서 후보마다 하나씩, <b>서로 안 겹치는 조각</b>으로 잘려요. 안 겹치는 조각들의 확률은 그냥 더하면 되니까, 조각을 모두 더한 게 \(P(D)\)예요. 각 조각 \(\theta\cap D\)의 확률은 곱셈법칙으로 likelihood × prior예요. 후보가 몇 개든 똑같아요.</p>
+  \[P(D)=\sum_{\text{모든 }\theta}P(\theta\cap D)=\sum_{\text{모든 }\theta}P(D\mid\theta)\,P(\theta)\qquad(\theta\text{가 띄엄띄엄한 값일 때})\]
+  <p>같은 그림에서 posterior도 읽을 수 있어요. 2주차에서 조건부확률은 표본공간이 줄어드는 거라고 했죠. "\(D\)가 일어났다"는 걸 알면 표본공간이 초록 타원 안으로 줄어들어요. 그러면 posterior \(P(\theta\mid D)\)는 <b>타원 안에서 그 후보의 조각이 차지하는 비율</b>이에요. 동전 예시라면 조작 쪽 조각의 비율 \(0.0033\div0.0342\approx9.6\%\)예요.</p>
+  <p>그런데 실제 실험에서 모르는 값은 0.5나 0.8처럼 딱 정해진 후보 몇 개가 아니에요. 새로 만든 동전의 앞면 확률은 0과 1 사이 <b>어떤 값이든</b> 될 수 있어요. 벤다이어그램으로 치면 칸을 셀 수 없이 잘게 쪼갠 셈이라 조각을 하나씩 더할 수가 없죠.</p>
+  <p>이럴 때는 3주차의 연속형 확률변수와 똑같이 생각하면 돼요. 확률 \(P(\theta)\) 대신 확률밀도함수 \(p(\theta)\)를 쓰고, 조각을 하나씩 더하는 대신 <b>곡선 아래 넓이</b>를 구해요. 그게 적분이에요.</p>
+  \[P(D)=\int P(D\mid\theta)\,p(\theta)\,d\theta\qquad(\theta\text{가 연속인 값일 때})\]
+  <figure class="plate narrow"><img src="{{IMG:bx_evidence}}" alt="θ가 0부터 1 사이 모든 값일 때 likelihood×prior 곡선. 곡선 아래를 칠했고 넓이가 P(D)=0.0909" width="853" height="656"><figcaption>모든 후보가 똑같이 그럴듯하다고(균등 prior) 두고 10번 중 7번 앞면이 나온 경우. 초록 곡선 = likelihood × prior, 칠한 넓이 = \(P(D)\)</figcaption></figure>
+  <p>후보가 2개든, 4개든, 무한히 많든 하는 일은 같아요. "likelihood × prior"를 모두 모으는 거예요. 후보가 띄엄띄엄하면 \(\sum\)으로 더하고, 연속이면 \(\int\)으로 넓이를 구해요.</p>
+  <p>그리고 posterior는 각 후보의 "likelihood × prior"를 이 \(P(D)\)로 나눈 거예요. 연속일 때는 곡선 전체를 넓이로 나누는 셈이라, 나누고 나면 <b>곡선 아래 넓이가 정확히 1</b>이 돼요. 확률밀도함수가 되는 거죠. \(P(D)\)를 <b>정규화 상수</b>(normalizing constant)라고도 부르는 이유예요.</p>
+
+  <aside class="caution"><span class="caution-label">관점 주의</span>5주차에서는 모수 \(\theta\)를 "정해져 있지만 우리가 모르는 상수"로 봤어요. 그래서 \(\theta\) 자체에는 확률을 주지 않았죠. 동전 예시에서 \(\theta\)에 확률을 줄 수 있었던 건 주머니에서 무작위로 꺼냈기 때문이고, 이건 강의 관점과도 맞아요. 그런데 이 절부터는 그런 주머니가 없는데도 \(\theta\)에 prior 분포를 줘요. 이때 확률은 "모르는 값에 대해 얼마나 확신하는지"를 나타내요. 이걸 <b>베이즈 관점</b>이라고 해요. 두 관점 모두 실제로 쓰여요. 다만 시험에서 신뢰구간을 해석할 때는 강의 방식대로 "같은 방법으로 구간을 반복해서 만들면 그중 95%가 \(\theta\)를 포함한다"로 답하세요. 참고로 MLE는 prior가 필요 없어서 강의 관점에서도 그대로 쓰는 방법이에요.</aside>
+
+  <h3>새 동전의 앞면 확률 추정하기</h3>
+  <p>이제 \(\theta\)가 0과 1 사이 어떤 값이든 될 수 있는 새 동전을 생각해 볼게요. \(n\)번 던져서 앞면이 \(k\)번 나왔을 때, likelihood는 \(\theta\)에 대한 함수 \(L(\theta)=\binom{n}{k}\theta^k(1-\theta)^{n-k}\)예요. 이 함수의 꼭대기 위치가 MLE예요.</p>
+  \[\hat\theta_{\text{MLE}}=\frac{k}{n}\qquad(\text{앞면이 나온 비율 그대로})\]
+  <details class="sol"><summary>유도 보기</summary>
+    <p>로그를 씌워도 꼭대기 위치는 같아요(다음 절에서 설명해요).</p>
+    \[\log L(\theta)=\log\binom{n}{k}+k\log\theta+(n-k)\log(1-\theta)\]
+    <p>\(\theta\)로 미분해서 0으로 두면</p>
+    \[\frac{k}{\theta}-\frac{n-k}{1-\theta}=0\ \Rightarrow\ k(1-\theta)=(n-k)\theta\ \Rightarrow\ \theta=\frac{k}{n}\]
+  </details>
+  <p>그런데 3번 던져서 3번 다 앞면이면 MLE는 \(3/3=1\)이에요. "이 동전은 절대 뒷면이 안 나온다"는 결론인데, 고작 3번 보고 그렇게 말하긴 어렵죠. 이때 prior가 도움이 돼요. "동전은 보통 0.5 근처일 것"이라는 상식을 넣으면 MAP는 극단으로 가지 않아요.</p>
+
+  <div class="panel" id="bt-w">
+    <div class="panel-head">
+      <p class="panel-title">prior × likelihood → posterior</p>
+      <div class="seg" role="group" aria-label="보기 단계" id="bt-step">
+        <button type="button" data-s="1" class="on" aria-pressed="true">① 곱하기</button>
+        <button type="button" data-s="2" aria-pressed="false">② \(P(D)\)로 나누기</button>
+      </div>
+    </div>
+    <div class="seg bt-prior" role="group" aria-label="prior 고르기" id="bt-prior">
+      <button type="button" data-a="1" data-b="1" class="on" aria-pressed="true">아무 정보 없음</button>
+      <button type="button" data-a="11" data-b="11" aria-pressed="false">보통 동전일 것</button>
+      <button type="button" data-a="9" data-b="3" aria-pressed="false">앞면이 잘 나올 것</button>
+    </div>
+    <svg id="bt-svg" viewBox="0 0 560 280" role="img" aria-label="θ에 대한 prior, likelihood, posterior 곡선과 MLE, MAP 위치"></svg>
+    <div class="sliders two">
+      <label class="sl"><span>던진 횟수 \(n\)</span> <span class="val" id="bt-nv"></span><input type="range" id="bt-n" min="1" max="60" step="1" value="3" aria-label="던진 횟수"></label>
+      <label class="sl"><span>앞면 수 \(k\)</span> <span class="val" id="bt-kv"></span><input type="range" id="bt-k" min="0" max="3" step="1" value="3" aria-label="앞면 수"></label>
+    </div>
+    <div class="w3-out" id="bt-out"></div>
+    <p class="panel-note" id="bt-note"></p>
+  </div>
+  <p>해 볼 것</p>
+  <ul>
+    <li><b>① 곱하기</b>와 <b>② 나누기</b>를 번갈아 눌러 보세요. 초록 곡선의 모양은 그대로이고 <b>세로축 숫자만</b> 바뀌어요. \(P(D)\)로 나눠도 꼭대기 위치(MAP)는 그대로라는 뜻이에요.</li>
+    <li>"아무 정보 없음"에서는 prior가 평평해서 초록 곡선이 주황 곡선과 모양이 똑같아요. 그래서 MAP = MLE예요.</li>
+    <li>"보통 동전일 것"을 고르고 3번 중 3번 앞면을 보세요. MLE는 1이지만 MAP는 0.57쯤이에요. 이제 \(n\)을 60까지 올리고 \(k\)도 끝까지 올려 보세요. 데이터가 많아지면 MAP가 MLE 쪽으로 따라가요.</li>
+  </ul>
+  <details class="sol"><summary>세 prior는 어떻게 만든 건가요?</summary>
+    <p>세 prior는 모두 \(p(\theta)\propto\theta^{a-1}(1-\theta)^{b-1}\) 꼴이에요(베타분포라고 불러요). 이 꼴의 prior에 이항 likelihood를 곱하면 posterior도 같은 꼴 \(\theta^{k+a-1}(1-\theta)^{n-k+b-1}\)이 되고, 꼭대기는</p>
+    \[\hat\theta_{\text{MAP}}=\frac{k+a-1}{n+a+b-2}\]
+    <p>예요. 그러니까 prior는 <b>"실험 전에 이미 앞면 \(a-1\)번, 뒷면 \(b-1\)번을 본 것처럼"</b> 작동해요.</p>
+    <ul>
+      <li>아무 정보 없음: \(a=b=1\), 가상의 관측 0번 → MAP \(=k/n\) = MLE</li>
+      <li>보통 동전일 것: \(a=b=11\), 가상의 앞면 10번·뒷면 10번 → 3번 중 3번이면 \(\frac{3+10}{3+20}=\frac{13}{23}\approx0.565\)</li>
+      <li>앞면이 잘 나올 것: \(a=9,\ b=3\), 가상의 앞면 8번·뒷면 2번 → prior의 꼭대기가 0.8</li>
+    </ul>
+  </details>
+</section>
+
+<section id="log">
+  <div class="sec-head"><h2>로그를 씌우면 최적화 문제가 돼요</h2></div>
+  <p>측정값 \(x_1,x_2,\dots,x_N\)이 서로 독립이면, 데이터 전체의 likelihood는 각각의 likelihood를 <b>곱한</b> 거예요. 동전을 5번 던졌을 때 0.5를 다섯 번 곱한 것과 같아요.</p>
+  \[L(\theta)=P(D\mid\theta)=\prod_{i=1}^{N}P(x_i\mid\theta)=P(x_1\mid\theta)\times P(x_2\mid\theta)\times\cdots\times P(x_N\mid\theta)\]
+  <p>그런데 실제로 이걸 계산하려고 하면 두 가지 문제가 생겨요.</p>
+  <ul>
+    <li><b>컴퓨터에서 0이 돼요.</b> 1보다 작은 수를 수천 개 곱하면 컴퓨터가 표현할 수 있는 가장 작은 수보다 작아져서 그냥 0으로 처리돼요. 예를 들어 \(0.5^{1100}\)은 컴퓨터에서 0이에요.</li>
+    <li><b>미분하기 어려워요.</b> 곱은 미분하기 번거롭고, 합은 미분하기 쉬워요.</li>
+  </ul>
+  <p>그래서 likelihood에 <b>로그</b>를 씌워요. 로그는 곱을 합으로 바꿔 줘요.</p>
+  \[\log L(\theta)=\sum_{i=1}^{N}\log P(x_i\mid\theta)\]
+  <p>로그는 증가함수라서, 원래 값이 클수록 로그 값도 커요. 그래서 <b>꼭대기의 위치가 바뀌지 않아요.</b> 여기에 마이너스를 붙이면 꼭대기가 골짜기로 뒤집혀서, "가장 큰 곳 찾기"가 "가장 작은 곳 찾기"로 바뀌어요.</p>
+  <figure class="plate wide"><img src="{{IMG:bx_log}}" alt="10번 중 7번 앞면일 때 likelihood, log likelihood, 음의 log likelihood 곡선. 앞의 두 곡선은 θ=0.7에서 가장 높고, 마지막 곡선은 θ=0.7에서 가장 낮다" width="1413" height="598"><figcaption>10번 중 7번 앞면일 때. 세 곡선의 모양은 달라도 특별한 지점은 모두 \(\theta=0.7\)이에요.</figcaption></figure>
+  <p>그래서 실제로는 MLE와 MAP를 이렇게 풀어요.</p>
+  \[\hat\theta_{\text{MLE}}=\arg\min_\theta\ \Big[\underbrace{-\log P(D\mid\theta)}_{\text{데이터와 안 맞는 정도}}\Big]\]
+  \[\hat\theta_{\text{MAP}}=\arg\min_\theta\ \Big[\underbrace{-\log P(D\mid\theta)}_{\text{데이터와 안 맞는 정도}}\ \underbrace{-\log P(\theta)}_{\text{prior와 안 맞는 정도}}\Big]\]
+  <p>최소화하는 대상을 <b>손실함수</b>(loss function)라고 불러요. 통계의 추정 문제가 "손실을 가장 작게 만드는 값 찾기", 곧 <b>최적화</b> 문제로 바뀌었어요. MAP는 데이터 손실에 "prior에서 벗어난 만큼의 벌점"을 더한 것이에요.</p>
+  <p class="key">MLE = 음의 로그 likelihood 최소화 &nbsp;&nbsp; MAP = MLE의 손실 + prior 벌점 최소화</p>
+  <p>뒤의 "어디에 쓰나"는 모두 이 두 줄에서 나와요.</p>
+</section>
+
+<section id="normal">
+  <div class="sec-head"><h2>정규분포에서: 같은 것을 \(N\)번 쟀을 때</h2><span class="slide-tag">4·5주차와 연결</span></div>
+  <p>실험에서 가장 흔한 상황이에요. 참값이 \(\theta\)인 것을 \(N\)번 측정하는데, 잴 때마다 오차가 섞여요. 그 오차가 평균 0, 표준편차 \(\sigma\)인 정규분포를 따르고, \(\sigma\)는 장비 사양 등으로 알고 있다고 할게요. 곧 각 측정값은 \(x_i\sim N(\theta,\sigma^2)\)이고 서로 독립이에요.</p>
+
+  <h3>MLE는 표본평균이에요</h3>
+  \[\hat\theta_{\text{MLE}}=\bar x=\frac{1}{N}\sum_{i=1}^{N}x_i\]
+  <details class="sol"><summary>유도 보기</summary>
+    <p>정규분포의 확률밀도함수는</p>
+    \[p(x\mid\theta)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\!\left\{-\frac{(x-\theta)^2}{2\sigma^2}\right\}\]
+    <p>이므로 음의 로그 likelihood는</p>
+    \[-\log L(\theta)=\frac{1}{2\sigma^2}\sum_{i=1}^{N}(x_i-\theta)^2+\frac{N}{2}\log(2\pi\sigma^2)\]
+    <p>뒤의 항은 \(\theta\)와 상관없어요. \(\theta\)로 미분해서 0으로 두면</p>
+    \[-\frac{1}{\sigma^2}\sum_{i=1}^{N}(x_i-\theta)=0\ \Rightarrow\ \sum_{i=1}^{N}x_i-N\theta=0\ \Rightarrow\ \theta=\bar x\]
+  </details>
+  <p>유도에서 \(\theta\)가 들어간 부분은 \(\sum(x_i-\theta)^2\), 곧 <b>편차 제곱합</b>뿐이에요. 오차가 정규분포라고 가정하면 MLE는 "제곱오차의 합을 가장 작게 만드는 값"과 같아요. 우리가 측정값을 평균 내는 데에는 이런 이유가 숨어 있어요.</p>
+  <p>덤으로, 이때 likelihood를 \(\theta\)에 대한 곡선으로 그리면 중심이 \(\bar x\)이고 폭이 \(\sigma/\sqrt N\)인 종 모양이에요. 4주차의 표준오차예요. 측정을 많이 할수록 likelihood 곡선이 좁아져요.</p>
+
+  <h3>MAP는 표본평균과 prior의 가중평균이에요</h3>
+  <p>이번엔 prior도 둬요. "측정 전에도 \(\theta\)는 대략 \(\mu_0\) 근처일 것 같고, 그 불확실성은 표준편차 \(\tau\) 정도"라는 뜻으로 \(\theta\sim N(\mu_0,\tau^2)\)라고 할게요. 그러면</p>
+  \[\hat\theta_{\text{MAP}}=\frac{N\,\htmlClass{c-lk}{\bar x}+m\,\htmlClass{c-pr}{\mu_0}}{N+m},\qquad m=\frac{\sigma^2}{\tau^2}\]
+  <details class="sol"><summary>유도 보기</summary>
+    \[-\log P(D\mid\theta)-\log p(\theta)=\frac{1}{2\sigma^2}\sum_{i=1}^{N}(x_i-\theta)^2+\frac{(\theta-\mu_0)^2}{2\tau^2}+(\theta\text{와 무관한 상수})\]
+    <p>\(\theta\)로 미분해서 0으로 두면</p>
+    \[-\frac{1}{\sigma^2}\sum_{i=1}^{N}(x_i-\theta)+\frac{\theta-\mu_0}{\tau^2}=0\]
+    \[\theta\left(\frac{N}{\sigma^2}+\frac{1}{\tau^2}\right)=\frac{N\bar x}{\sigma^2}+\frac{\mu_0}{\tau^2}\ \Rightarrow\ \hat\theta_{\text{MAP}}=\frac{N\bar x/\sigma^2+\mu_0/\tau^2}{N/\sigma^2+1/\tau^2}\]
+    <p>분자와 분모에 \(\sigma^2\)를 곱하면 위의 식이 돼요. 이 경우 posterior는 정규분포이고, 그 평균도 MAP와 같아요.</p>
+  </details>
+  <p>식을 이렇게 읽으면 돼요. prior의 중심 \(\mu_0\)가 <b>"가상의 측정값 \(m\)개"</b>처럼 진짜 측정값 \(N\)개와 섞여요.</p>
+  <ul>
+    <li>prior를 강하게 믿을수록(\(\tau\)가 작을수록) \(m\)이 커지고, 추정값이 \(\mu_0\) 쪽으로 끌려가요.</li>
+    <li>데이터가 많아지면(\(N\)이 커지면) \(m\)은 상대적으로 작아지고, MAP는 MLE(\(\bar x\))에 가까워져요. 데이터가 충분하면 prior는 저절로 밀려나요.</li>
+  </ul>
+  <p>예를 들어 볼게요. 새 반응 조건에서 수율을 3번 쟀더니 평균 75%가 나왔어요(측정 오차 \(\sigma=5\)%p). 그런데 비슷한 조건들의 수율은 대체로 65% 근처였고, 조건마다 5%p 정도 차이가 났어요. 그래서 prior를 \(N(65,5^2)\)로 두면 \(m=5^2/5^2=1\)이에요.</p>
+  \[\hat\theta_{\text{MAP}}=\frac{3\times75+1\times65}{3+1}=\frac{290}{4}=72.5\]
+  <p>같은 평균 75가 30번 측정에서 나왔다면 \(\hat\theta_{\text{MAP}}=\frac{30\times75+65}{31}=\frac{2315}{31}\approx74.7\)로 거의 MLE와 같아요. 3번 만에 "신기록 조건을 찾았다"고 결론 내기보다 조금 보수적으로 보고, 데이터가 쌓이면 데이터를 따라가자는 거예요.</p>
+
+  <div class="panel" id="nm-w">
+    <div class="panel-head"><p class="panel-title">수율 예시: prior와 데이터의 줄다리기</p></div>
+    <p class="panel-sub">prior \(N(65,\tau^2)\), 측정 오차 \(\sigma=5\). 세 곡선 모두 \(\theta\)에 대한 그래프예요.</p>
+    <svg id="nm-svg" viewBox="0 0 560 250" role="img" aria-label="수율 θ에 대한 prior, likelihood, posterior 정규곡선과 MLE, MAP 위치"></svg>
+    <div class="sliders three">
+      <label class="sl"><span>측정 횟수 \(N\)</span> <span class="val" id="nm-nv"></span><input type="range" id="nm-n" min="1" max="50" step="1" value="3" aria-label="측정 횟수"></label>
+      <label class="sl"><span>측정 평균 \(\bar x\)</span> <span class="val" id="nm-xv"></span><input type="range" id="nm-x" min="55" max="90" step="0.5" value="75" aria-label="측정 평균"></label>
+      <label class="sl mu"><span>prior의 폭 \(\tau\)</span> <span class="val" id="nm-tv"></span><input type="range" id="nm-t" min="1" max="20" step="0.5" value="5" aria-label="prior의 폭"></label>
+    </div>
+    <div class="w3-out" id="nm-out"></div>
+  </div>
+</section>
+
+<section id="use">
+  <div class="sec-head"><h2>어디에 쓰나</h2></div>
+  <p>여기부터가 이 자료의 진짜 목적이에요. 앞에서 본 두 줄, "MLE = 음의 로그 likelihood 최소화"와 "MAP = 거기에 prior 벌점 더하기"가 실제로 어떻게 쓰이는지 볼게요.</p>
+
+  <h3>1. 평균을 낼까, 중앙값을 쓸까: 오차를 어떻게 보느냐의 문제</h3>
+  <p>앞 절에서 반복 측정값을 평균 내는 건 <b>오차가 정규분포라고 가정했을 때의 MLE</b>라는 걸 봤어요. 가정을 바꾸면 답도 바뀌어요. 가끔 크게 튀는 값이 섞이는 오차(라플라스분포)를 가정하면 MLE는 <b>중앙값</b>이 돼요. 1주차에서 꼬리가 길어지면 평균은 그쪽으로 끌려가지만 중앙값은 가운데에 머문다고 했어요. 튀는 값에 덜 휘둘리는 중앙값이 "튀는 값이 섞이는 오차"에 맞는 추정값으로 나오는 거예요.</p>
+  <p>장비가 가끔 튀는 값을 낸다면, 평균 대신 중앙값을 쓰는 게 그 장비에 맞는 MLE일 수 있어요.</p>
+
+  <h3>2. 추세선과 검량선: 최소제곱법</h3>
+  <p>엑셀에서 추세선을 긋거나, 농도를 아는 표준 시료로 검량선(calibration curve)을 그리는 것도 MLE예요. 측정값을 \(y_i=a+bx_i+\text{오차}\)로 놓고 오차가 정규분포라고 가정하면, 음의 로그 likelihood에서 \(a,b\)에 달린 부분은</p>
+  \[\sum_{i}\big(y_i-(a+bx_i)\big)^2\]
+  <p>하나뿐이에요. 그러니까 MLE는 이 값을 가장 작게 만드는 직선이고, 이게 <b>최소제곱법</b>(least squares)이에요. 앞 절에서 평균이 "편차 제곱합 최소"였던 것과 같은 구조예요. 10주차 회귀분석에서 다시 만나요.</p>
+  <figure class="plate narrow"><img src="{{IMG:bx_lsq}}" alt="점 8개와 초록 직선. 각 점에서 직선까지의 세로 거리가 주황 선이고, 그 길이를 한 변으로 하는 주황 정사각형이 그려져 있다" width="1070" height="1023"><figcaption>주황 정사각형의 넓이 합이 가장 작은 직선을 고르는 게 최소제곱법이에요</figcaption></figure>
+
+  <h3>3. 정밀도가 다른 장비 두 대의 값 합치기</h3>
+  <p>같은 시료를 온도계 두 개로 쟀어요. 온도계 A는 25.0℃(오차 표준편차 \(\sigma_A=0.2\)), 온도계 B는 24.7℃(오차 표준편차 \(\sigma_B=0.1\))를 보여 줬어요.</p>
+  <p>그냥 평균 내면 24.85℃예요. 그런데 B가 두 배 정밀한데 같은 비중을 주는 게 맞을까요? 두 측정값을 데이터로 놓고 MLE를 구해 볼게요.</p>
+  \[-\log L(\theta)=\frac{(25.0-\theta)^2}{2\times0.2^2}+\frac{(24.7-\theta)^2}{2\times0.1^2}+\text{상수}\]
+  <p>미분해서 0으로 두면</p>
+  \[\hat\theta=\frac{x_A/\sigma_A^2+x_B/\sigma_B^2}{1/\sigma_A^2+1/\sigma_B^2}=\frac{25.0/0.04+24.7/0.01}{1/0.04+1/0.01}=\frac{625+2470}{25+100}=\frac{3095}{125}=24.76\]
+  <ul>
+    <li>각 값에 \(1/\sigma^2\)만큼 가중치를 줘요. 이걸 <b>역분산 가중평균</b>(inverse-variance weighting)이라고 해요. 여기서는 B가 A의 4배 비중이에요.</li>
+    <li>합친 값의 표준편차는 \(1/\sqrt{25+100}=1/\sqrt{125}\approx0.089\)예요. <b>정밀한 B 하나만 쓸 때(0.1)보다도 작아요.</b> 덜 정밀한 장비의 값도 버리지 말고 제대로 합치면 이득이에요.</li>
+    <li>앞 절의 MAP 식과 모양이 똑같아요. prior를 "정밀도가 \(1/\tau^2\)인 측정값 하나"로 본 셈이에요.</li>
+  </ul>
+  <div class="panel" id="fu-w">
+    <div class="panel-head"><p class="panel-title">측정값 두 개 합치기</p></div>
+    <p class="panel-sub">파랑 = 온도계 A, 주황 = 온도계 B, 초록 = 합친 결과. 곡선이 좁을수록 정밀해요.</p>
+    <svg id="fu-svg" viewBox="0 0 560 230" role="img" aria-label="두 측정값의 정규곡선과 역분산 가중으로 합친 더 좁은 곡선"></svg>
+    <div class="sliders four">
+      <label class="sl mu"><span>A 값</span> <span class="val" id="fu-xav"></span><input type="range" id="fu-xa" min="24" max="26" step="0.05" value="25" aria-label="A 측정값"></label>
+      <label class="sl mu"><span>A의 \(\sigma\)</span> <span class="val" id="fu-sav"></span><input type="range" id="fu-sa" min="0.05" max="0.5" step="0.01" value="0.2" aria-label="A 표준편차"></label>
+      <label class="sl"><span>B 값</span> <span class="val" id="fu-xbv"></span><input type="range" id="fu-xb" min="24" max="26" step="0.05" value="24.7" aria-label="B 측정값"></label>
+      <label class="sl"><span>B의 \(\sigma\)</span> <span class="val" id="fu-sbv"></span><input type="range" id="fu-sb" min="0.05" max="0.5" step="0.01" value="0.1" aria-label="B 표준편차"></label>
+    </div>
+    <div class="w3-out" id="fu-out"></div>
+  </div>
+  <p>로봇이나 자율주행차는 GPS, 바퀴 회전 수, 카메라 정보를 매 순간 이런 식으로 합쳐요. 방금 합친 결과(posterior)를 다음 순간의 prior로 삼아 새 측정값과 또 합치는 걸 반복하는데, 이게 <b>칼만 필터</b>(Kalman filter)의 핵심 아이디어예요. "오늘의 posterior가 내일의 prior"라는 생각은 베이즈 방법 전체를 관통해요.</p>
+
+  <h3>4. 데이터가 적을 때: prior는 과적합을 막는 버팀목</h3>
+  <p>3번 던져 3번 앞면이면 MLE는 "앞면 확률 100%"였어요. 이렇게 적은 데이터에 지나치게 맞춰서 극단적인 결론을 내는 걸 <b>과적합</b>(overfitting)이라고 해요. 수율 예시에서 3번 측정으로 75%라고 단정하는 것도 같은 위험이 있어요.</p>
+  <p>MAP는 prior로 추정값을 그럴듯한 범위 쪽으로 살짝 당겨서 과적합을 줄여요. 데이터가 쌓이면 prior의 영향은 저절로 줄어들어요. 다만 prior는 연구자가 고르는 거라서 두 가지를 꼭 지켜야 해요. 어떤 prior를 썼는지 밝히고, prior를 조금 바꿔도 결론이 유지되는지 확인하는 거예요.</p>
+
+  <h3>5. 머신러닝: 손실함수와 정규화</h3>
+  <p>머신러닝 모델을 학습시킨다는 건 결국 손실함수를 최소화하는 거예요. 그 손실함수들을 확률로 번역하면 대부분 MLE나 MAP예요.</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>하는 일</th><th>머신러닝에서 부르는 이름</th><th>확률로 보면</th></tr></thead>
+    <tbody>
+      <tr><td>제곱오차 최소화</td><td>회귀의 MSE 손실</td><td>오차가 정규분포라고 가정한 MLE</td></tr>
+      <tr><td>교차엔트로피 최소화</td><td>분류의 손실</td><td>"정답일 확률" 모형(베르누이)에 대한 MLE</td></tr>
+      <tr><td>손실 \(+\ \lambda\sum w_j^2\)</td><td>L2 정규화, weight decay</td><td>가중치 \(w\)에 정규분포 prior를 둔 MAP</td></tr>
+      <tr><td>손실 \(+\ \lambda\sum\lvert w_j\rvert\)</td><td>L1 정규화 (lasso)</td><td>가중치에 라플라스분포 prior를 둔 MAP</td></tr>
+    </tbody>
+  </table></div>
+  <p>"정규화(regularization)"라는 낯선 이름이 사실은 <b>음의 로그 prior</b>예요. 예를 들어 L2 정규화는 "가중치들이 0 근처일 것"이라는 정규분포 prior에서 나와요. 제곱오차를 합으로 쓰면 \(\lambda=\sigma^2/\tau^2\)이고, 정규분포 절의 \(m\)과 같은 거예요. prior를 얼마나 강하게 믿을지 정하는 손잡이인 셈이에요.</p>
+</section>
+
+<section id="summary">
+  <div class="sec-head"><h2>정리</h2></div>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th></th><th class="c-lk">MLE</th><th class="c-po">MAP</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">최대화하는 것</th><td>likelihood \(P(D\mid\theta)\)</td><td>likelihood × prior \(P(D\mid\theta)P(\theta)\)</td></tr>
+      <tr><th scope="row">최소화하는 것</th><td>\(-\log P(D\mid\theta)\)</td><td>\(-\log P(D\mid\theta)-\log P(\theta)\)</td></tr>
+      <tr><th scope="row">필요한 것</th><td>데이터가 어떻게 생기는지에 대한 모형</td><td>그 모형 + prior</td></tr>
+      <tr><th scope="row">장점</th><td>단순하고 해석이 쉬워요. prior를 고를 필요가 없어요.</td><td>데이터가 적어도 안정적이에요. 과적합을 줄여요.</td></tr>
+      <tr><th scope="row">약점</th><td>데이터가 적으면 극단적인 값이 나와요.</td><td>prior를 정해야 하고, 결과가 그 선택에 좌우돼요.</td></tr>
+      <tr><th scope="row">데이터가 많아지면</th><td colspan="2">두 추정값이 같아져요.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>흔한 오해 세 가지</h3>
+  <aside class="aside">
+    <p class="aside-q">likelihood는 "\(\theta\)가 그 값일 확률"이다?</p>
+    <p>아니에요. \(P(D\mid\theta)\)는 \(\theta\)를 고정했을 때 <b>데이터가</b> 나올 확률이에요. 동전 예시에서 두 likelihood 0.03125와 0.32768을 더하면 1이 안 되죠. likelihood는 \(\theta\)에 대한 확률이 아니라서 다 더해도(적분해도) 1이 될 이유가 없어요. "\(\theta\)가 그 값일 확률"은 posterior예요. 영어로 probability가 아니라 likelihood라는 다른 단어를 쓰는 이유이기도 해요.</p>
+  </aside>
+  <aside class="aside">
+    <p class="aside-q">\(P(D\mid\theta)\)와 \(P(\theta\mid D)\)는 비슷하다?</p>
+    <p>2주차의 \(P(A\mid B)\neq P(B\mid A)\)와 같은 이야기예요. 조작 동전이라면 5연속 앞면이 나올 확률은 33%지만, 5연속 앞면을 봤을 때 그 동전이 조작일 확률은 9.6%였어요.</p>
+  </aside>
+  <aside class="aside">
+    <p class="aside-q">MAP가 베이즈 방법의 전부다?</p>
+    <p>MAP는 posterior 곡선에서 꼭대기 한 점만 뽑은 거예요. 베이즈 방법의 진짜 강점은 posterior <b>곡선 전체</b>를 가지고 "얼마나 확신하는지"까지 말할 수 있다는 데 있어요. 위젯에서 데이터가 많아질수록 초록 곡선이 좁아졌던 게 바로 그 확신이 커지는 모습이에요.</p>
+  </aside>
+</section>
+
+<section id="practice">
+  <div class="sec-head"><h2>확인 문제</h2></div>
+  <p>먼저 풀어 보고 풀이를 열어 보세요.</p>
+
+  <div class="q">
+    <p class="q-stem"><span class="q-no">1.</span>상자에 주사위가 많이 들어 있는데, 90%는 공정한 주사위이고 10%는 6이 나올 확률이 \(\tfrac12\)인 조작 주사위예요. 하나를 아무거나 꺼내 던졌어요.</p>
+    <ul class="q-sub">
+      <li>(1) 2번 던져서 2번 모두 6이 나왔어요. 이 주사위가 조작 주사위일 posterior를 구하세요.</li>
+      <li>(2) 3번 던져서 3번 모두 6이 나왔다면 posterior는 얼마이고, MLE와 MAP는 각각 어느 주사위를 고르나요?</li>
+    </ul>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) likelihood는 공정 \((1/6)^2=1/36\), 조작 \((1/2)^2=1/4\)이에요. likelihood × prior는 공정 \(\frac{1}{36}\times0.9=0.025\), 조작 \(\frac14\times0.1=0.025\)로 똑같아요.</p>
+      \[P(\text{조작}\mid D)=\frac{0.025}{0.025+0.025}=0.5\]
+      <p>(2) likelihood × prior는 공정 \(\frac{1}{216}\times0.9\approx0.004167\), 조작 \(\frac18\times0.1=0.0125\)예요.</p>
+      \[P(\text{조작}\mid D)=\frac{0.0125}{0.004167+0.0125}=\frac{0.0125}{0.016667}=0.75\]
+      <p>likelihood는 조작 쪽(\(\frac18\))이 공정 쪽(\(\frac1{216}\))보다 크니까 MLE는 조작, posterior도 조작 쪽이 크니까 MAP도 조작이에요.</p>
+      <p class="sol-note">(1)에서 MLE는 이미 조작을 골라요(\(\frac14>\frac1{36}\)). 하지만 prior 때문에 posterior는 반반이에요. 한 번 더 6이 나와야 MAP도 조작으로 넘어가요.</p>
+    </details>
+  </div>
+
+  <div class="q">
+    <p class="q-stem"><span class="q-no">2.</span>어떤 물질의 농도 \(\theta\)를 오차 표준편차 \(\sigma=2\)인 장비로 측정해요. 측정 전 경험으로는 \(\theta\sim N(12,1^2)\) 정도라고 봐요.</p>
+    <ul class="q-sub">
+      <li>(1) 4번 측정한 평균이 \(\bar x=10.0\)일 때 MLE와 MAP를 구하세요.</li>
+      <li>(2) 36번 측정한 평균이 \(\bar x=10.0\)일 때 MAP를 구하고, (1)과 비교해 보세요.</li>
+    </ul>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>prior가 가상의 측정값 \(m=\sigma^2/\tau^2=2^2/1^2=4\)개 역할을 해요.</p>
+      <p>(1) MLE는 \(\bar x=10.0\)이에요.</p>
+      \[\hat\theta_{\text{MAP}}=\frac{4\times10.0+4\times12}{4+4}=\frac{88}{8}=11.0\]
+      <p>(2) \(\hat\theta_{\text{MAP}}=\dfrac{36\times10.0+4\times12}{36+4}=\dfrac{408}{40}=10.2\)</p>
+      <p class="sol-note">측정이 4번일 때는 prior가 진짜 측정값만큼(4개분) 무게를 가져서 정확히 중간인 11.0이 나와요. 36번이면 prior의 무게가 10%뿐이라 MLE에 가까워져요.</p>
+    </details>
+  </div>
+
+  <div class="q">
+    <p class="q-stem"><span class="q-no">3.</span>같은 물체를 저울 두 대로 쟀어요. 저울 A는 50.4g(오차 표준편차 0.3g), 저울 B는 50.0g(오차 표준편차 0.6g)을 보여 줬어요. 두 값을 MLE로 합친 값과 그 표준편차를 구하세요.</p>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>가중치는 \(1/\sigma^2\)이라서 A는 \(1/0.09\approx11.11\), B는 \(1/0.36\approx2.78\)이에요. 비율로는 정확히 4 : 1이에요.</p>
+      \[\hat\theta=\frac{4\times50.4+1\times50.0}{4+1}=\frac{251.6}{5}=50.32\]
+      \[\text{표준편차}=\frac{1}{\sqrt{1/0.09+1/0.36}}=\frac{1}{\sqrt{13.89}}\approx0.268\]
+      <p class="sol-note">표준편차가 2배면 분산은 4배라서 가중치는 4분의 1이 돼요. 합친 값의 표준편차 0.268은 정밀한 A 하나(0.3)보다도 작아요.</p>
+    </details>
+  </div>
+
+  <div class="q">
+    <p class="q-stem"><span class="q-no">4.</span>친구가 이렇게 말했어요. "조작 동전이면 5연속 앞면이 나올 확률이 0.33이잖아. 방금 5연속 앞면이 나왔으니까 이 동전이 조작일 확률은 0.33이야." 무엇이 틀렸는지 설명하세요.</p>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>0.33은 likelihood \(P(D\mid\text{조작})\), 곧 "조작 동전이라면 이 데이터가 나올 확률"이에요. 친구가 말하고 싶은 건 posterior \(P(\text{조작}\mid D)\)인데, 둘은 조건의 방향이 반대예요. posterior를 구하려면 조작 동전이 애초에 얼마나 흔한지(prior)와, 공정 동전으로도 5연속 앞면이 나올 수 있다는 것(evidence)까지 따져야 해요. 조작 동전이 100개 중 1개라면 posterior는 약 0.096이에요.</p>
+    </details>
+  </div>
+</section>
+
+<section id="next">
+  <div class="sec-head"><h2>더 나아가려면</h2></div>
+  <p>정규 수업에서도 여기 나온 아이디어를 다시 만나요. 10주차 회귀분석의 최소제곱법이 바로 "오차가 정규분포일 때의 MLE"예요.</p>
+  <p><b>베이지안 최적화</b>(Bayesian optimization)는 실험 한 번이 비싸고 오래 걸릴 때 쓰는 방법이에요. 지금까지의 실험 결과로 "조건에 따라 결과가 어떻게 달라질지"에 대한 posterior를 만들고, 그걸 보고 다음에 어떤 조건으로 실험할지를 골라요. 결과가 나오면 posterior를 업데이트하고 다시 다음 조건을 골라요. 적은 실험 횟수로 최적 조건을 찾아야 하는 연구실이라면 이 이름으로 찾아보세요.</p>
+  <p><b>신용구간</b>(credible interval)은 posterior 곡선에서 넓이 95%를 차지하는 구간이에요. 이건 "\(\theta\)가 이 구간에 있을 확률이 95%"라고 해석할 수 있어요. 5주차에서 신뢰구간을 이렇게 해석하면 안 된다고 했던 것과 비교해 보면, 두 관점의 차이가 잘 보여요.</p>
+</section>
+
+</main>

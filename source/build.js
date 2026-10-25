@@ -13,6 +13,8 @@ const katex = require('katex');
 const KDIR = path.dirname(require.resolve('katex/package.json')) + '/dist/';
 const FDIR = path.dirname(require.resolve('@kfonts/nanum-barun-gothic/package.json')) + '/src/';
 const conf = JSON.parse(fs.readFileSync('weeks.json', 'utf8'));
+// 보충 페이지(시험 범위 밖 읽을거리) — weeks.json과 분리해 둔다
+const extras = fs.existsSync('extras.json') ? JSON.parse(fs.readFileSync('extras.json', 'utf8')) : [];
 const baseCss = fs.readFileSync('base.css', 'utf8');
 const out = 'out';
 fs.mkdirSync(out, { recursive: true });
@@ -57,7 +59,9 @@ function weekBar(current){
     if (!w.ready) return `<span class="wk off" aria-disabled="true">${label}</span>`;
     if (w.n === current) return `<span class="wk on" aria-current="page">${label}</span>`;
     return `<a class="wk" href="${w.file}">${label}</a>`;
-  }).join('');
+  }).join('') + extras.map(x => x.id === current
+    ? `<span class="wk extra on" aria-current="page">${x.menu}</span>`
+    : `<a class="wk extra" href="${x.file}">${x.menu}</a>`).join('');
   return `<nav class="weekbar" aria-label="회차">
   <a class="wk home" href="index.html">전체 목록</a>
   ${items}
@@ -103,6 +107,23 @@ for (const w of conf.weeks){
     style, body, script: js
   }));
   console.log(w.file, (fs.statSync(path.join(out, w.file)).size / 1024).toFixed(0) + 'KB');
+}
+
+/* ---- 보충 페이지 ---- */
+for (const x of extras){
+  const frag = math(images(fs.readFileSync(x.frag, 'utf8')));
+  const js = x.js && fs.existsSync(x.js) ? fs.readFileSync(x.js, 'utf8') : '';
+  const hero = `<header class="hero">
+  <p class="eyebrow">${x.eyebrow}</p>
+  <h1>${x.title}</h1>
+  ${x.lede ? `<p class="lede">${x.lede}</p>` : ''}
+</header>`;
+  const body = weekBar(x.id) + '\n' + hero + '\n' + frag + '\n' + `<footer class="foot"><p>${x.foot}</p></footer>`;
+  fs.writeFileSync(path.join(out, x.file), page({
+    title: `${x.title} · ${x.kicker}`, desc: `${conf.course} ${x.kicker} — ${x.summary}`,
+    style: fontFaces(body + js, 'x-' + x.id) + getKatexCss() + baseCss, body, script: js
+  }));
+  console.log(x.file, (fs.statSync(path.join(out, x.file)).size / 1024).toFixed(0) + 'KB');
 }
 
 /* ---- 회차 목록(홈) ---- */
@@ -151,6 +172,12 @@ const hubBody = `<header class="hero">
   <p class="lede">${conf.hubLede}</p>
 </header>
 ${libCard ? `<div class="cards lib-top">\n${libCard}\n</div>` : ''}
+${extras.length ? `<div class="cards extra-top">\n${extras.map(x => `<a class="card extra-card" href="${x.file}">
+  <p class="card-no">${x.kicker}</p>
+  <p class="card-title">${x.title}</p>
+  <p class="card-sum">${x.summary}</p>
+  ${x.note ? `<p class="card-slides">${x.note}</p>` : ''}
+</a>`).join('\n')}\n</div>` : ''}
 <div class="cards">
 ${cards}
 </div>

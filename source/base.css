@@ -445,3 +445,82 @@ table.sched tr.skip th,table.sched tr.skip th a{color:var(--orange)}
 .card.skip{background:var(--orange-tint);border-color:transparent}
 .card.skip:hover{border-color:var(--orange)}
 .card.skip .card-no{color:var(--orange);font-weight:700}
+
+/* 보충 페이지 (extras) — 회차 바·홈 카드 */
+.wk.extra{border-style:dashed;border-color:var(--green);color:var(--green)}
+.wk.extra:hover{border-color:var(--green);color:var(--green);background:var(--green-tint)}
+.wk.extra.on{background:var(--green);color:var(--ground);border-style:solid}
+.extra-top{margin-bottom:12px}
+.extra-card{border-color:var(--green);border-style:dashed;background:var(--green-tint)}
+.extra-card:hover{border-color:var(--green);border-style:solid}
+.extra-card .card-no{color:var(--green);font-weight:700}
+
+/* 보충: 베이즈 (prior 파랑 · likelihood 주황 · posterior 초록) */
+.c-pr{color:var(--blue)}
+.c-lk{color:var(--orange)}
+.c-po{color:var(--green)}
+table.info .c-pr{color:var(--blue)}
+table.info .c-lk{color:var(--orange)}
+table.info .c-po{color:var(--green)}
+aside.caution{display:block;margin:1.4em 0}
+.plate.narrow{max-width:30rem;margin:0.4em auto 1.2em}
+.sliders.two{grid-template-columns:repeat(2,1fr)}
+.sliders.three{grid-template-columns:repeat(3,1fr)}
+.sliders.four{grid-template-columns:repeat(4,1fr)}
+@media (max-width:560px){.sliders.three,.sliders.four{grid-template-columns:repeat(2,1fr)}}
+.sl .katex{font-size:1em}
+.bt-prior{margin:0 0 4px}
+.bx-rows{margin-top:16px}
+.bx-gh{margin:14px 0 6px;font-size:0.92rem;color:var(--muted)}
+.bx-gh:first-child{margin-top:0}
+.bx-gh b{font-size:1rem}
+.bf-pr{background:var(--blue)}
+.bf-lk{background:var(--orange)}
+.bf-jt{background:var(--muted)}
+.bf-po{background:var(--green)}
+#cn-w .verdict{margin-top:14px}
+.pill.bx-mle{background:var(--orange-tint);color:var(--orange)}
+.pill.bx-map{background:var(--green-tint);color:var(--green)}
+.bx-prior{fill:none;stroke:var(--blue);stroke-width:2.2;stroke-dasharray:6 5}
+.bx-lik{fill:none;stroke:var(--orange);stroke-width:2.2}
+.bx-post{fill:none;stroke:var(--green);stroke-width:3}
+.bx-area{fill:var(--green);opacity:.16}
+.bx-fa{fill:none;stroke:var(--blue);stroke-width:2.4}
+.bx-fb{fill:none;stroke:var(--orange);stroke-width:2.4}
+.bx-v{stroke-width:1.6;stroke-dasharray:4 4}
+.bx-v.lk{stroke:var(--orange)}
+.bx-v.po{stroke:var(--green);stroke-dasharray:none;stroke-width:2}
+.bx-lab{font-size:13px;font-weight:700;text-anchor:middle}
+.bx-lab.lk{fill:var(--orange)}
+.bx-lab.po{fill:var(--green)}
+.bx-lab.pr{fill:var(--blue)}
+.bx-cap{fill:var(--green);font-size:13px;font-weight:700}
+.bx-tick{text-anchor:end;font-size:11px}
+.w3-out .w-full{grid-column:1/-1;font-size:0.88rem;color:var(--muted)}
+.btree{margin:0.6em 0 1.2em}
+.btree svg{width:100%;height:auto;display:block}
+.bt-e{stroke:var(--muted);stroke-width:1.5}
+.bt-br{fill:none;stroke:var(--green);stroke-width:2}
+.bt-box{fill:var(--ground);stroke:var(--ink);stroke-width:1.5}
+.bt-box.hit{fill:var(--green-tint);stroke:var(--green);stroke-width:2.5}
+.bt-box.dim{fill:var(--surface);stroke:var(--rule)}
+.bt-t{fill:var(--ink);font-size:15px;text-anchor:middle}
+.bt-t.muted{fill:var(--muted)}
+.bt-n{font-weight:700}
+.bt-t.po{fill:var(--green);font-size:17px}
+.bt-lab{font-size:15px;font-weight:700;text-anchor:middle}
+.bt-lab.pr{fill:var(--blue)}
+.bt-lab.lk{fill:var(--orange)}
+.vb-figs{margin:0.6em 0 1.2em}
+.vb-figs .venn{margin:0}
+.vb-title{fill:var(--ink);font-size:15px;font-weight:700;text-anchor:middle}
+.vb-div{stroke:var(--muted);stroke-width:1.5}
+.vb-name{fill:var(--ink);font-size:14px;font-weight:700;text-anchor:middle}
+.vb-pr{fill:var(--blue);font-size:13px;text-anchor:middle}
+.vb-piece{fill:var(--green);fill-opacity:.32}
+.vb-piece.alt{fill-opacity:.55}
+.vb-d{fill:none;stroke:var(--green);stroke-width:2.5}
+.vb-dl{fill:var(--green);font-size:20px;font-weight:700}
+.vb-num{fill:var(--ink);font-size:14px;font-weight:700;text-anchor:middle}
+.vb-note{fill:var(--muted);font-size:12px;text-anchor:middle}
+.vb-sub{font-size:11px}
