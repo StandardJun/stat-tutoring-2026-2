@@ -524,3 +524,8 @@ aside.caution{display:block;margin:1.4em 0}
 .vb-num{fill:var(--ink);font-size:14px;font-weight:700;text-anchor:middle}
 .vb-note{fill:var(--muted);font-size:12px;text-anchor:middle}
 .vb-sub{font-size:11px}
+
+/* 6회차: 컴퓨터 출력 */
+pre.rout{margin:0;padding:12px 14px;background:var(--surface);border:1px solid var(--rule);border-radius:10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:0.8rem;line-height:1.6;color:var(--ink);white-space:pre}
+pre.rout b{font-weight:700}
+table.info code{font-size:0.92em}
