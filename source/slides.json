@@ -1,0 +1,10 @@
+{
+  "9/16":  { "path": "files/slides/260916.pdf", "save": "260916_1장-2장(모분산까지).pdf" },
+  "9/23":  { "path": "files/slides/260923.pdf", "save": "260923_2장-3장(조건부확률까지).pdf" },
+  "9/30":  { "path": "files/slides/260930.pdf", "save": "260930_3장-4장(정규분포, CLT).pdf" },
+  "10/7":  { "path": "files/slides/261007.pdf", "save": "261007_4장.pdf" },
+  "10/14": { "path": "files/slides/261014.pdf", "save": "261014_5장-6장.pdf" },
+  "10/21": { "link": "library.html#mock", "label": "자료실" },
+  "10/28": { "path": "files/slides/261028.pdf", "save": "261028_기말 범위 미리보기.pdf" },
+  "11/4":  { "path": "files/slides/261104.pdf", "save": "261104_6장.pdf" }
+}

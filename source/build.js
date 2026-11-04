@@ -136,8 +136,12 @@ const cards = conf.weeks.map(w => {
 }).join('\n');
 const ready = {};
 conf.weeks.forEach(function(w){ if (w.ready) ready[w.n] = w; });
+// 수업자료 PDF (slides.json — 날짜 → 파일). 수업이 끝난(done) 행에만 버튼을 붙인다
+const slides = fs.existsSync('slides.json') ? JSON.parse(fs.readFileSync('slides.json', 'utf8')) : {};
+function kb(f){ const b = fs.statSync(f).size; return b >= 1048576 ? (b / 1048576).toFixed(1) + 'MB' : Math.round(b / 1024) + 'KB'; }
+const hasSlides = Object.keys(slides).length > 0;
 const planRows = (conf.plan || []).map(r => {
-  if (r.exam) return `<tr class="exam"><th scope="row">${r.exam}</th><td class="pd">${r.date}</td><td></td></tr>`;
+  if (r.exam) return `<tr class="exam"><th scope="row">${r.exam}</th><td class="pd">${r.date}</td><td></td>${hasSlides ? '<td></td>' : ''}</tr>`;
   // week: 연결할 회차 페이지 번호 (기본은 n, null이면 연결 안 함) · link: 직접 지정한 주소
   // label: '5회차' 대신 쓸 이름 · kind: 행에 붙일 클래스(skip 등) · done: 페이지 없이 수업 완료 표시
   const w = ready['week' in r ? r.week : r.n];
@@ -145,12 +149,18 @@ const planRows = (conf.plan || []).map(r => {
   const text = r.label || `${r.n}회차`;
   const label = href ? `<a href="${href}">${text}</a>` : text;
   const cls = [(w || r.done) && 'done', r.kind].filter(Boolean).join(' ');
-  return `<tr${cls ? ` class="${cls}"` : ''}><th scope="row">${label}</th><td class="pd">${r.date}</td><td>${r.topic}</td></tr>`;
+  const sl = (w || r.done) && slides[r.date];
+  // link가 있으면 PDF 대신 그 주소로 보낸다 (예: 문제풀이 회차 → 자료실)
+  const slBtn = !sl ? '' : sl.link
+    ? `<a class="mat-dl" href="${sl.link}">${sl.label || '자료실'}</a>`
+    : `<a class="mat-dl" href="${sl.path}" download="${sl.save}" rel="nofollow" title="${sl.save}">PDF<span class="dl-meta">${kb(sl.path)}</span></a>`;
+  const slCell = hasSlides ? `<td class="mat">${slBtn}</td>` : '';
+  return `<tr${cls ? ` class="${cls}"` : ''}><th scope="row">${label}</th><td class="pd">${r.date}</td><td>${r.topic}</td>${slCell}</tr>`;
 }).join('\n');
 const planBlock = (conf.plan || []).length ? `<section class="plan">
   <div class="sec-head"><h2>${conf.planTitle}</h2></div>
   <div class="table-scroll"><table class="sched">
-  <thead><tr><th scope="col">회차</th><th scope="col">날짜</th><th scope="col">다룰 내용</th></tr></thead>
+  <thead><tr><th scope="col">회차</th><th scope="col">날짜</th><th scope="col">다룰 내용</th>${hasSlides ? '<th scope="col">수업자료</th>' : ''}</tr></thead>
   <tbody>
 ${planRows}
   </tbody></table></div>
@@ -159,25 +169,18 @@ ${planRows}
 
 /* ---- 자료실 설정 (library.json — weeks.json과 분리해 둔다) ---- */
 const lib = fs.existsSync('library.json') ? JSON.parse(fs.readFileSync('library.json', 'utf8')) : null;
-function kb(f){ const b = fs.statSync(f).size; return b >= 1048576 ? (b / 1048576).toFixed(1) + 'MB' : Math.round(b / 1024) + 'KB'; }
-const libCard = lib ? `<a class="card lib-card" href="library.html">
-  <p class="card-no">${lib.title}</p>
-  <p class="card-title">${lib.sections.map(x => x.title).join(' · ')}</p>
-  <p class="card-sum">PDF로 바로 내려받을 수 있어요.</p>
-</a>` : '';
+// 자료실·더 읽을거리는 회차 흐름과 섞이지 않게 오른쪽 위 작은 링크로 둔다
+const hubLinks = (lib || extras.length) ? `<nav class="hub-links" aria-label="부가 자료">
+  ${lib ? `<a class="hub-link lib" href="library.html">${lib.title}</a>` : ''}
+  ${extras.map(x => `<a class="hub-link extra" href="${x.file}"><span class="hub-kicker">${x.kicker}</span>${x.menu}</a>`).join('\n  ')}
+</nav>` : '';
 
-const hubBody = `<header class="hero">
+const hubBody = `${hubLinks}
+<header class="hero">
   <p class="eyebrow">${conf.term} · ${conf.course}</p>
   <h1>${conf.hubTitle}</h1>
   <p class="lede">${conf.hubLede}</p>
 </header>
-${libCard ? `<div class="cards lib-top">\n${libCard}\n</div>` : ''}
-${extras.length ? `<div class="cards extra-top">\n${extras.map(x => `<a class="card extra-card" href="${x.file}">
-  <p class="card-no">${x.kicker}</p>
-  <p class="card-title">${x.title}</p>
-  <p class="card-sum">${x.summary}</p>
-  ${x.note ? `<p class="card-slides">${x.note}</p>` : ''}
-</a>`).join('\n')}\n</div>` : ''}
 <div class="cards">
 ${cards}
 </div>
@@ -200,20 +203,27 @@ if (lib){
   <ul class="lib-list">
     ${g.items.map(item).join('\n    ')}
   </ul>`;
-  const sections = lib.sections.map(sec => `<section id="${sec.id}">
+  const section = sec => `<section id="${sec.id}">
   <div class="sec-head"><h2>${sec.title}</h2></div>
   ${sec.note ? `<p>${sec.note}</p>` : ''}
   ${sec.groups.map(group).join('\n  ')}
   ${sec.figure ? `<figure class="lib-fig"><a href="${sec.figure.src}" target="_blank" rel="nofollow"><img src="${sec.figure.src}" alt="${sec.figure.alt}" loading="lazy"></a><figcaption>${sec.figure.caption}</figcaption></figure>` : ''}
-</section>`).join('\n');
+</section>`;
+  // parts: 중간고사·기말고사처럼 시험별로 나눈 묶음
+  const parts = lib.parts.map(pt => `<div class="lib-part" id="${pt.id}">
+<h2 class="lib-part-title">${pt.title}</h2>
+${pt.sections.length ? pt.sections.map(section).join('\n') : `<p class="lib-empty">${pt.empty || '아직 올라온 자료가 없어요.'}</p>`}
+</div>`).join('\n');
+  const partNav = `<nav class="lib-jump">${lib.parts.map(pt => `<a href="#${pt.id}">${pt.title}</a>`).join('')}</nav>`;
   const libBody = `${weekBar(0)}
 <header class="hero">
   <p class="eyebrow">${conf.term} · ${conf.course}</p>
   <h1>${lib.title}</h1>
   <p class="lede">${lib.lede}</p>
 </header>
+${partNav}
 ${lib.notice ? `<p class="caution"><span class="caution-label">부탁</span>${lib.notice}</p>` : ''}
-${sections}
+${parts}
 <footer class="foot"><p>${conf.term} ${conf.course} · 자료실</p></footer>`;
   fs.writeFileSync(path.join(out, 'library.html'), page({
     title: `${lib.title} · ${conf.hubTitle}`, desc: `${conf.course} 자료실`,
@@ -221,5 +231,5 @@ ${sections}
   }));
   console.log('library.html', (fs.statSync(path.join(out, 'library.html')).size / 1024).toFixed(0) + 'KB');
   fs.cpSync('files', path.join(out, 'files'), { recursive: true });
-  console.log('files/ 복사', lib.sections.flatMap(x => x.groups.flatMap(g => g.items.flatMap(i => i.files))).length + '개');
+  console.log('files/ 복사', lib.parts.flatMap(pt => pt.sections).flatMap(x => x.groups.flatMap(g => g.items.flatMap(i => i.files))).length + '개');
 }
