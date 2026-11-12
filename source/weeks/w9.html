@@ -1,0 +1,366 @@
+<nav class="toc" aria-label="목차">
+  <a href="#today">오늘의 범위</a>
+  <a href="#map">큰 그림</a>
+  <a href="#chi">카이제곱 검정의 원리</a>
+  <a href="#gof">적합도 검정</a>
+  <a href="#hom">동질성 검정</a>
+  <a href="#ind">독립성 검정</a>
+  <a href="#vs">동질성 vs 독립성</a>
+  <a href="#two">2×2 표와 Z검정</a>
+  <a href="#map2">큰 그림 다시</a>
+  <a href="#practice">연습문제</a>
+</nav>
+
+<main>
+
+<section id="today">
+  <div class="sec-head"><h2>오늘의 범위</h2><span class="slide-tag">슬라이드 2</span></div>
+  <p>이번에는 7장의 뒷부분인 <b>카이제곱검정</b>을 봐요.</p>
+  <p>카이제곱검정은 비율 여러 개를 비교하거나 변수가 2개 있을 때 쓰여요. 지금까지는 변수가 1개 있을 때 그 변수 하나의 평균, 분산, 비율에 대해 검정해 왔다면, 이제는 변수 자체를 늘리는 경우도 보게 돼요.</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>무엇 ↓ &nbsp;몇 개 →</th><th>1개</th><th>2개</th><th>3개 이상</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">평균</th><td>중간고사 범위<br>\(t,\ Z\)</td><td>이표본, 대응비교<br>\(t\) <span class="nw">(6장)</span></td><td>분산분석<br>\(F\) <span class="nw">(9장)</span></td></tr>
+      <tr><th scope="row">분산</th><td>분산 1개<br>\(\chi^2\) <span class="nw">(6장)</span></td><td>분산 2개<br>\(F\) <span class="nw">(6장)</span></td><td></td></tr>
+      <tr><th scope="row">비율, 범주</th><td>비율 1개<br>\(Z\) <span class="nw">(7장)</span></td><td>비율 2개<br>\(Z\) <span class="nw">(7장)</span></td><td class="c-red"><b>비율 여러 개</b><br>\(\chi^2\) <span class="nw">(7장)</span></td></tr>
+      <tr><th scope="row">관계<br>(변수 2개)</th><td colspan="3">숫자 변수 2개: 상관분석, 회귀분석 \(t,\ F\) <span class="nw">(8장)</span><br><span class="c-red"><b>범주 변수 2개: 독립성 검정</b> \(\chi^2\) <span class="nw">(7장)</span></span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="map">
+  <div class="sec-head"><h2>7장의 큰 그림</h2><span class="slide-tag">슬라이드 3</span></div>
+  <div class="tree">
+    <p class="tree-root">7장: 비율과 범주형 자료</p>
+    <div class="tree-row">
+      <div class="tree-grp">
+        <p class="tree-head">모비율</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">Z검정</p><p>모비율 1개</p></div>
+          <div class="leaf"><p class="leaf-h">Z검정 (합동비율)</p><p>모비율 2개: 같은가? (차이가 0?)</p></div>
+          <div class="leaf"><p class="leaf-h">Z검정 (각자 비율)</p><p>모비율 2개: 차이가 D보다 큰가?</p></div>
+        </div>
+      </div>
+      <div class="tree-grp">
+        <p class="tree-head">범주형 자료</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">적합도 검정 (\(\chi^2\))</p><p>모집단 1개, 범주 비율이 정해짐</p></div>
+          <div class="leaf"><p class="leaf-h">동질성 검정 (\(\chi^2\))</p><p>모집단 여러 개, 따로 뽑음</p></div>
+          <div class="leaf"><p class="leaf-h">독립성 검정 (\(\chi^2\))</p><p>모집단 1개, 특성 2개를 함께 기록</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>범주형 자료의 경우에는 카이제곱검정이라는 걸 이용하는데, 어떤 목적으로 어떻게 실험 설계를 하느냐에 따라 시나리오가 나뉘어요. 적합도 검정, 동질성 검정, 독립성 검정, 총 세 가지를 다뤄요.</p>
+  <p>범주가 2개일 때의 적합도 검정은 모비율 1개에 대한 양측검정과 원리적으로 완전히 동일해요. 범주가 2개이고 모집단이 2개인 동질성 검정과, 두 모비율이 같은지 보는 \(Z\)검정도 원리적으로 동일해요.</p>
+</section>
+
+<section id="chi">
+  <div class="sec-head"><h2>범주형 자료의 \(\chi^2\) 검정</h2><span class="slide-tag">슬라이드 4</span></div>
+  <p class="key">여러 모집단(범주) 비교: 전체적 검정 → 세부적 다중비교</p>
+  <p>오늘 다루는 건 지금까지 검정에서 많이 봐 온 연속형 자료가 아닌 범주형 자료라 조금 다른 부분이 있어요. 그래도 가설검정은 똑같은 구조로 가요.</p>
+  <p>범주형 자료에 대한 검정은 범주가 3개 이상일 때 많이 쓰이는데, 범주가 3개 이상이면 비율이 여러 개라 "\(p_1\)이 \(p_2\)보다 크다" 같은 하나짜리 대립가설을 쓰기 어려워요. 그래서 범주형 자료의 가설검정에서는 <b>귀무가설을 일종의 모델 형태로</b> 세우고, 대립가설은 <b>"귀무가설이 아니다"</b>로 둬요.</p>
+  <p>그래서 전체적인 흐름은, 일단 전체적으로 검정하고, 기각되면 어디가 다른지 세부적으로 보는 거예요. 7장의 카이제곱검정에서는 전체적 검정에 초점을 맞춰요.</p>
+  <p>범주형 자료는 뒤에서 보겠지만 표 형태로 볼 수 있어요. 이때 귀무가설 모델이 맞다면 각 칸에 몇 개쯤 나와야 하는지(추정 기대도수 \(\hat E\))를 모델이 맞다 치고 계산할 수 있고, 실제 개수(관측도수 \(O\))를 세서 그 예측과 실제가 비슷한지 다른지를 비교해요. 그 검정통계량이 아래 식이에요.</p>
+  \[\chi^2=\sum\frac{(O_i-\hat E_i)^2}{\hat E_i}\ \dot\sim\ \chi^2(df)\]
+  <p class="where">조건: 모든 \(\hat E_i\ge5\) (\(\hat E_i=np_i\))</p>
+  <p>변수가 두 개 있더라도 원리는 같아요. 표의 모든 칸에 대해 기대도수와 관측도수의 차를 제곱해서 기대도수로 나눈 뒤 더하면 돼요.</p>
+  <p>이게 왜 카이제곱분포를 따르는지는 강의에서 다뤘으니 여기서는 직관만 볼게요. 관측도수에서 기대도수를 빼고 제곱한 뒤 기대도수로 나누는 건, 일종의 표준화를 하고 제곱하는 과정으로 생각할 수 있어요. 각 기대도수는 모델이 주장하는 그 칸의 확률과 표본의 크기를 곱한 것이라, 이항분포의 기댓값과 같아요. 이제는 범주가 3개 이상이 될 수 있으니 정확히는 이항분포를 확장한 <b>다항분포</b>라고 하지만, 같은 맥락으로 표본이 충분히 크면(이항분포에서는 성공과 실패의 기댓값이, 이제는 모든 범주의 기댓값이 어느 정도 나올 만큼 크면) 정규근사가 돼요. 그러니 결국 정규분포를 표준화해서 제곱한 뒤 칸별로 더한 것이라 카이제곱분포가 된다고 직관적으로 이해할 수 있어요.</p>
+  <p>이 논리를 따라가려면 다항분포의 정규근사가 꼭 필요해요. 모든 기대도수가 5 이상일 만큼 표본의 크기가 커야 이 검정통계량을 쓸 수 있으므로, 카이제곱검정에서는 <span class="c-red"><b>모든 기대도수가 5 이상인지 항상 확인</b></span>해야 해요.</p>
+  <figure class="plate"><img src="{{IMG:w9_chi2}}" alt="자유도 3인 카이제곱분포. 오른쪽 꼬리 부분이 빨갛게 칠해진 기각역" width="1200" height="680"><figcaption>카이제곱검정의 기각역은 항상 오른쪽 꼬리</figcaption></figure>
+  <p>이렇게 만든 검정통계량을 보면, 귀무가설이 맞다면 관측도수와 기대도수가 비슷할 테니 검정통계량이 작을 거예요. 귀무가설이 틀릴수록 관측도수와 기대도수가 양의 방향이든 음의 방향이든 차이가 커질 테니 검정통계량은 커져요.</p>
+  <ul>
+    <li>관측도수 \(O\) ≈ 기대도수 \(E\) → \(H_0\) 맞음</li>
+    <li>관측도수 \(O\)와 기대도수 \(E\)의 차이가 큼 → <span class="c-red">\(H_0\) 기각</span></li>
+  </ul>
+  <p class="key">그래서 카이제곱검정의 기각역은 <span class="c-red">항상 오른쪽 꼬리</span>예요.</p>
+</section>
+
+<section id="gof">
+  <div class="sec-head"><h2>(\(\chi^2\)) 적합도 검정</h2><span class="slide-tag">슬라이드 5</span></div>
+  <p class="key">표본의 분포가 정해진(알려진) 분포와 맞는지 확인</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th></th><th>범주 1</th><th>범주 2</th><th>…</th><th>범주 \(c\)</th><th>합</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">관측도수</th><td>\(O_1\)</td><td>\(O_2\)</td><td>…</td><td>\(O_c\)</td><td>\(n\)</td></tr>
+      <tr><th scope="row">기대도수</th><td class="c-mu">\(np_{10}\)</td><td class="c-mu">\(np_{20}\)</td><td>…</td><td class="c-mu">\(np_{c0}\)</td><td>\(n\)</td></tr>
+    </tbody>
+  </table></div>
+  <p>앞에서 설명한 카이제곱검정은 여러 방법으로 쓰여요. 그중 가장 기본적인 게, 표본의 분포가 귀무가설이 주장하는 분포와 맞는지 확인하는 <b>적합도 검정</b>이에요.</p>
+  <p>이때 귀무가설은 각 범주가 나올 확률이 알려져 있는 어떤 모델과 같다고 말하고, 대립가설은 "귀무가설이 아니다"가 돼요.</p>
+  \[H_0:\ p_i=p_{i0}\quad(i=1,\dots,c),\qquad E_i=n\,p_{i0}\]
+  \[\htmlClass{c-red}{\chi^2=\sum_{i=1}^{c}\frac{(O_i-E_i)^2}{E_i}\ \sim\ \chi^2(c-1)}\]
+  <p>자유도는 기대도수의 합이 전체 합 \(n\)이어야 한다는 제약조건이 있어서, 범주의 개수 \(c\)에서 하나 깎여 \(c-1\)이 돼요. (카이제곱분포의 자유도는 기본적으로 \(Z^2\)을 몇 개 더했느냐인데, 앞에서 봤듯이 여기서는 표본의 크기가 아니라 <b>범주의 개수</b>만큼 더해요. 그래서 기본적으로 \(c\)를 따라가는데, 제약조건이 붙어서 하나가 빠지는 거예요.)</p>
+  <p>당연히 모든 기대도수가 5 이상인지 확인해야 해요.</p>
+  <p>범주가 2개인 경우는 사실상 모비율 1개에 대해 양측검정하는 것과 의미가 같아요. 둘 다 분포가 기대와 같은지 확인하는 거예요. 다만 모비율을 검정할 때는 \(Z\)검정이었는데, 카이제곱은 \(Z^2\)에 대한 검정이라 단측검정이 안 돼요. 그래서 양측검정일 때만 의미가 통해요.</p>
+  <p class="key"><span class="c-red">범주가 2개면 모비율 1개 Z검정(양측)과 같은 검정</span></p>
+</section>
+
+<section id="hom">
+  <div class="sec-head"><h2>(\(\chi^2\)) 동질성 검정</h2><span class="slide-tag">슬라이드 6</span></div>
+  <p class="key">여러 모집단 사이에 범주 분포가 같은지 확인</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th></th><th>범주 1</th><th>…</th><th>범주 \(c\)</th><th>표본크기</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">모집단 1</th><td>\(O_{11}\)</td><td>…</td><td>\(O_{1c}\)</td><td class="c-red">\(n_1\)</td></tr>
+      <tr><th scope="row">⋮</th><td>⋮</td><td></td><td>⋮</td><td>⋮</td></tr>
+      <tr><th scope="row">모집단 \(r\)</th><td>\(O_{r1}\)</td><td>…</td><td>\(O_{rc}\)</td><td class="c-red">\(n_r\)</td></tr>
+      <tr><th scope="row">합계</th><td>\(O_{\cdot1}\)</td><td>…</td><td>\(O_{\cdot c}\)</td><td>\(n\)</td></tr>
+    </tbody>
+  </table></div>
+  <p>앞선 적합도 검정이 하나의 모집단에 대해 여러 범주를 본 거라면, 동질성 검정은 그걸 <b>여러 모집단으로 확장</b>한 거예요. 그래서 모집단에 관계없이 범주의 비율이 같은지를 보는, 일종의 여러 모집단에 대한 적합도 검정과 같아요.</p>
+  <p>이때 귀무가설은 모집단에 관계없이 범주마다의 비율이 같다가 되고, 대립가설은 그게 아니다가 돼요.</p>
+  \[p_{ij}:\ i\text{번째 모집단에서 }j\text{번째 범주의 비율}\]
+  \[H_0:\ p_{1j}=p_{2j}=\cdots=p_{rj}=p_j\quad(j=1,\dots,c),\qquad \hat E_{ij}=n_i\,\hat p_j=n_i\times\frac{O_{\cdot j}}{n}\]
+  \[\htmlClass{c-red}{\chi^2=\sum_{i=1}^{r}\sum_{j=1}^{c}\frac{(O_{ij}-\hat E_{ij})^2}{\hat E_{ij}}\ \sim\ \chi^2\big((r-1)(c-1)\big)}\]
+  <p>원리는 적합도 검정과 비슷하고 그걸 확장한 거라고 이해하면 돼요. 이때는 제약이 행에서 한 번, 열에서 한 번 생기므로 자유도는 (행 수(모집단 수) − 1) × (열 수(범주 수) − 1)이 돼요.</p>
+  <p>당연히 모든 기대도수가 5 이상인지 확인해야 해요.</p>
+  <p>동질성 검정은 여러 모집단을 비교하기 위한 것이므로, 모집단 \(1,2,\dots,r\)의 표본크기 \(n_1,n_2,\dots,n_r\)을 정하고 실험을 수행해요. 따라서 동질성 검정은 <b>각 표본별 크기가 미리 정해져 있다</b>는 특징이 있어요.</p>
+  <p class="key"><span class="c-red">모집단마다 따로 뽑음 → 표본크기(행 합)가 미리 정해짐</span></p>
+  <p>아래 표에서 행 합과 열 합은 고정해 두었어요. 몇 칸을 정하면 나머지가 저절로 정해지는지 직접 바꿔 보세요.</p>
+
+  <div class="panel" id="df9-w">
+    <div class="panel-head">
+      <p class="panel-title">자유도: 몇 칸을 자유롭게 정할 수 있나</p>
+    </div>
+    <p class="panel-sub">2 × 3 표, 행 합 100, 100과 열 합 60, 50, 90은 고정. 파란 두 칸만 슬라이더로 정해요</p>
+    <div class="table-scroll"><table class="plain" id="df9-tab"></table></div>
+    <div class="sliders two">
+      <label class="sl">1행 범주 1 <input type="range" id="df9-a" min="0" max="60" step="1" value="35"><span class="val" id="df9-a-v">35</span></label>
+      <label class="sl">1행 범주 2 <input type="range" id="df9-b" min="0" max="50" step="1" value="20"><span class="val" id="df9-b-v">20</span></label>
+    </div>
+    <div class="w3-out" id="df9-out" aria-live="polite"></div>
+    <p class="panel-note" id="df9-note"></p>
+  </div>
+</section>
+
+<section id="ind">
+  <div class="sec-head"><h2>(\(\chi^2\)) 독립성 검정</h2><span class="slide-tag">슬라이드 7</span></div>
+  <p class="key">한 모집단에서 뽑아 특성 2개(A, B)의 독립성 확인</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th></th><th>\(B_1\)</th><th>…</th><th>\(B_c\)</th><th>합계</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">\(A_1\)</th><td>\(O_{11}\)</td><td>…</td><td>\(O_{1c}\)</td><td>\(O_{1\cdot}\)</td></tr>
+      <tr><th scope="row">⋮</th><td>⋮</td><td></td><td>⋮</td><td>⋮</td></tr>
+      <tr><th scope="row">\(A_r\)</th><td>\(O_{r1}\)</td><td>…</td><td>\(O_{rc}\)</td><td>\(O_{r\cdot}\)</td></tr>
+      <tr><th scope="row">합계</th><td>\(O_{\cdot1}\)</td><td>…</td><td>\(O_{\cdot c}\)</td><td class="c-red">\(n\)</td></tr>
+    </tbody>
+  </table></div>
+  <p>독립성 검정은 동질성 검정과 상황과 구조가 완전히 같아요. 하지만 의미상으로는 <b>하나의 모집단에서 두 변수가 서로 독립인지</b> 확인할 때 쓰는 것이라 의미가 달라요.</p>
+  <p>그래서 검정통계량도 똑같고 카이제곱분포의 자유도도 똑같은데, 의미가 다르고, 또 실험 설계 측면에서 모집단이 하나밖에 없으므로 행이나 열의 도수 합계가 미리 정해져 있지 않고 <b>총 표본의 크기 하나만</b> 정해져 있다는 차이가 있어요.</p>
+  <p>그리고 결합분포와 주변분포를 배울 때, 독립이려면 모든 칸에서 결합확률이 주변확률의 곱과 같으면 된다고 했어요. 독립성 검정은 그걸 확인하는 것과 완전히 같은 의미예요. 그래서 그걸 귀무가설로 써요.</p>
+  \[p_{ij}:\ A\text{의 }i\text{번째},\ B\text{의 }j\text{번째 범주에 속할 확률}\]
+  \[H_0:\ p_{ij}=p_{i\cdot}\times p_{\cdot j}\quad(\text{모든 }i,j),\qquad \hat E_{ij}=n\,\hat p_{i\cdot}\,\hat p_{\cdot j}=n\cdot\frac{O_{i\cdot}}{n}\cdot\frac{O_{\cdot j}}{n}=\frac{O_{i\cdot}\,O_{\cdot j}}{n}\]
+  \[\htmlClass{c-red}{\chi^2=\sum_{i=1}^{r}\sum_{j=1}^{c}\frac{(O_{ij}-\hat E_{ij})^2}{\hat E_{ij}}\ \sim\ \chi^2\big((r-1)(c-1)\big)}\]
+  <p>당연히 모든 기대도수가 5 이상인지 확인해야 해요.</p>
+</section>
+
+<section id="vs">
+  <div class="sec-head"><h2>동질성 vs 독립성</h2><span class="slide-tag">슬라이드 8</span></div>
+  <div class="compare">
+    <div><p class="compare-label">동질성</p><p class="c-mu">모집단 여러 개에서 따로 뽑음<br>(예: 1학년 100명, 4학년 100명)</p><p>\(H_0\): 메뉴 비율이 학년마다 같다</p><p class="c-mu">행 합이 미리 정해짐</p></div>
+    <div><p class="compare-label">독립성</p><p class="c-mu">모집단 1개에서 한 번에 뽑음<br>(예: 학생 200명 뽑고 학년, 메뉴 기록)</p><p>\(H_0\): 학년과 메뉴는 독립이다</p><p class="c-mu">\(n\)만 정해짐</p></div>
+  </div>
+  <p>앞서 말했듯이 동질성과 독립성은 구조가 같기 때문에 답은 똑같이 나와요. 그러나 실험 설계 측면과 가설에서 차이가 있어요. 그래서 헷갈리지 않는 게 중요하고, <b>시험에서 헷갈리게 하는 단골 소재</b>예요.</p>
+  <p>가설을 보면 안 헷갈릴 수 있는데, 대부분의 문제는 가설을 주지 않고 "가설검정을 하라"고 하니 그 헷갈리는 가설을 우리가 써야 해요. 이때 가장 큰 힌트는 문제를 잘 이해하는 것도 있지만, <b>실험 설계 구조를 보는 것</b>이에요. 독립성 검정은 한 모집단 안에서 두 변수가 독립인지를 보는 거니까 총 표본의 크기 하나만 정해요. 그러나 동질성 검정은 모집단별로 범주 비율이 같다고 말해야 하니 각 모집단별로 뽑는 표본의 크기를 하나하나 정해요. 그래서 <b>몇 개의 표본 크기를 정했는가</b>를 보고 동질성과 독립성을 구분할 수 있어요.</p>
+  <p class="key"><span class="c-red">본질적으로 과정이 같음 → 문제를 잘 읽고 구분!</span></p>
+</section>
+
+<section id="two">
+  <div class="sec-head"><h2>2×2 표의 \(\chi^2\) 검정 = 두 모비율 Z검정</h2><span class="slide-tag">슬라이드 9</span></div>
+  <p>예: 남학생 300명, 여학생 300명을 따로 뽑아 동아리 가입 여부를 조사했어요. 괄호 안은 기대도수(행합 × 열합 ÷ \(n\))예요.</p>
+  <div class="table-scroll"><table class="plain">
+    <thead><tr><th></th><th>가입</th><th>미가입</th><th>합</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">남</th><td>120 (105)</td><td>180 (195)</td><td>300</td></tr>
+      <tr><th scope="row">여</th><td>90 (105)</td><td>210 (195)</td><td>300</td></tr>
+      <tr><th scope="row">합</th><td>210</td><td>390</td><td>600</td></tr>
+    </tbody>
+  </table></div>
+  \[\chi^2=\frac{15^2}{105}+\frac{15^2}{195}+\frac{15^2}{105}+\frac{15^2}{195}=\htmlClass{c-red}{6.59}\]
+  \[Z=\frac{0.4-0.3}{\sqrt{0.35\times0.65\left(\frac{1}{300}+\frac{1}{300}\right)}}=2.568,\qquad Z^2=\htmlClass{c-red}{6.59}\]
+  <p>2×2 동질성 검정을 살펴보면, 범주가 두 개밖에 없으므로 한 범주의 도수가 나머지 범주의 도수를 결정해요. 예시에서 가입 도수가 정해지면 미가입 도수가 정해지는 걸 볼 수 있어요. 그러니까 이 예시와 같은 2×2 동질성 검정은 남자의 가입비율 \(p_1\)과 여자의 가입비율 \(p_2\)가 같은지를 따지는 모비율 검정과 의미가 같아요. 그래서 2×2 동질성 검정은 두 모비율에 대한 \(Z\)검정과 같아요.</p>
+  <p>식으로 생각해 봐도, 2×2 동질성 검정은 카이제곱분포의 자유도가 1이므로 그냥 \(Z\) 하나를 제곱한 거라 \(Z\)와 호환이 돼요.</p>
+  \[\chi^2=Z^2,\qquad \text{자유도 }(2-1)(2-1)=1,\qquad \chi^2_{0.05}(1)=3.841=1.96^2=z_{0.025}^2\]
+  <p>이때 유의할 점은, 카이제곱검정은 대립가설이 "귀무가설이 아니다"라서, 작다 크다 같은 세부적인 검정이 아니라 양측검정의 성향을 띤다는 거예요. 그래서 여기서 동일하다고 한 \(Z\)검정은 <b>양측검정에 대해서만</b> 통한다고 이해하면 돼요. 그래서 오른쪽 넓이 임계값으로 \(Z^2\)과 카이제곱을 비교할 때 카이제곱은 0.05, \(Z^2\)은 0.025가 적혀 있어요.</p>
+  <p class="key"><span class="c-red">\(\chi^2\)는 "다르다"(양측)만! 한쪽 방향이나 차이 D는 Z로</span></p>
+  <p>아래에서 가입 인원을 바꿔 보면서, \(\chi^2\)과 \(Z^2\)이 항상 같은지 확인해 보세요.</p>
+
+  <div class="panel" id="zz9-w">
+    <div class="panel-head">
+      <p class="panel-title">2×2 표에서 \(\chi^2\)와 \(Z^2\) 비교</p>
+    </div>
+    <p class="panel-sub">남학생 300명, 여학생 300명. 가입 인원을 바꾸면 기대도수, \(\chi^2\), \(Z\)가 함께 바뀌어요</p>
+    <div class="table-scroll"><table class="plain" id="zz9-tab"></table></div>
+    <div class="sliders two">
+      <label class="sl">남 가입 <input type="range" id="zz9-a" min="30" max="270" step="1" value="120"><span class="val" id="zz9-a-v">120</span></label>
+      <label class="sl">여 가입 <input type="range" id="zz9-b" min="30" max="270" step="1" value="90"><span class="val" id="zz9-b-v">90</span></label>
+    </div>
+    <div class="w3-out" id="zz9-out" aria-live="polite"></div>
+    <p class="panel-note" id="zz9-note"></p>
+  </div>
+</section>
+
+<section id="map2">
+  <div class="sec-head"><h2>큰 그림 다시</h2><span class="slide-tag">슬라이드 10</span></div>
+  <div class="tree">
+    <p class="tree-root">7장: 비율과 범주형 자료</p>
+    <div class="tree-row">
+      <div class="tree-grp">
+        <p class="tree-head">모비율</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">Z검정</p><p>모비율 1개</p></div>
+          <div class="leaf"><p class="leaf-h">Z검정 (합동비율)</p><p>모비율 2개: 같은가? (차이가 0?)</p><p class="leaf-q"><b>연습 1번 (2)</b>와 비교</p></div>
+          <div class="leaf"><p class="leaf-h">Z검정 (각자 비율)</p><p>모비율 2개: 차이가 D보다 큰가?</p><p class="leaf-q"><b>연습 1번 (3)</b></p></div>
+        </div>
+      </div>
+      <div class="tree-grp">
+        <p class="tree-head">범주형 자료</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">적합도 검정 (\(\chi^2\))</p><p>모집단 1개, 범주 비율이 정해짐</p><p class="leaf-q"><b>연습 2번</b>, 추가 4번</p></div>
+          <div class="leaf"><p class="leaf-h">동질성 검정 (\(\chi^2\))</p><p>모집단 여러 개, 따로 뽑음</p><p class="leaf-q"><b>연습 1번 (1), 3번</b></p></div>
+          <div class="leaf"><p class="leaf-h">독립성 검정 (\(\chi^2\))</p><p>모집단 1개, 특성 2개를 함께 기록</p><p class="leaf-q"><b>연습 3번 (4)</b>, 추가 5번</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>처음에 봤던 그림에 연습문제가 어느 가지에 해당하는지 표시해 두었어요. 굵은 글씨는 수업 때 푼 문제, 나머지는 추가 문제예요. 연습 1번은 지난 회차 모비율 2번과 같은 자료를 \(\chi^2\)로 다시 풀어서 위쪽 \(Z\)검정과 연결하는 문제예요. OX로 정리하는 6번(추가 문제)은 오늘 내용 전체를 다 써요.</p>
+</section>
+
+<section id="practice">
+  <div class="sec-head"><h2>연습문제</h2><span class="slide-tag">슬라이드 11–13</span></div>
+  <p>먼저 풀어 보고 풀이를 열어 보세요. 카이제곱분포표는 오른쪽 꼬리 넓이가 \(\alpha\)인 값 \(\chi^2_\alpha(k)\)를 주는 표를 기준으로 했어요. 4번부터는 추가 문제예요.</p>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">1</span>아침 식사를 거르는 학생의 비율이 학년에 따라 다른지 알아보려고, 1학년 250명과 4학년 200명을 각각 무작위로 뽑아 조사했다. 1학년은 95명, 4학년은 52명이 아침을 거른다고 답했다.</p>
+    <ol class="q-sub">
+      <li>(1) 자료를 2×2 표(학년 × 아침을 거름/먹음)로 정리하고, 두 학년의 아침을 거르는 비율이 다르다고 할 수 있는지 \(\chi^2\) 분포를 사용하여 유의수준 5%에서 검정하시오.</li>
+      <li>(2) 합동표본비율을 이용한 두 모비율의 \(Z\) 검정통계량을 구하고, (1)의 \(\chi^2\) 값과 비교하시오.</li>
+      <li>(3) "1학년의 비율이 4학년보다 0.05를 초과하여 크다"는 주장은 \(\chi^2\) 검정으로 검정할 수 없다. 그 이유를 쓰시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>2×2 표: 1학년 95 / 155 (합 250), 4학년 52 / 148 (합 200), 열 합 147 / 303, \(n=450\). 학년별로 따로 뽑았으니 동질성 검정.</p>
+      <p>(1) \(H_0:p_1=p_2\) vs \(H_1:p_1\ne p_2\). 기대도수 \(250\times\frac{147}{450}=81.67\), \(168.33\), \(200\times\frac{147}{450}=65.33\), \(134.67\) (모두 5 이상). \(\chi^2=\dfrac{13.33^2}{81.67}+\dfrac{13.33^2}{168.33}+\dfrac{13.33^2}{65.33}+\dfrac{13.33^2}{134.67}=2.177+1.056+2.721+1.320=7.27\gt\chi^2_{0.05}(1)=3.841\) → 기각. 아침을 거르는 비율이 학년에 따라 다르다고 할 수 있다. (p value ≈ 0.007)</p>
+      <p>(2) 합동비율 \(\hat p=147/450=0.3267\), \(SE=\sqrt{0.3267\times0.6733\left(\frac1{250}+\frac1{200}\right)}=0.0445\), \(z=\dfrac{0.38-0.26}{0.0445}=2.70\). \(z^2=7.27=\chi^2\)이고, 임계값도 \(1.96^2=3.841\)로 같아서 같은 결론이다.</p>
+      <p>(3) \(\chi^2\)는 차이를 제곱해서 모으므로 방향이 사라져 "다르다"(양측)만 검정할 수 있고, 귀무가설도 "같다"(차이 0)만 다룬다. 차이가 0.05를 넘는지(단측, \(D\ne0\))는 각자 비율로 구한 \(Z\) 검정으로 해야 한다.</p>
+      <p class="sol-note">2×2 동질성 \(\chi^2\) = 합동비율 \(Z^2\). 네 칸의 \(|O-E|\)가 모두 13.33으로 같은 것도 2×2 표의 특징이에요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">2</span>학생식당의 네 코너(한식, 양식, 분식, 샐러드) 이용 비율은 작년 조사에서 35%, 30%, 20%, 15%였다. 올해 어느 날 점심 이용 학생 400명을 무작위로 골라 이용한 코너를 조사한 결과가 다음과 같다.</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>코너</th><th>한식</th><th>양식</th><th>분식</th><th>샐러드</th><th>합</th></tr></thead>
+      <tbody><tr><th scope="row">이용 학생 수</th><td>118</td><td>142</td><td>70</td><td>70</td><td>400</td></tr></tbody>
+    </table></div>
+    <ol class="q-sub">
+      <li>(1) 올해 코너별 이용 비율이 작년과 달라졌다고 할 수 있는지 유의수준 5%에서 검정하고, 결론을 문장으로 쓰시오.</li>
+      <li>(2) 기대도수와 가장 크게 어긋난 코너는 어디인지 쓰고, 그 코너는 기대보다 많았는지 적었는지 쓰시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) \(H_0\): 코너별 이용 비율이 0.35, 0.30, 0.20, 0.15이다 vs \(H_1\): \(H_0\)가 아니다. 기대도수 \(E=400\times\)비율 \(=140,\ 120,\ 80,\ 60\). \(\chi^2=\dfrac{22^2}{140}+\dfrac{22^2}{120}+\dfrac{10^2}{80}+\dfrac{10^2}{60}=3.457+4.033+1.250+1.667=10.41\). 자유도 \(4-1=3\), \(\chi^2_{0.05}(3)=7.815\) → 기각. 올해 코너별 이용 비율은 작년과 달라졌다고 할 수 있다. (p value ≈ 0.015)</p>
+      <p>(2) 항별 기여가 가장 큰 것은 양식(4.03). 기대 120명보다 많았다(142명).</p>
+      <p class="sol-note">\(E\)는 비율이 아니라 개수예요. 자유도는 범주 수 − 1. 차이 크기(22)가 같아도 \(E\)가 작은 양식이 한식보다 \(\chi^2\)에 더 크게 기여해요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">3</span>직장인과 대학생이 좋아하는 운동이 다른지 알아보려고, 직장인 180명과 대학생 220명을 각각 무작위로 뽑아 가장 좋아하는 운동을 조사했다. 조사 결과와 컴퓨터로 \(\chi^2\) 검정을 실행한 결과가 다음과 같다.</p>
+    <p class="where">&lt;조사 결과&gt;</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th></th><th>헬스</th><th>러닝</th><th>구기</th><th>합</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">직장인</th><td>80</td><td>60</td><td>40</td><td>180</td></tr>
+        <tr><th scope="row">대학생</th><td>70</td><td>60</td><td>90</td><td>220</td></tr>
+      </tbody>
+    </table></div>
+    <p class="where">&lt;결과 1: 각 칸의 기대도수&gt;</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th></th><th>헬스</th><th>러닝</th><th>구기</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">직장인</th><td>67.5</td><td>54.0</td><td>58.5</td></tr>
+        <tr><th scope="row">대학생</th><td>82.5</td><td>66.0</td><td>71.5</td></tr>
+      </tbody>
+    </table></div>
+    <div class="table-scroll"><pre class="rout">&lt;결과 2&gt;  X-squared = 16.058, df = 2, p-value = 0.000326</pre></div>
+    <ol class="q-sub">
+      <li>(1) 표본을 뽑은 방식에 맞는 검정의 이름을 쓰고, 귀무가설과 대립가설을 세우시오.</li>
+      <li>(2) 결과 1에서 직장인-헬스 칸의 기대도수 67.5가 어떻게 계산되었는지 쓰시오.</li>
+      <li>(3) 결과 2를 이용하여 유의수준 5%에서 결론을 내리시오.</li>
+      <li>(4) 만약 400명을 한 번에 무작위로 뽑아 직장인인지 대학생인지와 좋아하는 운동을 함께 기록했다면, 검정의 이름과 귀무가설은 어떻게 달라지는가?</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) 직장인, 대학생을 각각 따로 뽑았으니(행 합 180, 220이 미리 정해짐) <b>동질성 검정</b>. \(H_0\): 좋아하는 운동의 비율이 직장인과 대학생에서 같다. \(H_1\): \(H_0\)가 아니다(적어도 한 운동의 비율은 다르다).</p>
+      <p>(2) \(\hat E=n_1\times\dfrac{O_{\cdot1}}{n}=180\times\dfrac{80+70}{400}=67.5\) (행합 × 열합 ÷ \(n\)).</p>
+      <p>(3) 자유도 \((2-1)(3-1)=2\). p value \(0.000326\lt0.05\) → 기각 (또는 \(16.06\gt\chi^2_{0.05}(2)=5.991\)). 좋아하는 운동의 비율이 직장인과 대학생 사이에 다르다고 할 수 있다.</p>
+      <p>(4) <b>독립성 검정</b>. \(H_0\): 직업(직장인/대학생)과 좋아하는 운동은 독립이다. \(H_1\): 독립이 아니다. 기대도수, \(\chi^2\), 자유도 계산은 같다.</p>
+      <p class="sol-note">계산은 같고, 표본을 뽑은 방식이 검정 이름과 가설을 정해요. 시험에서는 검정 이름 + 가설 + 결론 문장이 점수예요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">4</span>(추가 문제) 한 도서관에서 지난 학기 평일 반납 연체 150건을 무작위로 골라 요일별로 정리했다. 연체가 요일마다 고르게 일어난다고 할 수 있는지 알아보려고 한다.</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>요일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>합</th></tr></thead>
+      <tbody><tr><th scope="row">연체 건수</th><td>38</td><td>27</td><td>25</td><td>22</td><td>38</td><td>150</td></tr></tbody>
+    </table></div>
+    <ol class="q-sub">
+      <li>(1) 연체가 요일에 따라 고르지 않다고 할 수 있는지 유의수준 5%에서 검정하시오.</li>
+      <li>(2) 카이제곱분포표를 이용하여 이 검정의 p value가 0.1보다 큰지 작은지 판단하시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) \(H_0\): 요일별 연체 비율이 모두 1/5이다 vs \(H_1\): \(H_0\)가 아니다. \(E=150\times\frac15=30\). \(\chi^2=\dfrac{8^2+3^2+5^2+8^2+8^2}{30}=\dfrac{226}{30}=7.53\lt\chi^2_{0.05}(4)=9.488\) → 기각 못 함. 연체가 요일에 따라 고르지 않다고 할 수 없다.</p>
+      <p>(2) \(7.53\lt\chi^2_{0.1}(4)=7.779\)이므로 p value는 0.1보다 크다. (실제 ≈ 0.110)</p>
+      <p class="sol-note">"고르게" = 모든 범주의 비율이 같다는 적합도예요. 기각 못 함은 "고르다"의 증명이 아니라 증거가 부족하다는 뜻이에요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">5</span>(추가 문제) 한 대학의 학생 200명을 무작위로 뽑아 거주 형태와 아침 식사 여부를 함께 조사한 결과가 다음과 같다.</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th></th><th>먹음</th><th>거름</th><th>합</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">자취</th><td>22</td><td>38</td><td>60</td></tr>
+        <tr><th scope="row">기숙사</th><td>30</td><td>20</td><td>50</td></tr>
+        <tr><th scope="row">통학</th><td>52</td><td>38</td><td>90</td></tr>
+        <tr><th scope="row">합</th><td>104</td><td>96</td><td>200</td></tr>
+      </tbody>
+    </table></div>
+    <ol class="q-sub">
+      <li>(1) 알맞은 검정의 이름을 쓰고 귀무가설과 대립가설을 세우시오.</li>
+      <li>(2) 각 칸의 기대도수를 구하시오.</li>
+      <li>(3) 거주 형태와 아침 식사 여부가 관계가 있다고 할 수 있는지 유의수준 5%에서 검정하시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) 200명을 한 번에 뽑아 두 특성을 함께 기록했으니 <b>독립성 검정</b>. \(H_0\): 거주 형태와 아침 식사 여부는 독립이다. \(H_1\): 독립이 아니다.</p>
+      <p>(2) \(\hat E_{ij}=\dfrac{\text{행합}\times\text{열합}}{n}\): 자취 \(\dfrac{60\times104}{200}=31.2\), \(28.8\) / 기숙사 \(26.0\), \(24.0\) / 통학 \(46.8\), \(43.2\).</p>
+      <p>(3) \(\chi^2=\dfrac{9.2^2}{31.2}+\dfrac{9.2^2}{28.8}+\dfrac{4^2}{26}+\dfrac{4^2}{24}+\dfrac{5.2^2}{46.8}+\dfrac{5.2^2}{43.2}=2.713+2.939+0.615+0.667+0.578+0.626=8.14\). 자유도 \((3-1)(2-1)=2\), \(\chi^2_{0.05}(2)=5.991\) → 기각. 거주 형태와 아침 식사 여부는 관계가 있다고 할 수 있다(자취생이 아침을 더 많이 거름). (p value ≈ 0.017)</p>
+      <p class="sol-note">열이 2개인 표에서는 행마다 \(|O-E|\)가 같아요. 관계가 있다는 것은 인과가 아니라 같이 움직인다는 뜻이에요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">6</span>(추가 문제) 다음 설명이 옳으면 O, 옳지 않으면 X를 표시하고, X인 것은 바르게 고치시오.</p>
+    <ol class="q-sub">
+      <li>(1) \(\chi^2\) 검정에서 대립가설이 "다르다"이면 기각역을 양쪽 꼬리에 \(\alpha/2\)씩 둔다.</li>
+      <li>(2) 기대도수는 귀무가설의 비율을 그대로 쓰면 되므로 0.25처럼 비율로 계산한다.</li>
+      <li>(3) 적합도 검정에서 범주가 5개이면 검정통계량의 자유도는 4이다.</li>
+      <li>(4) 2×3 분할표로 독립성 검정을 하면 자유도는 6이다.</li>
+      <li>(5) 기대도수가 5보다 작은 칸이 있어도 \(\chi^2\) 분포 근사를 그대로 쓸 수 있다.</li>
+      <li>(6) 범주가 2개인 적합도 검정은 모비율 1개에 대한 양측 \(Z\) 검정과 같은 결론을 준다.</li>
+      <li>(7) 동질성 검정과 독립성 검정은 기대도수 계산 방법이 서로 다르다.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) X: \(\chi^2\) 검정은 항상 오른쪽 꼬리만.</p>
+      <p>(2) X: 기대도수는 \(n\times\)비율로 구한 개수.</p>
+      <p>(3) O: \(c-1=4\).</p>
+      <p>(4) X: \((2-1)(3-1)=2\).</p>
+      <p>(5) X: 모든 칸의 기대도수가 5 이상이어야 근사가 맞다.</p>
+      <p>(6) O: \(\chi^2=Z^2\).</p>
+      <p>(7) X: 둘 다 행합 × 열합 ÷ \(n\)으로 같다. 다른 것은 표본을 뽑는 방식과 가설.</p>
+      <p class="sol-note">(1)은 \(\chi^2\)가 차이를 제곱해서 모으기 때문에 "다르다"여도 큰 쪽만 귀무가설에 불리해요.</p>
+    </details>
+  </article>
+</section>
+
+</main>
