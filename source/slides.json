@@ -6,5 +6,7 @@
   "10/14": { "path": "files/slides/261014.pdf", "save": "261014_5장-6장.pdf" },
   "10/21": { "link": "library.html#mock", "label": "자료실" },
   "10/28": { "path": "files/slides/261028.pdf", "save": "261028_기말 범위 미리보기.pdf" },
-  "11/4":  { "path": "files/slides/261104.pdf", "save": "261104_6장.pdf" }
+  "11/4":  { "path": "files/slides/261104.pdf", "save": "261104_6장.pdf" },
+  "11/11": { "path": "files/slides/261111.pdf", "save": "261111_7장(모비율).pdf" },
+  "11/12": { "path": "files/slides/261112.pdf", "save": "261112_7장(카이제곱 검정).pdf" }
 }

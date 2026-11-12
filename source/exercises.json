@@ -1,0 +1,66 @@
+{
+  "9/23": [
+    {
+      "label": "연습문제",
+      "path": "files/exercises/260923.pdf",
+      "save": "260923_연습문제.pdf"
+    }
+  ],
+  "9/30": [
+    {
+      "label": "연습문제",
+      "path": "files/exercises/260930.pdf",
+      "save": "260930_연습문제.pdf"
+    },
+    {
+      "label": "풀이",
+      "path": "files/exercises/260930-sol.pdf",
+      "save": "260930_연습문제 풀이.pdf"
+    }
+  ],
+  "10/7": [
+    {
+      "label": "연습문제",
+      "path": "files/exercises/261007.pdf",
+      "save": "261007_연습문제.pdf"
+    },
+    {
+      "label": "풀이",
+      "path": "files/exercises/261007-sol.pdf",
+      "save": "261007_연습문제 풀이.pdf"
+    }
+  ],
+  "10/14": [
+    {
+      "label": "연습문제",
+      "path": "files/exercises/261014.pdf",
+      "save": "261014_연습문제.pdf"
+    }
+  ],
+  "11/4": [
+    {
+      "label": "연습문제",
+      "path": "files/exercises/261104.pdf",
+      "save": "261104_연습문제.pdf"
+    },
+    {
+      "label": "풀이",
+      "path": "files/exercises/261104-sol.pdf",
+      "save": "261104_연습문제 풀이.pdf"
+    }
+  ],
+  "11/11": [
+    {
+      "label": "연습문제",
+      "path": "files/exercises/261111.pdf",
+      "save": "261111_연습문제(모비율).pdf"
+    }
+  ],
+  "11/12": [
+    {
+      "label": "연습문제",
+      "path": "files/exercises/261112.pdf",
+      "save": "261112_연습문제(카이제곱 검정).pdf"
+    }
+  ]
+}

@@ -1,0 +1,271 @@
+<nav class="toc" aria-label="목차">
+  <a href="#today">오늘의 범위</a>
+  <a href="#map">큰 그림</a>
+  <a href="#phat">표본비율의 분포</a>
+  <a href="#test1">모비율의 검정</a>
+  <a href="#ci1">모비율의 신뢰구간</a>
+  <a href="#size">표본크기</a>
+  <a href="#two">두 모비율의 비교</a>
+  <a href="#pooled">합동표본비율</a>
+  <a href="#se">정리: 표준오차</a>
+  <a href="#map2">큰 그림 다시</a>
+  <a href="#practice">연습문제</a>
+</nav>
+
+<main>
+
+<section id="today">
+  <div class="sec-head"><h2>오늘의 범위</h2><span class="slide-tag">슬라이드 2</span></div>
+  <p>지난 시간에는 독립 이표본 검정, 대응비교, 그리고 분산 1개에 대한 검정과 분산 2개에 대한 검정까지 봤어요.</p>
+  <p>이번에는 아래 표에서 빨간 칸, <b>비율에 대한 검정</b>(비율 1개, 비율 2개)을 봐요. 비율 여러 개에 대한 검정인 카이제곱 검정은 다음 회차에서 이어서 봐요.</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>무엇 ↓ &nbsp;몇 개 →</th><th>1개</th><th>2개</th><th>3개 이상</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">평균</th><td>중간고사 범위<br>\(t,\ Z\)</td><td>이표본, 대응비교<br>\(t\) <span class="nw">(6장)</span></td><td>분산분석<br>\(F\) <span class="nw">(9장)</span></td></tr>
+      <tr><th scope="row">분산</th><td>분산 1개<br>\(\chi^2\) <span class="nw">(6장)</span></td><td>분산 2개<br>\(F\) <span class="nw">(6장)</span></td><td></td></tr>
+      <tr><th scope="row">비율, 범주</th><td class="c-red"><b>비율 1개</b><br>\(Z\) <span class="nw">(7장)</span></td><td class="c-red"><b>비율 2개</b><br>\(Z\) <span class="nw">(7장)</span></td><td>비율 여러 개<br>\(\chi^2\) <span class="nw">(7장)</span></td></tr>
+      <tr><th scope="row">관계<br>(변수 2개)</th><td colspan="3">숫자 변수 2개: 상관분석, 회귀분석 \(t,\ F\) <span class="nw">(8장)</span><br>범주 변수 2개: 독립성 검정 \(\chi^2\) <span class="nw">(7장)</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="map">
+  <div class="sec-head"><h2>7장의 큰 그림</h2><span class="slide-tag">슬라이드 3</span></div>
+  <div class="tree">
+    <p class="tree-root">7장: 비율과 범주형 자료</p>
+    <div class="tree-row">
+      <div class="tree-grp">
+        <p class="tree-head">모비율</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">Z검정</p><p>모비율 1개</p></div>
+          <div class="leaf"><p class="leaf-h">Z검정 (합동비율)</p><p>모비율 2개: 같은가? (차이가 0?)</p></div>
+          <div class="leaf"><p class="leaf-h">Z검정 (각자 비율)</p><p>모비율 2개: 차이가 D보다 큰가?</p></div>
+        </div>
+      </div>
+      <div class="tree-grp">
+        <p class="tree-head">범주형 자료</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">적합도 검정 (\(\chi^2\))</p><p>모집단 1개, 범주 비율이 정해짐</p></div>
+          <div class="leaf"><p class="leaf-h">동질성 검정 (\(\chi^2\))</p><p>모집단 여러 개, 따로 뽑음</p></div>
+          <div class="leaf"><p class="leaf-h">독립성 검정 (\(\chi^2\))</p><p>모집단 1개, 특성 2개를 함께 기록</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>7장의 전체적인 내용이에요. 크게 두 갈래로, 하나는 <b>모비율에 대한 검정</b>, 하나는 <b>범주형 자료에 대한 검정</b>이에요.</p>
+  <p>모비율은 사실 원리적으로 0과 1의 값을 갖는 확률변수의 평균이라, 평균과 아예 동일해요. 그래서 그 시나리오가 평균에 대한 검정일 때와 완전히 같아요.</p>
+  <p>범주형 자료의 경우에는 카이제곱검정이라는 걸 이용하는데, 이때는 어떤 목적으로 어떻게 실험 설계를 하느냐에 따라 시나리오가 나뉘어요. 적합도 검정, 동질성 검정, 독립성 검정, 총 세 가지를 다뤄요. (이 부분은 다음 회차에서 봐요.)</p>
+  <p class="where">범주가 2개일 때의 적합도 검정은 모비율 1개에 대한 양측검정과 원리적으로 완전히 동일해요. 범주가 2개이고 모집단이 2개인 동질성 검정과, 두 모비율이 같은지 보는 \(Z\)검정도 원리적으로 동일해요.</p>
+</section>
+
+<section id="phat">
+  <div class="sec-head"><h2>(모비율) 표본비율의 분포</h2><span class="slide-tag">슬라이드 4</span></div>
+  <p class="key">비율 = 0과 1의 평균 → 평균이랑 똑같이 \(Z\)!</p>
+  <p>우리가 검정을 통해 알아내고 싶은 모비율은, 결국 모집단을 0과 1로 이루어진 확률변수로 바꿔 생각했을 때 그중 1의 비율이에요.</p>
+  <p>그러면 모비율을 추정하는 표본비율은, 성공확률이 \(p\)인 이항분포를 따르는 확률변수(표본합)를 표본의 크기 \(n\)으로 나눈 것으로 이해할 수 있고, 이건 사실상 표본평균과 원리적으로 동일해요.</p>
+  \[X\sim B(n,p)\ \Rightarrow\ \hat p=\frac{1}{n}\sum_{i=1}^{n}X_i=\frac{X}{n}\]
+  <p>따라서 모비율 \(p\)의 추정량인 \(\hat p\)는 이항분포를 따르는 확률변수를 \(n\)으로 나눈 것이므로, 평균과 분산을 이항분포의 평균과 분산에서 유도해서 생각할 수 있어요.</p>
+  \[E(\hat p)=p,\qquad \mathrm{Var}(\hat p)=\frac{p(1-p)}{n}\]
+  <p>그리고 이항분포를 따르는 확률변수는 표본의 크기가 적당히 크면(성공과 실패의 기댓값이 둘 다 5 이상이면) 중심극한정리(CLT)를 적용해서 정규근사할 수 있었어요. 여기에도 그대로 적용돼서, 표본이 적당히 크면 \(\hat p\)는 정규근사가 돼요.</p>
+  \[\htmlClass{c-mu}{\hat p\ \dot\sim\ N\!\left(p,\ \frac{p(1-p)}{n}\right)}\]
+  <p class="where">단, \(np\ge5,\ n(1-p)\ge5\)</p>
+  <p>아래에서 \(n\)과 \(p\)를 바꿔 보면서, 표본비율의 실제 분포(막대)가 언제 정규분포(곡선)와 비슷해지는지 확인해 보세요.</p>
+
+  <div class="panel" id="pb8-w">
+    <div class="panel-head">
+      <p class="panel-title">표본비율의 분포와 정규근사</p>
+    </div>
+    <p class="panel-sub">막대: \(\hat p=X/n\)의 실제 분포(이항분포) · 곡선: 정규근사 \(N\!\left(p,\ p(1-p)/n\right)\)</p>
+    <svg id="pb8-svg" viewBox="0 0 560 210" role="img" aria-label="표본비율의 실제 분포를 막대로, 정규근사를 곡선으로 겹쳐 그린 그림"></svg>
+    <div class="sliders two">
+      <label class="sl">\(n\) <input type="range" id="pb8-n" min="5" max="200" step="1" value="20"><span class="val" id="pb8-n-v">20</span></label>
+      <label class="sl">\(p\) <input type="range" id="pb8-p" min="0.02" max="0.98" step="0.01" value="0.1"><span class="val" id="pb8-p-v">0.10</span></label>
+    </div>
+    <div class="w3-out" id="pb8-out" aria-live="polite"></div>
+    <p class="panel-note" id="pb8-note"></p>
+  </div>
+</section>
+
+<section id="test1">
+  <div class="sec-head"><h2>(모비율) 검정</h2><span class="slide-tag">슬라이드 5</span></div>
+  <p>표본비율은 표본이 적당히 크면 정규근사가 되므로, 정규근사된 상황에서 모비율 하나에 대해 검정하고 싶으면 표준화해서 \(Z\)검정을 하면 돼요. 표본평균을 검정할 때와 원리적으로 같아요.</p>
+  \[H_0:\ p=p_0\]
+  \[Z=\frac{\hat p-p_0}{\sqrt{\htmlClass{c-red}{p_0}(1-\htmlClass{c-red}{p_0})/n}}\ \dot\sim\ N(0,1)\]
+  <p class="where">조건: \(np_0\ge5,\ n(1-p_0)\ge5\)</p>
+  <p>검정통계량은 <b>귀무가설이 맞다는 전제</b> 아래에서 계산하므로, 표준오차의 \(p\) 자리에 귀무가설이 주장하는 \(p_0\)를 넣어 주면 돼요.</p>
+</section>
+
+<section id="ci1">
+  <div class="sec-head"><h2>(모비율) 신뢰구간</h2><span class="slide-tag">슬라이드 6</span></div>
+  <p class="key">왼쪽 넓이 \(\tfrac{\alpha}{2}\) 임계값 ≤ 검정통계량 ≤ 오른쪽 넓이 \(\tfrac{\alpha}{2}\) 임계값</p>
+  <p>신뢰구간은 지난 시간에 본 것과 똑같이, 왼쪽 넓이와 오른쪽 넓이가 \(\alpha/2\)가 되게 하는 임계값 사이에 검정통계량이 들어가게 하면 돼요. 여기서 우리가 남기고 싶은 모수는 분자에서 빼 주는 모비율 \(p\)예요.</p>
+  \[-z_{\alpha/2}\ \le\ \frac{\hat p-p}{\sqrt{\htmlClass{c-red}{p}(1-\htmlClass{c-red}{p})/n}}\ \le\ z_{\alpha/2}\]
+  <p>그런데 모비율에 대한 검정통계량은 분모에 들어가는 <b>표준오차에도 모수 \(p\)가 들어가는데</b>, 이걸 우리가 몰라요. 그런데 어차피 \(n\)이 크면 모비율과 표본비율은 비슷해지므로(큰 수의 법칙) 그 자리를 \(\hat p\)로 대신 써 주면 돼요.</p>
+  \[-z_{\alpha/2}\ \le\ \frac{\hat p-p}{\sqrt{\htmlClass{c-red}{\hat p}(1-\htmlClass{c-red}{\hat p})/n}}\ \le\ z_{\alpha/2}\]
+  <p>이 상태에서 \(p\)에 대해 정리하면, 모비율에 대한 신뢰구간을 구할 수 있어요.</p>
+  \[\htmlClass{c-mu}{\hat p-z_{\alpha/2}\sqrt{\frac{\hat p(1-\hat p)}{n}}\ \le\ p\ \le\ \hat p+z_{\alpha/2}\sqrt{\frac{\hat p(1-\hat p)}{n}}}\]
+</section>
+
+<section id="size">
+  <div class="sec-head"><h2>(모비율) 표본크기 정하기</h2><span class="slide-tag">슬라이드 7</span></div>
+  <p>표본을 많이 뽑을수록 구간의 크기는 줄어들어요. 그럼 원하는 구간의 크기를 맞추기 위해 필요한 표본의 크기도 이론적으로 거꾸로 계산할 수 있어요.</p>
+  <p>오차한계 \(d\)는 이렇게 쓸 수 있어요.</p>
+  \[d=z_{\alpha/2}\sqrt{\frac{p(1-p)}{n}}\]
+  <p>오차한계를 \(d\) 이하로 하려면, 등호를 만족하는 \(n\)보다 큰 \(n\)을 가지면 돼요. 이때 \(p\) 자리에는 추정값 \(p^*\)가 있으면 그걸 쓰면 돼요.</p>
+  \[n\ \ge\ \left(\frac{z_{\alpha/2}}{d}\right)^{2}p^{*}(1-p^{*})\qquad\text{(추정값 }p^*\text{가 있을 때)}\]
+  <p>만약 \(p\)에 대한 정보가 없다면, \(p\)가 0.5일 때 \(p(1-p)\)가 최대가 되므로 이게 가장 보수적인 상한이 돼요. 그래서 그때는 \(0.5\times0.5=0.25\), 곧 \(\tfrac14\)을 넣으면 돼요.</p>
+  \[\htmlClass{c-mu}{n\ \ge\ \frac{1}{4}\left(\frac{z_{\alpha/2}}{d}\right)^{2}}\qquad\text{(사전 정보가 없을 때)}\]
+  <figure class="plate"><img src="{{IMG:w8_pq}}" alt="p(1-p)를 p에 대해 그린 포물선. p = 0.5에서 최댓값 0.25" width="800" height="600"><figcaption>\(p(1-p)\)는 \(p=0.5\)에서 최대 0.25</figcaption></figure>
+  <p>여기까지가 모비율 하나에 대한 이야기예요.</p>
+</section>
+
+<section id="two">
+  <div class="sec-head"><h2>두 모비율의 비교</h2><span class="slide-tag">슬라이드 8</span></div>
+  <p>이번에는 모비율 두 개를 비교해 볼게요. 앞선 내용과 마찬가지로, 두 모비율을 비교할 때도 표본평균(두 모평균의 비교)과 똑같이 생각하면 돼요.</p>
+  \[(p_1-p_2)\ \to\ (\hat p_1-\hat p_2)\ \sim\ \left(p_1-p_2,\ \frac{p_1(1-p_1)}{n_1}+\frac{p_2(1-p_2)}{n_2}\right)\]
+  <p>다만 비율이므로 정규분포를 쓰려면 중심극한정리를 이용해야만 해서, 1번 표본과 2번 표본이 각각 적당히 커서 정규근사 조건을 만족해야 정규근사를 할 수 있어요.</p>
+  <p class="where">정규근사 조건: \(n_1p_1\ge5,\ n_1(1-p_1)\ge5,\ n_2p_2\ge5,\ n_2(1-p_2)\ge5\)</p>
+  <p>두 표본비율의 차는 위와 같은 분포를 가지고, 둘 다 정규근사가 되면 이 차 역시 정규근사하면 돼요.</p>
+  <p>그런데 두 표본비율의 차의 분포를 안다고 해도, 우리는 모수인 \(p_1\)과 \(p_2\)를 모르므로 그 추정치인 \(\hat p_1\)과 \(\hat p_2\)를 이용하게 돼요. 이때 <b>귀무가설이 무엇이냐에 따라</b> 평균과 분산 자리에 어떤 비율이 들어가는지가 달라져요.</p>
+  <div class="formula-grid">
+    <div><p class="compare-label">귀무가설이 "같다"</p>\[H_0:\ p_1=p_2\ \Rightarrow\ \text{합동비율 }\hat p\]</div>
+    <div><p class="compare-label">귀무가설이 "차이가 D"</p>\[H_0:\ p_1-p_2=D\ \Rightarrow\ \text{각자 }\hat p_1,\ \hat p_2\]</div>
+  </div>
+</section>
+
+<section id="pooled">
+  <div class="sec-head"><h2>(두 모비율) \(p_1=p_2=p\)이면</h2><span class="slide-tag">슬라이드 9</span></div>
+  \[\hat p_1\ \dot\sim\ N\!\left(p,\ \frac{p(1-p)}{n_1}\right),\qquad \hat p_2\ \dot\sim\ N\!\left(p,\ \frac{p(1-p)}{n_2}\right)\]
+  \[\htmlClass{c-mu}{\hat p_1-\hat p_2\ \dot\sim\ N\!\left(0,\ \htmlClass{c-red}{p(1-p)}\left(\frac{1}{n_1}+\frac{1}{n_2}\right)\right)}\]
+  <p>귀무가설이 두 모비율이 같다고 가정하면, 독립 이표본 검정의 등분산 가정에서 합동표본분산을 이용했던 것처럼, 두 표본비율을 표본의 크기로 가중평균한 <b>합동표본비율</b>을 검정에 이용해요. 공통인 \(p\) 하나를 두 표본을 합쳐서 추정하는 거예요.</p>
+  \[\htmlClass{c-red}{\hat p=\frac{n_1\hat p_1+n_2\hat p_2}{n_1+n_2}=\frac{X_1+X_2}{n_1+n_2}}\]
+  <p class="where">합동표본비율 = 표본 크기로 가중평균 (6장 합동표본분산처럼)</p>
+  <p>그런데 만약 귀무가설이 두 모비율의 차이가 0이 아닌 어떤 수라고 하면, 그때는 따로따로 모비율 자리에 표본비율을 넣어 주면 돼요.</p>
+  <p>아래에서 두 표본의 크기와 성공 개수를 바꿔 보면서, 합동표본비율이 어디에 놓이고 표준오차가 어떻게 달라지는지 확인해 보세요.</p>
+
+  <div class="panel" id="pp8-w">
+    <div class="panel-head">
+      <p class="panel-title">합동표본비율은 어디에 놓일까</p>
+    </div>
+    <p class="panel-sub">\(\hat p\)는 두 표본비율을 각자의 표본 크기 \(n\)만큼의 비중으로 섞은 값이에요</p>
+    <svg id="pp8-svg" viewBox="0 0 560 150" role="img" aria-label="두 표본비율과 합동표본비율, 단순평균의 위치를 수직선 위에 표시한 그림"></svg>
+    <div class="sliders four">
+      <label class="sl">\(n_1\) <input type="range" id="pp8-n1" min="20" max="500" step="10" value="250"><span class="val" id="pp8-n1-v">250</span></label>
+      <label class="sl">\(\hat p_1\) <input type="range" id="pp8-p1" min="0.02" max="0.98" step="0.01" value="0.38"><span class="val" id="pp8-p1-v">0.38</span></label>
+      <label class="sl">\(n_2\) <input type="range" id="pp8-n2" min="20" max="500" step="10" value="200"><span class="val" id="pp8-n2-v">200</span></label>
+      <label class="sl">\(\hat p_2\) <input type="range" id="pp8-p2" min="0.02" max="0.98" step="0.01" value="0.26"><span class="val" id="pp8-p2-v">0.26</span></label>
+    </div>
+    <div class="w3-out" id="pp8-out" aria-live="polite"></div>
+    <p class="panel-note" id="pp8-note"></p>
+  </div>
+</section>
+
+<section id="se">
+  <div class="sec-head"><h2>정리: 표준오차 자리만 바뀌어요</h2><span class="slide-tag">슬라이드 10</span></div>
+  \[\frac{(\hat p_1-\hat p_2)-D}{SE(\hat p_1-\hat p_2)}\]
+  <div class="formula-grid">
+    <div><p class="compare-label">\(H_0:\ p_1=p_2\) (차이 0)</p>\[\sqrt{\hat p(1-\hat p)\left(\frac{1}{n_1}+\frac{1}{n_2}\right)}\]\[\hat p=\frac{X_1+X_2}{n_1+n_2}\]<p class="c-red compare-to"><b>→ 합동비율</b></p></div>
+    <div><p class="compare-label">\(H_0:\ p_1-p_2=D\)</p>\[\sqrt{\frac{\hat p_1(1-\hat p_1)}{n_1}+\frac{\hat p_2(1-\hat p_2)}{n_2}}\]<p class="c-red compare-to"><b>→ 각자 비율</b></p></div>
+  </div>
+  <p>한 번에 정리하면, 독립 이표본 검정에서와 마찬가지로 경우에 따라 표준오차 자리만 바뀌어요. 귀무가설에서 두 모비율이 같다고 하면 합동표본비율을, 차이가 \(D\)라고 하면 그냥 각자의 표본비율을 이용하면 된다고 기억하면 돼요.</p>
+  <p class="caution"><span class="caution-label">주의</span>기준은 <b>귀무가설</b>이에요. 대립가설이 "다르다"(\(p_1\ne p_2\))인 양측검정도 귀무가설은 "같다"이므로 합동비율을 써요.</p>
+</section>
+
+<section id="map2">
+  <div class="sec-head"><h2>큰 그림 다시</h2><span class="slide-tag">슬라이드 11</span></div>
+  <div class="tree">
+    <p class="tree-root">7장: 비율과 범주형 자료</p>
+    <div class="tree-row">
+      <div class="tree-grp">
+        <p class="tree-head">모비율</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">Z검정</p><p>모비율 1개</p><p class="leaf-q"><b>연습 1번</b></p></div>
+          <div class="leaf"><p class="leaf-h">Z검정 (합동비율)</p><p>모비율 2개: 같은가? (차이가 0?)</p><p class="leaf-q"><b>연습 2번 (1), 3번 (2)</b></p></div>
+          <div class="leaf"><p class="leaf-h">Z검정 (각자 비율)</p><p>모비율 2개: 차이가 D보다 큰가?</p><p class="leaf-q"><b>연습 2번 (2), 3번 (1)</b> 신뢰구간</p></div>
+        </div>
+      </div>
+      <div class="tree-grp">
+        <p class="tree-head">범주형 자료</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">적합도 검정 (\(\chi^2\))</p><p>모집단 1개, 범주 비율이 정해짐</p></div>
+          <div class="leaf"><p class="leaf-h">동질성 검정 (\(\chi^2\))</p><p>모집단 여러 개, 따로 뽑음</p></div>
+          <div class="leaf"><p class="leaf-h">독립성 검정 (\(\chi^2\))</p><p>모집단 1개, 특성 2개를 함께 기록</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>처음에 봤던 그림에 연습문제가 어느 가지에 해당하는지 표시해 두었어요. 이번에는 위쪽 모비율 가지만 다뤘고, 아래 범주형 자료 가지는 다음 회차에서 봐요. OX로 정리하는 4번(추가 문제)은 오늘 내용 전체를 다 써요.</p>
+</section>
+
+<section id="practice">
+  <div class="sec-head"><h2>연습문제</h2><span class="slide-tag">슬라이드 12–14</span></div>
+  <p>먼저 풀어 보고 풀이를 열어 보세요. 표준정규분포표는 \(\Phi(z)=P(Z\le z)\)를 주는 표를 기준으로 했어요. 4번은 추가 문제예요.</p>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">1</span>한 대학의 학생 500명을 무작위로 뽑아 조사했더니 185명이 동영상 구독 서비스를 2개 이상 이용한다고 답했다.</p>
+    <ol class="q-sub">
+      <li>(1) 이 대학 학생 중 구독 서비스를 2개 이상 이용하는 비율 \(p\)에 대한 95% 신뢰구간을 구하시오.</li>
+      <li>(2) 작년 조사에서는 이 비율이 40%였다. 올해 비율이 줄었다고 할 수 있는지 유의수준 5%에서 검정하고, 결론을 문장으로 쓰시오.</li>
+      <li>(3) 다음 조사에서 95% 오차한계를 0.03 이하로 하려면 몇 명을 조사해야 하는가? (a) 사전 정보가 없는 경우와 (b) 이번 조사의 표본비율을 사전 추정값으로 쓰는 경우를 각각 구하시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>\(\hat p=185/500=0.37\).</p>
+      <p>(1) \(SE=\sqrt{\dfrac{0.37\times0.63}{500}}=0.0216\), \(0.37\pm1.96\times0.0216=0.37\pm0.0423\) → \((0.328,\ 0.412)\). (\(n\hat p=185\), \(n(1-\hat p)=315\) 모두 5 이상)</p>
+      <p>(2) \(H_0:p=0.4\) vs \(H_1:p\lt0.4\). \(SE_0=\sqrt{\dfrac{0.4\times0.6}{500}}=0.0219\), \(z=\dfrac{0.37-0.4}{0.0219}=-1.37\gt-1.645\) → 기각 못 함. 올해 비율이 줄었다고 할 수 없다. (p value ≈ 0.085)</p>
+      <p>(3) (a) \(n\ge\dfrac14\left(\dfrac{1.96}{0.03}\right)^2=1067.1\) → 1068명. (b) \(n\ge0.37\times0.63\times\left(\dfrac{1.96}{0.03}\right)^2=994.97\) → 995명.</p>
+      <p class="sol-note">신뢰구간은 \(\hat p\), 검정은 귀무가설 값 \(p_0\)로 표준오차를 계산해요. 표본크기는 1067.1명이면 1067명으로는 조건을 못 채우니 항상 올림이에요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">2</span>아침 식사를 거르는 학생의 비율이 학년에 따라 다른지 알아보려고, 1학년 250명과 4학년 200명을 각각 무작위로 뽑아 조사했다. 1학년은 95명, 4학년은 52명이 아침을 거른다고 답했다.</p>
+    <ol class="q-sub">
+      <li>(1) 1학년과 4학년의 아침을 거르는 비율이 다르다고 할 수 있는지 유의수준 5%에서 검정하고, 결론을 문장으로 쓰시오.</li>
+      <li>(2) 1학년의 비율이 4학년의 비율보다 0.05를 초과하여 크다고 할 수 있는지 유의수준 5%에서 검정하고, 결론을 문장으로 쓰시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>\(\hat p_1=95/250=0.38\), \(\hat p_2=52/200=0.26\).</p>
+      <p>(1) \(H_0:p_1=p_2\) vs \(H_1:p_1\ne p_2\). 귀무가설이 "같다"이므로 합동비율 \(\hat p=\dfrac{95+52}{250+200}=\dfrac{147}{450}=0.3267\). \(SE=\sqrt{0.3267\times0.6733\left(\dfrac1{250}+\dfrac1{200}\right)}=0.0445\), \(z=\dfrac{0.38-0.26}{0.0445}=2.70\gt z_{0.025}=1.96\) → 기각. 아침을 거르는 비율이 학년에 따라 다르다고 할 수 있다. (p value ≈ 0.007)</p>
+      <p>(2) \(H_0:p_1-p_2=0.05\) vs \(H_1:p_1-p_2\gt0.05\). 차이가 0이 아니므로 각자 비율: \(SE=\sqrt{\dfrac{0.38\times0.62}{250}+\dfrac{0.26\times0.74}{200}}=\sqrt{0.000942+0.000962}=0.0436\), \(z=\dfrac{0.12-0.05}{0.0436}=1.60\lt z_{0.05}=1.645\) → 기각 못 함. 1학년 비율이 0.05를 넘게 크다고 하기에는 근거가 부족하다. (p value ≈ 0.054)</p>
+      <p class="sol-note">같은 자료라도 귀무가설이 "같다"면 합동비율, "차이 = D(≠0)"이면 각자 비율이에요. (1)은 대립가설이 "다르다"여도 귀무가설이 "같다"라서 합동비율이에요. (2)는 단측이라 기준이 1.645예요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">3</span>두 공장 A, B의 불량률을 비교하려고 A 공장 제품 400개, B 공장 제품 300개를 무작위로 골라 검사했더니 불량품이 각각 18개, 24개였다. (두 표본은 서로 독립이다.)</p>
+    <ol class="q-sub">
+      <li>(1) 두 공장 불량률의 차이 \(p_A-p_B\)에 대한 95% 신뢰구간을 구하시오.</li>
+      <li>(2) B 공장의 불량률이 A 공장보다 높다고 할 수 있는지 유의수준 5%에서 검정하시오. 그리고 (1)의 신뢰구간에 0이 들어 있는 것과 비교해 보시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>\(\hat p_A=18/400=0.045\), \(\hat p_B=24/300=0.08\).</p>
+      <p>(1) 신뢰구간은 귀무가설이 없으니 각자 비율. \(SE=\sqrt{\dfrac{0.045\times0.955}{400}+\dfrac{0.08\times0.92}{300}}=\sqrt{0.000107+0.000245}=0.0188\), \(-0.035\pm1.96\times0.0188\) → \((-0.072,\ 0.002)\).</p>
+      <p>(2) \(H_0:p_A=p_B\) vs \(H_1:p_B\gt p_A\). 합동비율 \(\hat p=\dfrac{18+24}{700}=0.06\), \(SE=\sqrt{0.06\times0.94\left(\dfrac1{400}+\dfrac1{300}\right)}=0.0181\), \(z=\dfrac{0.08-0.045}{0.0181}=1.93\gt z_{0.05}=1.645\) → 기각. B 공장의 불량률이 더 높다고 할 수 있다. (p value ≈ 0.027)</p>
+      <p>95% 신뢰구간은 유의수준 5% <b>양측</b>검정과 짝이에요. 단측 검정은 5%를 한쪽에 다 몰아주므로 기준(1.645)이 낮아서, 신뢰구간에 0이 들어 있어도 단측으로는 기각될 수 있어요.</p>
+      <p class="sol-note">신뢰구간은 각자 비율, "같다" 검정은 합동비율이에요. 신뢰구간과 검정이 짝이 되는 건 "95% 구간 ↔ 양측 5%"일 때만이에요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">4</span>(추가 문제) 다음 설명이 옳으면 O, 옳지 않으면 X를 표시하고, X인 것은 바르게 고치시오.</p>
+    <ol class="q-sub">
+      <li>(1) 모비율의 신뢰구간과 검정에서 표준오차를 계산할 때 모두 표본비율 \(\hat p\)를 쓴다.</li>
+      <li>(2) 표본비율 \(\hat p=X/n\)의 분산은 \(np(1-p)\)이다.</li>
+      <li>(3) 모비율에 대한 사전 정보가 없을 때는 \(p=0.5\)로 놓고 표본크기를 정한다.</li>
+      <li>(4) 표본크기 계산 결과가 1067.1이면 1067명을 조사하면 된다.</li>
+      <li>(5) 두 모비율이 같은지 양측검정할 때는 대립가설이 \(p_1\ne p_2\)이므로 각자의 표본비율로 표준오차를 구한다.</li>
+      <li>(6) 두 모비율의 차이가 0.1보다 큰지 검정할 때는 합동표본비율을 쓴다.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) X: 검정에서는 귀무가설 값 \(p_0\)로 표준오차를 계산한다.</p>
+      <p>(2) X: \(\mathrm{Var}(\hat p)=\dfrac{p(1-p)}{n}\). \(np(1-p)\)는 개수 \(X\)의 분산이다.</p>
+      <p>(3) O: \(p(1-p)\)가 최대(0.25)인 경우라 가장 보수적이다.</p>
+      <p>(4) X: 표본크기는 올림해서 1068명.</p>
+      <p>(5) X: 귀무가설이 \(p_1=p_2\)이므로 합동비율. 대립가설이 아니라 귀무가설을 보고 정한다.</p>
+      <p>(6) X: 차이가 0이 아니면 각자 비율.</p>
+      <p class="sol-note">(5)가 가장 헷갈리는 부분이에요. 표준오차는 "귀무가설이 맞다고 칠 때"의 값이므로 귀무가설을 보고 정해요.</p>
+    </details>
+  </article>
+</section>
+
+</main>

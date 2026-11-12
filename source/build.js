@@ -139,7 +139,10 @@ conf.weeks.forEach(function(w){ if (w.ready) ready[w.n] = w; });
 // 수업자료 PDF (slides.json — 날짜 → 파일). 수업이 끝난(done) 행에만 버튼을 붙인다
 const slides = fs.existsSync('slides.json') ? JSON.parse(fs.readFileSync('slides.json', 'utf8')) : {};
 function kb(f){ const b = fs.statSync(f).size; return b >= 1048576 ? (b / 1048576).toFixed(1) + 'MB' : Math.round(b / 1024) + 'KB'; }
-const hasSlides = Object.keys(slides).length > 0;
+// 연습문제·풀이 PDF (exercises.json — 날짜 → [{label, path, save}]). 챗이 보내는 slides.json과 분리해 둔다
+const exercises = fs.existsSync('exercises.json') ? JSON.parse(fs.readFileSync('exercises.json', 'utf8')) : {};
+const hasSlides = Object.keys(slides).length + Object.keys(exercises).length > 0;
+const dlBtn = (f, label) => `<a class="mat-dl" href="${f.path}" download="${f.save}" rel="nofollow" title="${f.save}">${label}<span class="dl-meta">${kb(f.path)}</span></a>`;
 const planRows = (conf.plan || []).map(r => {
   if (r.exam) return `<tr class="exam"><th scope="row">${r.exam}</th><td class="pd">${r.date}</td><td></td>${hasSlides ? '<td></td>' : ''}</tr>`;
   // week: 연결할 회차 페이지 번호 (기본은 n, null이면 연결 안 함) · link: 직접 지정한 주소
@@ -149,12 +152,14 @@ const planRows = (conf.plan || []).map(r => {
   const text = r.label || `${r.n}회차`;
   const label = href ? `<a href="${href}">${text}</a>` : text;
   const cls = [(w || r.done) && 'done', r.kind].filter(Boolean).join(' ');
-  const sl = (w || r.done) && slides[r.date];
+  const open = w || r.done;
+  const sl = open && slides[r.date];
   // link가 있으면 PDF 대신 그 주소로 보낸다 (예: 문제풀이 회차 → 자료실)
   const slBtn = !sl ? '' : sl.link
     ? `<a class="mat-dl" href="${sl.link}">${sl.label || '자료실'}</a>`
-    : `<a class="mat-dl" href="${sl.path}" download="${sl.save}" rel="nofollow" title="${sl.save}">PDF<span class="dl-meta">${kb(sl.path)}</span></a>`;
-  const slCell = hasSlides ? `<td class="mat">${slBtn}</td>` : '';
+    : dlBtn(sl, '슬라이드');
+  const exBtns = open ? (exercises[r.date] || []).map(f => dlBtn(f, f.label)).join('') : '';
+  const slCell = hasSlides ? `<td class="mat"><div class="mat-btns">${slBtn}${exBtns}</div></td>` : '';
   return `<tr${cls ? ` class="${cls}"` : ''}><th scope="row">${label}</th><td class="pd">${r.date}</td><td>${r.topic}</td>${slCell}</tr>`;
 }).join('\n');
 const planBlock = (conf.plan || []).length ? `<section class="plan">
