@@ -47,5 +47,12 @@
       "path": "files/exercises/261112.pdf",
       "save": "261112_연습문제(카이제곱 검정).pdf"
     }
+  ],
+  "11/18": [
+    {
+      "label": "연습문제",
+      "path": "files/exercises/261118.pdf",
+      "save": "261118_연습문제(상관분석, 회귀분석).pdf"
+    }
   ]
 }

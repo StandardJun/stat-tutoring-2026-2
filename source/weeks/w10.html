@@ -1,0 +1,494 @@
+<nav class="toc" aria-label="목차">
+  <a href="#today">오늘의 범위</a>
+  <a href="#map">큰 그림</a>
+  <a href="#sxy">S 기호</a>
+  <a href="#corr">상관계수</a>
+  <a href="#ctest">상관계수 검정</a>
+  <a href="#fit">회귀분석이란</a>
+  <a href="#shape">선형회귀</a>
+  <a href="#model">모형과 가정</a>
+  <a href="#lsq">최소제곱법</a>
+  <a href="#r2">설명력</a>
+  <a href="#ftest">F검정</a>
+  <a href="#ttest">t검정</a>
+  <a href="#resid">잔차분석</a>
+  <a href="#multi">중회귀</a>
+  <a href="#mtest">중회귀 검정</a>
+  <a href="#out">출력 읽기</a>
+  <a href="#etc">나머지</a>
+  <a href="#map2">큰 그림 다시</a>
+  <a href="#practice">연습문제</a>
+</nav>
+
+<main>
+
+<section id="today">
+  <div class="sec-head"><h2>오늘의 범위</h2><span class="slide-tag">슬라이드 2</span></div>
+  <p>이번에는 8장을 봐요. 8장은 <b>변수 2개의 관계</b>를 다루는 상관분석과 회귀분석이에요. (회귀분석은 변수가 더 늘어날 수도 있어요.)</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>무엇 ↓ &nbsp;몇 개 →</th><th>1개</th><th>2개</th><th>3개 이상</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">평균</th><td>중간고사 범위<br>\(t,\ Z\)</td><td>이표본, 대응비교<br>\(t\) <span class="nw">(6장)</span></td><td>분산분석<br>\(F\) <span class="nw">(9장)</span></td></tr>
+      <tr><th scope="row">분산</th><td>분산 1개<br>\(\chi^2\) <span class="nw">(6장)</span></td><td>분산 2개<br>\(F\) <span class="nw">(6장)</span></td><td></td></tr>
+      <tr><th scope="row">비율, 범주</th><td>비율 1개<br>\(Z\) <span class="nw">(7장)</span></td><td>비율 2개<br>\(Z\) <span class="nw">(7장)</span></td><td>비율 여러 개<br>\(\chi^2\) <span class="nw">(7장)</span></td></tr>
+      <tr><th scope="row">관계<br>(변수 2개)</th><td colspan="3"><span class="c-red"><b>숫자 변수 2개: 상관분석, 회귀분석</b> \(t,\ F\) <span class="nw">(8장)</span></span><br>범주 변수 2개: 독립성 검정 \(\chi^2\) <span class="nw">(7장)</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>지난 시간에 본 카이제곱검정 중 독립성 검정도 변수를 두 개 보는 거였지만, 그건 두 변수가 <b>독립이냐 아니냐</b>에 초점을 맞췄어요. 오늘 다루는 것들은 두 변수가 <b>관련이 있는가</b>에서 시작해서, 관련이 있다면 <b>그걸 어떻게 모델링할 수 있는가</b>까지 다뤄요.</p>
+  <p>오늘 쓰이는 분포는 \(t\)분포와 \(F\)분포로 이미 아는 것들이에요. 다만 쓰이는 방법이 익숙하지 않을 수 있어요. 또 오늘은 용어가 많아서 헷갈리기 쉬워요. 용어를 잘 받아들이지 않은 상태에서 설명을 들으면 이해가 안 되니, 용어가 처음 나올 때마다 뜻을 잡고 넘어가세요.</p>
+</section>
+
+<section id="map">
+  <div class="sec-head"><h2>8장의 큰 그림</h2><span class="slide-tag">슬라이드 3</span></div>
+  <div class="tree">
+    <p class="tree-root">8장: 상관분석과 회귀분석</p>
+    <div class="tree-row">
+      <div class="tree-grp">
+        <p class="tree-head">상관분석</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">상관계수와 그 검정</p><p>두 변수의 직선 관계 세기</p></div>
+        </div>
+      </div>
+      <div class="tree-grp">
+        <p class="tree-head">회귀분석 <span class="tree-tag">x로 Y를 설명, 예측</span></p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">선형회귀: 단순회귀</p><p>설명변수 1개</p></div>
+          <div class="leaf"><p class="leaf-h">선형회귀: 중회귀</p><p>설명변수 2개 이상</p></div>
+          <div class="leaf"><p class="leaf-h" style="color:var(--muted)">그 밖의 회귀</p><p style="color:var(--muted)">이 수업에서는 다루지 않음</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>오늘 다룰 범위는 크게 두 가지, 상관분석과 회귀분석이에요. 회귀분석은 종류가 굉장히 많은데, 일반적인 회귀가 무엇인지를 가볍게 본 뒤 <b>선형회귀</b>만 집중해서 봐요. 선형회귀 안에서도 설명변수들의 1차식으로 된 간단한 경우만 보고, 설명변수가 몇 개인지에 따라 <b>단순회귀</b>와 <b>중회귀</b>로 나눠서 봐요.</p>
+</section>
+
+<section id="sxy">
+  <div class="sec-head"><h2>\(S_{(xx)},\ S_{(yy)},\ S_{(xy)}\)</h2><span class="slide-tag">슬라이드 4</span></div>
+  \[S_{(xx)}=\sum(x_i-\bar x)^2=\htmlClass{c-mu}{(n-1)\,s_x^2}\]
+  \[S_{(yy)}=\sum(y_i-\bar y)^2=\htmlClass{c-mu}{(n-1)\,s_y^2}\]
+  \[S_{(xy)}=\sum(x_i-\bar x)(y_i-\bar y)=\htmlClass{c-mu}{(n-1)\,s_{xy}}\]
+  \[\htmlClass{c-mu}{S_{(xx)}=\sum x_i^2-n\bar x^2,\qquad S_{(xy)}=\sum x_iy_i-n\bar x\bar y}\]
+  <p>8장에서는 \(S_{(\cdot\cdot)}\) 표현이 자주 나와요. 실제 데이터 하나하나에서 그 데이터들로 구한 표본평균을 뺀 값, 즉 <b>편차를 제곱해서 더하거나</b>, 두 변수의 <b>편차를 곱해서 더한</b> 거예요. 아래첨자에 따라 변수가 바뀌어요.</p>
+  <p>이건 표본분산을 구할 때 봤던 구조와 똑같아요. 모평균 \(\mu\) 대신 표본평균을 쓴 것까지 똑같아서, \(S_{(xx)}\)와 \(S_{(yy)}\)는 각각 표본분산에 \((n-1)\)을 곱한 것과 같아요. \(S_{(xy)}\)도 표본공분산 \(s_{xy}\)에 \((n-1)\)을 곱한 것과 같아요. (공분산은 부호가 있어야 하므로 \(\sigma\)나 \(s\)의 제곱으로 쓰지 않고, 대신 아래첨자에 문자가 2개 들어갔었어요.)</p>
+  <p>표본분산에서 얘기했던 것과 같은 맥락으로, 모평균 대신 표본평균을 썼기 때문에 자유도가 1개씩 깎여요. \(S_{(xy)}\)는 \(\mu_x\) 대신 \(\bar x\), \(\mu_y\) 대신 \(\bar y\)를 써서 자유도가 2개 깎여야 할 것 같지만, 아래 그림에서 보면 결국 \((\mu_x,\ \mu_y)\)라는 <b>점 하나</b>를 \((\bar x,\ \bar y)\)라는 점 하나로 바꾼 거라서 똑같이 1개가 깎인다고 이해할 수 있어요. 일관성을 생각해도 이게 자연스러워요.</p>
+  <figure class="plate narrow"><img src="{{IMG:w10_quad}}" alt="평균선 두 개로 산점도를 네 칸으로 나눈 그림. 오른쪽 위와 왼쪽 아래 칸은 편차의 곱이 양수, 나머지 두 칸은 음수" width="1200" height="880"><figcaption>오른쪽 위, 왼쪽 아래 점이 많으면 \(S_{(xy)}\gt0\)</figcaption></figure>
+  <p>그래서 표본분산 간편계산식을 재활용하면 \(S_{(\cdot\cdot)}\)를 구하는 간편계산식(파란 줄)도 알아낼 수 있어요. 그림을 보면 공분산과 상관계수를 배울 때 다뤘던 내용도 다시 떠올릴 수 있을 거예요.</p>
+  <p class="key">\(S_{(\cdot\cdot)}\) = 표본평균으로부터의 편차제곱합 (\(xy\)는 편차곱의 합)</p>
+</section>
+
+<section id="corr">
+  <div class="sec-head"><h2>(상관분석) 상관계수</h2><span class="slide-tag">슬라이드 5</span></div>
+  <p class="key">두 변수가 얼마나 직선으로 같이 움직이나</p>
+  \[r=\frac{S_{(xy)}}{\sqrt{S_{(xx)}}\,\sqrt{S_{(yy)}}},\qquad -1\le r\le 1\]
+  <p>중간고사 범위에서 다뤘던 내용이에요. 상관계수는 공분산을 각 변수의 표준편차로 나눈 것이었어요. 그 식에서 모분산, 모표준편차를 표본분산, 표본표준편차로 바꾼 뒤 분모와 분자에 \((n-1)\)을 곱해 주면 정확히 위 식이 돼요. 그때 \(\rho\)로 쓴 상관계수가 모상관계수였다면, 여기 나온 \(r\)은 <b>표본상관계수</b>라고 이해하면 돼요.</p>
+  <figure class="plate wide"><img src="{{IMG:w10_corr}}" alt="세 산점도. 양의 상관 r = 0.89, 음의 상관 r = −0.90, 그리고 U자 곡선 관계인데 r = −0.17" width="1400" height="420"><figcaption>세 번째 그림은 관계가 뚜렷한데도 \(r\)이 0 근처</figcaption></figure>
+  <p>그때 다뤘듯이 \(r\)은 \(-1\)과 1 사이의 값을 가지고, 절댓값이 1에 가까울수록 선형성이 강하다는 뜻이에요. 그렇다고 0에 가깝다고 해서 독립이라거나 관계가 없다고 생각할 수는 없어요. 비선형 관계를 가질 수도 있고, 상관계수가 0이어도 독립이 아닐 수 있었어요.</p>
+  <p class="key"><span class="c-red">\(r\approx0\)이어도 관계가 없는 건 아님 (직선 관계가 없을 뿐)</span></p>
+</section>
+
+<section id="ctest">
+  <div class="sec-head"><h2>(상관분석) 상관계수 검정</h2><span class="slide-tag">슬라이드 6</span></div>
+  \[H_0:\ \rho=0\]
+  \[T=\frac{r-0}{SE(r)},\qquad SE(r)=\sqrt{\frac{1-r^2}{n-2}}\]
+  \[\htmlClass{c-mu}{\text{cf) }SE(\bar X)=\sqrt{\frac{\sigma^2}{n}}}\]
+  \[\htmlClass{c-red}{\begin{aligned}T&=\frac{r}{\sqrt{(1-r^2)/(n-2)}}\\&=\sqrt{n-2}\,\frac{r}{\sqrt{1-r^2}}\ \sim\ t(n-2)\end{aligned}}\]
+  <p>두 변수가 선형성을 띠는지는 상관계수가 어느 정도인지를 보면 돼요. 정확히는 모상관계수를 알아봐야 하는데, 모수는 알 수 없으니 우리가 알 수 있는 건 표본상관계수뿐이에요. 그래서 모상관계수가 0인지 아닌지 알아보려면 <b>모상관계수에 대한 가설검정</b>을 해야 해요.</p>
+  <p>귀무가설은 모상관계수 \(\rho\)가 0이라는 거예요. 검정통계량은 늘 하던 것처럼 표본상관계수 \(r\)에서 귀무가설이 주장하는 \(\rho\)(= 0)를 빼고 표준오차로 나눠 표준화하면 돼요. 표준오차는 위 식과 같고, 표준오차를 표본에서 구한 \(r\)로 계산했으므로 \(Z\)와 \(t\) 중 <b>\(t\)분포</b>를 따라요. 자유도는 \(n-2\)예요. 상관계수 검정은 검정통계량을 외워 두는 게 편해요.</p>
+  <p>표준오차가 왜 이렇게 생겼는지 궁금할 수 있는데, 정확한 이유는 뒤에서 회귀분석을 보고 나면 이해가 될 거라 여기서는 직관 수준에서만 볼게요. 표본평균의 표준오차를 구할 때도 루트 안에 분산과 표본 크기의 비율을 넣었어요. 표본상관계수의 표준오차도 비슷한 모양인데, 표본 크기 자리에 자유도를 써요. 자유도가 왜 \(n-2\)인지는 뒤에서 SSE의 자유도가 \(n-2\)가 되는 걸 보고 돌아오면 돼요. \(1-r^2\)은 선형성이 강할수록 작아지고 약할수록 커지니까, 흩어짐(분산)의 역할을 한다고 이해할 수 있어요.</p>
+  <p>아래에서 \(r\)과 \(n\)을 바꿔 보면서 표준오차와 \(T\)가 어떻게 움직이는지 확인해 보세요.</p>
+
+  <div class="panel" id="ct10-w">
+    <div class="panel-head">
+      <p class="panel-title">상관계수 검정: \(r\)과 \(n\)에 따라 결론이 어떻게 바뀌나</p>
+    </div>
+    <p class="panel-sub">\(H_0:\rho=0\) vs \(H_1:\rho\ne0\), 유의수준 5% 양측검정</p>
+    <div class="sliders two">
+      <label class="sl">표본상관계수 r <input type="range" id="ct10-r" min="-0.95" max="0.95" step="0.01" value="0.30"><span class="val" id="ct10-r-v">0.30</span></label>
+      <label class="sl">표본 크기 n <input type="range" id="ct10-n" min="4" max="100" step="1" value="12"><span class="val" id="ct10-n-v">12</span></label>
+    </div>
+    <div class="w3-out" id="ct10-out" aria-live="polite"></div>
+    <p class="panel-note" id="ct10-note"></p>
+  </div>
+  <p>여기까지가 상관분석이에요.</p>
+</section>
+
+<section id="fit">
+  <div class="sec-head"><h2>(회귀분석) 데이터 fitting</h2><span class="slide-tag">슬라이드 7–8</span></div>
+  <figure class="plate narrow"><img src="{{IMG:w10_surface}}" alt="비료 양과 물 양을 바닥 두 축, 수확량을 세로축으로 한 3차원 그림. 주황 점 40개 위에 위로 볼록한 파란 곡면이 있고, 각 점과 곡면 사이에 빨간 세로 막대가 그려져 있다" width="820" height="765"><figcaption>비료 양, 물 양에 따른 수확량 (가상 자료 40개). 빨간 막대 = 실제와 곡면의 차이</figcaption></figure>
+  <p>이 그림을 보면 회귀분석이 무엇이고 왜 하는지 감이 잡힐 거예요. 회귀분석은 데이터가 어떤 모델에서 나왔다는 믿음 아래 <b>그 모델을 찾으려는</b> 거예요. 실제와 모델 사이에는 차이가 있을 수 있지만, 대략적으로는 모델이 얼추 맞춘다는 가정을 깔고 있어요.</p>
+  <p>그림은 비료 양과 물 양에 따른 수확량 모델(파란 곡면)과 실제 수확량(주황 점)을 함께 그린 거예요. 주황 점이 곡면과 일치하지 않을 때도 많지만 경향성은 얼추 맞아요. 이 <b>파란 그래프를 찾자</b>가 바로 회귀예요. 회귀는 지금까지의 데이터를 잘 fitting하려는 목적도 있지만, 새로운 데이터(\(x\) 값)가 들어왔을 때 결과값 \(Y\)를 알고자 하는 목적도 있어요.</p>
+  <p class="key">\(x\)들로 \(Y\)의 평균을 설명하는 식 찾기</p>
+  \[Y=f(x_1,\ x_2)+e\]
+  <ul>
+    <li>\(Y\) <b>반응변수</b>(종속변수): 수확량</li>
+    <li>\(x\) <b>설명변수</b>(독립변수): 비료 양, 물 양</li>
+    <li><span class="c-red">\(e\) <b>오차</b>: 모델과 실제의 차이</span></li>
+  </ul>
+  \[\hat y=\hat\beta_0+\hat\beta_1x_1+\hat\beta_2x_2+\hat\beta_3x_1^2+\hat\beta_4x_2^2\]
+  \[\htmlClass{c-red}{\sum(y_i-\hat y_i)^2\ \rightarrow\ \text{최소}}\quad\text{(최소제곱법)}\]
+  <p>결국 회귀는 함수, 그래프를 찾는 문제예요. 함수에 들어가는 변수를 보통 \(x\)라고 쓰고 <b>설명변수</b>라고 부르고, 결과로 나오는 변수를 \(y\)라고 쓰고 <b>반응변수</b>라고 불러요. 여기에 \(e\)라는 항을 더하는데, 이게 <b>오차</b>예요. 그래프만 세워 두면 모든 \(y\)가 그래프와 딱 맞아떨어져야 하는데, 실제와 모델에는 차이가 있어요. 그 차이를 표현하는 게 오차예요.</p>
+  <p>식을 보면 \(Y\)는 대문자, \(x\)는 소문자로 쓰여 있어요. 통계학에서 대문자와 소문자는 보통 의미가 있다고 했는데, 여기서도 정확히 그래요. \(x\)는 실험으로 구한 데이터로 이미 정해진 수이고, \(Y\)는 확률변수로서 분포를 가져요. 이미 정해진 \(x\)로 된 우변은 상수인데 좌변은 확률변수라니 말이 안 맞는 것 같지만, 사실 <b>오차 \(e\)도 확률변수</b>예요. 오차는 실제와 모델의 차이라서, 우리가 실험적으로 컨트롤할 수 없고 모델이 설명하지 못하는 영역이에요. 일종의 랜덤성이라고 생각하면 돼요. 오차가 랜덤성을 담당하는 확률변수이고, 그래서 결과값 \(Y\)도 확률변수라는 맥락을 잡으면 돼요.</p>
+  <p>어떤 \(x\)를 모델에 넣어서 나오는 \(y\)는 실제 \(y\)와 달라요. 그래서 이를 구분하려고, 회귀모델의 결과로 나온 \(y\)에는 추정량이라는 뜻으로 <b>\(\hat y\)</b>(와이 햇)를 써요. 모델을 이루는 계수들도 실제 값은 알 수 없고 데이터로 구하는 것이라 햇을 붙여요. \(x\)는 실제로 넣는 값이니 햇을 붙이지 않아요.</p>
+  <p>그런데 흩어진 점 \((x_1,\ x_2,\ y)\)들을 fitting하는 모델은 여러 개를 생각할 수 있어요. 그중 하나를 어떻게 정할까요? 그 방식이 <b>최소제곱법</b>이에요. 최소제곱법은 모든 자료에서 실제 \(y\)와 모델이 내놓는 \(\hat y\)의 차이를 제곱해서 더한 값이 가장 작아지는 모델을 골라요.</p>
+  <p>중학교 때 이차방정식을 풀려고 근의 공식을 썼던 것처럼, 최소제곱법을 만족하는 회귀식을 찾는 공식이 있어요. 수학적으로 최소제곱법의 최적 모델이 이미 정해져 있다는 뜻이에요. 이유까지 자세히 다루지는 않을게요. 대략 말하면 \(\sum(y_i-\hat y_i)^2\)을 모델의 모든 계수로 편미분해서 0이 되게 하는 계수를 찾으면 그게 공식이에요. 뒤에 나오는 공식이 믿을 만하고, <b>정해 둔 모양 안에서 최적의 모델</b>이라는 것만 기억하면 돼요.</p>
+</section>
+
+<section id="shape">
+  <div class="sec-head"><h2>(회귀분석) 회귀 모델 결정과 선형회귀</h2><span class="slide-tag">슬라이드 9–10</span></div>
+  <div class="figs">
+    <figure class="plate"><img src="{{IMG:w10_surface}}" alt="같은 자료에 위로 볼록한 곡면을 맞춘 그림" width="820" height="765"><figcaption>\(\hat y=\hat\beta_0+\hat\beta_1x_1+\hat\beta_2x_2+\hat\beta_3x_1^2+\hat\beta_4x_2^2\)</figcaption></figure>
+    <figure class="plate"><img src="{{IMG:w10_plane}}" alt="같은 자료에 평면을 맞춘 그림. 가장자리 점들의 빨간 막대가 길게 남는다" width="820" height="765"><figcaption>\(\hat y=\hat\beta_0+\hat\beta_1x_1+\hat\beta_2x_2\)</figcaption></figure>
+  </div>
+  <p>지금까지는 일반적인 회귀분석 얘기를 했어요. 통계학에서 다루는 회귀는 여러 회귀 방법 중 <b>선형회귀</b>예요. 선형회귀는 모델 식이 <b>계수에 대해 모두 1차</b>로 된 걸 말해요. 그 선형회귀 중에서도 우리는 설명변수 \(x\)의 차수도 1차인, <b>직선이나 평면</b>으로 모델링하는 가장 간단한 경우만 봐요.</p>
+  <div class="compare">
+    <div><p class="compare-label">직선 (설명변수 1개)</p><p>단순회귀</p><p>\(\hat y=\hat\alpha+\hat\beta x\)</p></div>
+    <div><p class="compare-label">평면 (설명변수 2개 이상)</p><p>중회귀</p><p>\(\hat y=\hat\beta_0+\hat\beta_1x_1+\hat\beta_2x_2\)</p></div>
+  </div>
+  <p>우리가 보는 선형회귀는 두 가지예요. 설명변수를 1개만 쓰는 <b>단순회귀</b>와 2개 이상 쓰는 <b>중회귀</b>예요. 결과값 \(y\)가 몇 개의 변수에 영향을 받느냐로 정해지고, 이론은 비슷하므로 단순회귀를 주로 보고 마지막에 중회귀를 짧게 봐요. 문제에서는 어떤 변수를 쓸지 알려 주니, 그 개수를 세면 단순회귀 문제인지 중회귀 문제인지 알 수 있어요.</p>
+</section>
+
+<section id="model">
+  <div class="sec-head"><h2>(단순회귀) 모형과 가정</h2><span class="slide-tag">슬라이드 11</span></div>
+  \[Y=\alpha+\beta x+e\]
+  \[E(Y)=\alpha+\beta x,\qquad \hat y=\hat\alpha+\hat\beta x\]
+  \[e_i\ \overset{ind}{\sim}\ N(0,\ \sigma^2)\]
+  <p class="where">선형성, 등분산성, 독립성 (+ 정규성)</p>
+  <figure class="plate narrow"><img src="{{IMG:w10_model}}" alt="빨간 직선 E(Y) = α + βx 위의 세 x 값마다 같은 폭의 정규분포 곡선이 걸쳐 있고, 그 근처에 주황 점들이 흩어져 있다" width="1200" height="840"><figcaption>\(x\)마다 \(Y\)는 직선을 중심으로 같은 폭으로 흩어져요</figcaption></figure>
+  <p>이제 단순회귀를 집중해서 봐요. 선형 단순회귀는 \(Y=\alpha+\beta x+e\) 꼴로 모델링하는 걸 말해요. 여기서 \(\alpha\)(알파), \(\beta\)(베타)는 모수라서 몰라요. 그래서 모수로 이루어진 진짜 직선인 <b>모회귀직선</b>도 몰라요.</p>
+  <p>대신 표본으로 그 값들을 추정해서 써요. 그래서 \(\hat\alpha,\ \hat\beta,\ \hat y\)가 들어간 <b>추정된(표본) 회귀직선</b>을 써요. \(x\)는 실제 데이터를 넣는 자리라 햇 없이 상수처럼 다뤄요. \(Y\)는 오차 \(e\) 때문에 같은 \(x\)에서도 매번 다른 값이 될 수 있는데, 그건 컨트롤할 수 없는 부분이라 \(\hat y\) 식에는 \(e\)가 없어요. \(\hat y\)는 <b>그 \(x\)에서의 평균적인 \(y\)</b>를 나타내요.</p>
+  <p>\(\hat y\) 식에 오차를 넣지 않았지만, 이 모델링이 말이 되려면 오차에 몇 가지 가정을 해야 해요. 오차에 붙이는 가정은 선형성, 등분산성, 독립성이고, 이 가정이 붙으면 \(Y\)의 기댓값이 \(\alpha+\beta x\)가 돼서 \(Y\)가 <b>평균적으로</b> 모회귀직선 위에 있게 돼요.</p>
+  <p class="key">\(Y=\alpha+\beta x+e\)는 모델, \(E(Y)=\alpha+\beta x\)가 모회귀직선</p>
+  <p>여기에 \(e\)가 \(N(0,\ \sigma^2)\)을 따른다고 하면, 오차를 고려한 \(Y\)는 위 그림처럼 이해할 수 있어요. 모회귀직선 \(\alpha+\beta x\)가 빨간 선을 담당하고, \(e\)가 랜덤성을 더해요. 해당 \(x\)의 함숫값에서 위아래로 얼마나 움직일지가 \(N(0,\ \sigma^2)\)을 따르는 확률변수의 관측값으로 랜덤하게 정해져요.</p>
+  <ul>
+    <li><b>선형성</b>: \(e\)의 기댓값이 0이라 \(Y\)가 평균적으로는 빨간 직선 위에 있음</li>
+    <li><b>등분산성</b>: 어느 \(x\)에서 보든 퍼진 정도(\(\sigma^2\))가 일정함</li>
+    <li><b>독립성</b>: 오차들이 서로 영향을 주지 않음</li>
+  </ul>
+  <p>이 세 가지는 꼭 필요한 가정이에요. 가설검정을 하거나 신뢰구간을 구해야 할 때는 오차가 정규분포라는 <b>정규성</b>까지 가정해요.</p>
+</section>
+
+<section id="lsq">
+  <div class="sec-head"><h2>(단순회귀) 최소제곱법</h2><span class="slide-tag">슬라이드 12</span></div>
+  \[\hat e_i=y_i-\hat y_i\quad\text{(잔차)}\]
+  \[Q=\sum(y_i-\hat y_i)^2\ \rightarrow\ \text{최소}\]
+  \[\htmlClass{c-red}{\hat\beta=\frac{S_{(xy)}}{S_{(xx)}}=r\,\frac{s_y}{s_x}}\]
+  \[\hat\alpha=\bar y-\hat\beta\,\bar x\]
+  <figure class="plate narrow"><img src="{{IMG:w10_ls}}" alt="공부 시간과 점수 12명의 산점도와 회귀직선. 각 점에서 직선까지 주황 세로선(잔차)과 그 길이를 한 변으로 하는 정사각형이 그려져 있고, 평균점에 별 표시" width="1324" height="900"><figcaption>잔차를 한 변으로 하는 정사각형의 넓이 합 = \(Q\)</figcaption></figure>
+  <p>앞에서 오차 \(e\)와 거기에 붙는 가정을 봤어요. 그런데 \(e\)는 랜덤한 부분이라 관찰할 수 없어요. 그래서 우리가 관찰할 수 있는 랜덤한 부분을 \(\hat e\)라고 쓰고 <b>잔차</b>라고 불러요. 잔차는 데이터마다 실제 \(y\)에서 모델이 추정한 \(\hat y\)를 빼서 계산해요.</p>
+  <p>앞에서 본 최소제곱법이 적용되는 대상이 바로 이 잔차예요. 실제와 모델의 차이인 잔차(의 제곱합)가 가장 작아지게 하는 게 최적의 모델이라는 생각이에요. 그래서 최소제곱법으로 모델 공식을 얻어요.</p>
+  <p>최소제곱법으로 얻은 공식은 위와 같아요. 기울기 \(\hat\beta\)는 \(S_{(xy)}\)와 \(S_{(xx)}\)의 비율이에요. 일차함수의 기울기가 \(x\)가 움직일 때 \(y\)가 얼마나 움직이는지의 비율이었던 걸 떠올리면, 이것도 \(x\)가 움직일 때 \(x\)와 \(y\)가 같이 움직이는 정도의 비율로 이해하면 돼요. 또 \(\hat\beta\)는 두 변수가 얼마나 강하게 선형적으로 움직이는지를 나타내는 상관계수에 두 변수의 표본표준편차 비율을 곱한 것과도 같아요.</p>
+  <p>\(\hat\alpha=\bar y-\hat\beta\bar x\)는 외우지 않아도 돼요. 최소제곱법 직선은 <b>항상 평균점 \((\bar x,\ \bar y)\)를 지나요</b>. 기울기와 지나는 한 점을 알면 일차함수 식을 세울 수 있었으니, \(\hat\beta\)만 공식으로 구하고 이 점을 지나게 하면 \(\hat\alpha\)를 따로 외우지 않고도 답을 구할 수 있어요. 편한 쪽으로 하면 돼요.</p>
+  <p>아래에서 절편과 기울기를 직접 움직여 보면서, 주황 정사각형의 넓이 합이 언제 가장 작아지는지 찾아보세요.</p>
+
+  <div class="panel" id="ls10-w">
+    <div class="panel-head">
+      <p class="panel-title">정사각형 넓이 합이 가장 작은 직선 찾기</p>
+    </div>
+    <p class="panel-sub">가상의 학생 12명의 주당 공부 시간과 점수. 잔차를 한 변으로 하는 정사각형의 넓이 합이 \(Q\)예요</p>
+    <svg id="ls10-svg" viewBox="0 0 560 300" role="img" aria-label="공부 시간과 점수 산점도 위에 절편과 기울기를 바꿀 수 있는 직선, 각 점의 잔차를 한 변으로 하는 주황 정사각형이 그려진 그림"></svg>
+    <div class="sliders two">
+      <label class="sl">절편 <input type="range" id="ls10-a" min="25" max="60" step="0.1" value="50"><span class="val" id="ls10-a-v">50.0</span></label>
+      <label class="sl">기울기 <input type="range" id="ls10-b" min="0" max="5" step="0.02" value="1.5"><span class="val" id="ls10-b-v">1.50</span></label>
+    </div>
+    <div class="panel-actions">
+      <button type="button" class="btn" id="ls10-best">최소제곱 직선 보기</button>
+    </div>
+    <div class="w3-out" id="ls10-out" aria-live="polite"></div>
+    <p class="panel-note" id="ls10-note"></p>
+  </div>
+</section>
+
+<section id="r2">
+  <div class="sec-head"><h2>(단순회귀) 설명력</h2><span class="slide-tag">슬라이드 13</span></div>
+  \[\underbrace{\sum(y_i-\bar y)^2}_{SST\ \ (n-1)}=\underbrace{\sum(\hat y_i-\bar y)^2}_{SSR\ \ (1)}+\underbrace{\sum(y_i-\hat y_i)^2}_{SSE\ \ (n-2)}\]
+  \[\htmlClass{c-red}{R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}}\]
+  <p class="where" style="text-align:center"><span class="c-mu">단순회귀에서는 \(R^2=r^2\) (상관계수의 제곱)</span></p>
+  \[\hat\sigma^2=MSE=\frac{SSE}{n-2}\]
+  <figure class="plate narrow"><img src="{{IMG:w10_decomp}}" alt="한 점에서 평균선까지의 전체 편차를, 평균선에서 회귀직선까지(설명 O, 파랑)와 회귀직선에서 점까지(설명 X, 주황)로 나눈 그림" width="1280" height="880"><figcaption>전체 편차 = 설명된 부분(파랑) + 설명 못 한 부분(주황)</figcaption></figure>
+  <p>여기부터가 회귀분석, 그리고 9장 분산분석에서 헷갈리는 부분이에요. 천천히 따라오면서 용어를 익혀 두는 게 중요해요.</p>
+  <p>회귀분석에서는 모델이 얼마만큼을 설명하고 얼마만큼을 설명하지 못했는지를 나눠서 봐요. 그림에서 어떤 \(x\)에서 \(\bar y\)와 실제 \(y\)의 차이를, \(\bar y\)에서 \(\hat y\)까지의 거리(파랑)와 \(\hat y\)에서 \(y\)까지의 거리(주황)로 나눠요. 파랑은 모델이 설명할 수 있는 부분, 주황은 설명할 수 없는 부분이에요. 이 두 부분이 전체에서 얼마나 차지하는지 재려고 모든 자료에 대해 합해요. 그런데 이런 편차는 그냥 더하면 0이 되니까 제곱해서 더해요. 증명은 생략하지만, <b>전체 제곱합 = 파랑 제곱합 + 주황 제곱합</b>이 성립해요.</p>
+  <p>각 부분을 부르는 이름이 SST, SSR, SSE예요. SS는 Sum of Squares, 제곱합이라는 뜻이에요.</p>
+  <ul>
+    <li><b>SST</b>: T = Total, <b>총제곱합</b></li>
+    <li><b>SSR</b>: R = Regression, <b>회귀제곱합</b>. 모델이 설명하는 부분(파랑)</li>
+    <li><b>SSE</b>: E = Error, <b>잔차제곱합</b>. 모델이 설명하지 못하는 잔차 부분(주황)</li>
+  </ul>
+  <p>뒤에서 SS를 MS로 바꾼 것도 나오는데, T, R, E는 똑같고 MS는 Mean Square(평균제곱), 즉 SS를 각자의 자유도로 나눈 거예요.</p>
+  <p>자유도는 SST, SSR, SSE가 각각 \(n-1,\ 1,\ n-2\)예요. SST는 표본분산과 같은 이유로 \(\mu_y\) 대신 \(\bar y\)를 써서 하나가 깎여 \(n-1\)이에요. SSR은 모델에 변수 하나를 넣으니 1이에요. 변수를 여러 개 쓰는 중회귀에서는 SSR의 자유도가 변수 개수만큼이 돼요. SSE는 양변의 자유도가 맞아야 해서 \(n-2\)라고 이해해도 되고, 원리적으로는 \(\hat\alpha\)와 \(\hat\beta\)를 정하느라 정보 두 개를 써서 2개가 깎였다고 보면 돼요.</p>
+  <p>이렇게 나누는 이유는 모델이 얼마나 설명하는지를 수치로 해석하려는 거예요. 그 맥락에서 <b>설명력</b>을 생각할 수 있고, 설명력은 <b>결정계수</b>로 나타내요. 보통 \(R^2\)으로 쓰고, 강의에서는 그냥 \(r^2\)으로 썼을 수도 있어요. \(R^2\)은 원래 SSR/SST로 정의되고, 전체 중에 얼마만큼이 설명되는지를 뜻해요. 선형 단순회귀에서는 이게 상관계수의 제곱 \(r^2\)과 값이 같아서 \(r^2\)으로 쓰기도 해요. SSR/SST는 (SST − SSE)/SST로 바꿔 1 − SSE/SST로도 쓸 수 있으니, 알고 있는 값에 따라 편한 형태로 쓰면 돼요.</p>
+  <p>식을 외우기보다 의미로 이해하면 좋아요. \(R^2\)은 "얼마나 설명되는가"이고, 그건 전체 SST 중 모델이 설명하는 SSR의 비율이에요. 또는 전체 1에서, SST 중 모델이 설명하지 못하는 SSE의 비율을 뺀 것이에요.</p>
+  <p>마지막으로, 오차에 등분산성을 가정하면서 어느 \(x\)에서든 분산이 \(\sigma^2\)으로 같다고 했어요. 모수 \(\sigma^2\)은 알 수 없지만 추정량은 구할 수 있어요. 그게 <b>MSE</b>예요. MS가 붙은 건 SS를 자유도로 나눈 것이니, SSE를 자유도 \(n-2\)로 나눈 게 오차분산의 추정량이에요. 식 구조도 표본분산과 비슷해서 \(\hat\sigma^2\)이라고 보면 돼요.</p>
+</section>
+
+<section id="ftest">
+  <div class="sec-head"><h2>(단순회귀) 회귀직선의 유의성 검정</h2><span class="slide-tag">슬라이드 14</span></div>
+  \[H_0:\ \beta=0\]
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">회귀</th><td>SSR</td><td>1</td><td>MSR = SSR / 1</td><td>MSR / MSE</td></tr>
+      <tr><th scope="row">잔차</th><td>SSE</td><td>\(n-2\)</td><td>MSE = SSE / \((n-2)\)</td><td></td></tr>
+      <tr><th scope="row">전체</th><td>SST</td><td>\(n-1\)</td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+  \[\htmlClass{c-red}{F=\frac{SSR/1}{SSE/(n-2)}=\frac{MSR}{MSE}\ \sim\ F(1,\ n-2)}\]
+  <p>회귀에 대한 이론을 전개했으니 이제 검정할 차례예요. 이론이 아무리 좋아도 실제 데이터에서 의미가 없으면 쓸 수 없어요. 그래서 하는 게 <b>회귀직선의 유의성 검정</b>이에요. 내 데이터에서 찾은 회귀직선이 과연 의미가 있는지를 봐요.</p>
+  <p>귀무가설은 \(x\)의 계수 \(\beta\)가 0이라고 둬요. \(\beta=0\)은 \(x\)가 변해도 \(y\)가 변하지 않는다는 뜻이니, 마땅한 회귀직선이 없다, 즉 회귀직선이 유의하지 않다는 뜻이에요.</p>
+  <p>이때 \(F\)검정을 하고, 검정통계량은 MSR/MSE예요. 자유도를 고려했을 때 오차에 대한 모델의 비율이라는 뜻이에요. 이 값이 크면 오차에 비해 모델이 설명하는 부분이 크니까 모델이 의미 있다고 보고 귀무가설을 기각하고, 작으면 기각하지 못해요. 지난 시간 카이제곱검정처럼 <b>크면 기각, 작으면 기각 못 함</b>, 즉 오른쪽 꼬리만 봐요.</p>
+  <p>앞으로 이런 \(F\)검정이 자주 나오는데, 그때마다 상황을 한눈에 정리하려고 위와 같은 표를 그려요. 이게 <b>분산분석표</b>(ANOVA 표)예요. 원래 9장 분산분석에서 쓰는 표인데 회귀에서도 쓰여요.</p>
+</section>
+
+<section id="ttest">
+  <div class="sec-head"><h2>(단순회귀) t검정</h2><span class="slide-tag">슬라이드 15</span></div>
+  \[\hat\beta\ \sim\ N\!\left(\beta,\ \frac{\sigma^2}{S_{(xx)}}\right)\]
+  \[\htmlClass{c-red}{T=\frac{\hat\beta-0}{\sqrt{MSE/S_{(xx)}}}\ \sim\ t(n-2)}\]
+  <p class="key">기울기 \(t\)검정 (\(T\)) = 상관계수 검정 (\(T\)) = 회귀직선 \(F\)검정 (\(F=T^2\))</p>
+  <p>회귀직선의 유의성을 검정하는 방법이 \(F\)검정 말고 하나 더 있어요. \(\hat\beta\)의 분포를 이용하는 거예요. 오차에 정규성 가정이 성립하면 \(\hat\beta\)는 평균이 \(\beta\), 분산이 \(\sigma^2/S_{(xx)}\)인 정규분포를 따라요.</p>
+  <p>\(S_{(xx)}\)는 \(x\)가 넓게 퍼져 있을수록 커지는데, 분산의 분모에 있으니 분산이 작아져요. \(x\)에 대한 정보가 많을수록 \(\hat\beta\)가 \(\beta\) 근처에 더 몰려서 분포한다는 뜻이에요.</p>
+  <p>이걸로 검정하려고 보니 \(\sigma^2\)은 모수라 몰라요. 그래서 추정량 \(\hat\sigma^2\), 즉 MSE(SSE를 자유도 \(n-2\)로 나눈 것)를 쓰고, 그 대신 정규분포를 \(t\)분포로 바꿔 \(t\)검정을 하면 돼요.</p>
+  <p>그런데 이 검정통계량은 사실 앞의 상관계수 검정의 검정통계량과 <b>똑같아요</b>. 회귀직선이 의미가 없다면 상관계수가 말해 주는 선형성도 없을 테니 서로 통한다고 보면 돼요. 그래서 앞의 \(F\)검정, 여기의 \(t\)검정, 상관분석의 \(t\)검정이 모두 같은 의미예요. 이제서야 상관계수 검정의 자유도가 \(n-2\)인 이유도 알 수 있어요. SSE의 자유도가 \(n-2\)였기 때문이에요.</p>
+  <p class="caution"><span class="caution-label">주의</span>\(F\)검정은 그 자체로는 오른쪽 꼬리만 보지만, 대립가설로는 "\(\beta\ne0\)"만 말할 수 있어요. "\(\beta\)가 0보다 크다(작다)"처럼 방향이 있는 검정은 \(F\)로 못 하고 \(t\)검정으로 해야 해요. 그래서 \(F\)검정과 같다고 할 수 있는 \(t\)검정은, 카이제곱검정과 모비율 검정 때처럼 <b>양측검정일 때만</b> 통해요.</p>
+  <p class="key"><span class="c-red">단측검정은 \(t\)로만! \(F\)는 방향을 못 봄</span></p>
+</section>
+
+<section id="resid">
+  <div class="sec-head"><h2>(단순회귀) 잔차분석</h2><span class="slide-tag">슬라이드 16</span></div>
+  <figure class="plate wide"><img src="{{IMG:w10_resid}}" alt="잔차 그림 세 개. 왼쪽은 0 주변에 고르게 퍼진 띠 모양(OK), 가운데는 x가 커질수록 넓어지는 깔때기 모양(등분산 위반), 오른쪽은 U자 곡선 패턴(선형성 위반)" width="1400" height="420"><figcaption>왼쪽: 가정 OK / 가운데: 등분산성 X / 오른쪽: 선형성 X</figcaption></figure>
+  <p>앞에서 이야기한 것들은 모두 오차 \(e\)에 대한 가정을 전제로 한 거예요. 이 전제가 맞지 않으면 앞의 이야기가 소용없어져요. 그래서 가정이 맞는지도 확인해야 하는데, 오차 \(e\)는 알 수 없으니 대신 잔차 \(\hat e\)로 확인해요. 이걸 <b>잔차분석</b>이라고 해요.</p>
+  <p>잔차분석에서는 잔차의 산점도를 보고 가정이 맞는지 확인해요. 검정통계량으로 검정하는 정도는 아니고, 눈으로 산점도에 이상이 없는지 보면 돼요. 가정이 모두 맞는다면 잔차 대부분이 ±표준편차의 2배 범위 안에 들어와야 해요. 표준화하면 ±2 안에 약 95%가 들어와야 해요(정규분포에서 \(2\sigma\) 범위 안에 약 95%가 들어왔으니까요). 또 특정한 모양을 띠지 않고 띠 안에 분포해야 해요. 왼쪽 그림처럼 보이면 가정이 성립하는 거예요. 가운데나 오른쪽 그림처럼 특정한 모양을 보이거나 띠를 벗어난 점이 너무 많으면 오차에 대한 가정이 성립하지 않는다고 판단해요.</p>
+  <div class="chain">
+    <p>산점도 → 최소제곱 직선 → 잔차분석 → 결정계수 → 유의성 검정</p>
+  </div>
+  <p>그래서 잔차분석까지 고려하면 선형 단순회귀분석은 위 과정을 거쳐요. 산점도를 그린 뒤 그 산점도를 잘 fitting하는 직선을 최소제곱법으로 찾아요(실제로는 \(\hat\beta,\ \hat\alpha\) 공식을 쓰면 돼요). 그다음 잔차 산점도를 그려 잔차분석을 하고, 가정이 성립하는 걸 확인하면 결정계수로 회귀직선이 얼마만큼을 설명하는지 보고, 마지막으로 유의성 검정으로 "이 회귀직선은 유의하다"를 주장하면 돼요.</p>
+</section>
+
+<section id="multi">
+  <div class="sec-head"><h2>(중회귀) 설명변수 2개 이상</h2><span class="slide-tag">슬라이드 17</span></div>
+  \[Y=\beta_0+\beta_1x_1+\cdots+\beta_kx_k+e\]
+  \[\underbrace{\sum(y_i-\bar y)^2}_{SST\ \ (n-1)}=\underbrace{\sum(\hat y_i-\bar y)^2}_{SSR\ \ (k)}+\underbrace{\sum(y_i-\hat y_i)^2}_{SSE\ \ (n-k-1)}\]
+  \[\hat\sigma^2=MSE=\frac{SSE}{n-k-1}\]
+  \[R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}\]
+  \[R_a^2=1-\frac{SSE/(n-k-1)}{SST/(n-1)}\]
+  <p>지금까지 본 건 가장 기본적인, 설명변수가 1개뿐인 선형 단순회귀예요. 이제 볼 건 설명변수가 2개 이상일 때 쓰는 <b>중회귀분석</b>이에요. 역시 선형회귀만 봐요.</p>
+  <p>모델은 단순회귀에서 변수만 늘어나서, 일반적으로 \(Y=\beta_0+\beta_1x_1+\cdots+\beta_kx_k+e\) 꼴이에요. 각 설명변수 앞의 계수는 <b>다른 설명변수는 변하지 않고 그 설명변수만 변할 때 \(Y\)의 평균이 변하는 비율</b>을 뜻해요.</p>
+  <p>SST, SSR, SSE도 똑같이 생각하면 되는데, 달라진 건 자유도예요. 설명변수가 \(k\)개가 되면서 SSR의 자유도가 1에서 \(k\)로 늘고, 그 영향으로 SSE의 자유도는 \(n-k-1\)로 줄어요. 자유도만 제대로 알면 단순회귀와 정확히 같은 원리로 생각하고 문제를 풀면 돼요.</p>
+  <p>\(\hat\sigma^2\)은 MSE, 즉 SSE를 자유도로 나눈 것이고, 결정계수도 똑같이 SSR/SST로 정의돼요. 그런데 중회귀에서는 변수가 늘어나면 SST 중 SSR이 차지하는 비중이 자연스럽게 커질 수밖에 없어요. 그래서 변수가 늘어서 SSR이 커지는 효과에 패널티를 주려고, 자유도로 나눠 보정한 <b>수정 결정계수</b> \(R_a^2\)을 더 많이 써요.</p>
+  <p>단순회귀에서는 \(R^2\)이 상관계수의 제곱 \(r^2\)과 같다고 했지만, 중회귀에서는 그렇지 않아요. 단순회귀에서는 변수가 \(x\)와 \(Y\) 둘뿐이라 상관계수가 하나밖에 없었는데, 중회귀에서는 설명변수가 여러 개라 어떤 상관계수를 써야 할지부터 모호해요. (수업 범위 밖이지만 \(y\)와 \(\hat y\)의 상관계수를 제곱하면 결정계수와 같아요.) 중회귀에서는 결정계수를 <b>SSR/SST</b>로 기억하면 돼요. 수정 결정계수 \(R_a^2\)은 어떤 것의 제곱과도 같지 않아요.</p>
+  <p class="key"><span class="c-red">중회귀에서 결정계수는 상관계수의 제곱과 같지 않음!</span></p>
+</section>
+
+<section id="mtest">
+  <div class="sec-head"><h2>(중회귀) 유의성 검정</h2><span class="slide-tag">슬라이드 18</span></div>
+  <p><b>① \(F\)검정: 모형 전체</b></p>
+  \[H_0:\ \beta_1=\cdots=\beta_k=0\]
+  \[F=\frac{MSR}{MSE}\ \sim\ F(k,\ n-k-1)\]
+  <p class="chain-strong">↓ 기각되면</p>
+  <p><b class="c-mu">② \(t\)검정: 변수 하나씩</b></p>
+  \[H_0:\ \beta_j=0\]
+  \[T=\frac{\hat\beta_j}{SE(\hat\beta_j)}\ \sim\ t(n-k-1)\]
+  <p>지난 시간 카이제곱검정에서, 범주가 여러 개라 대립가설을 쓰기 애매해서 전체적 검정부터 하고 귀무가설이 기각되면 세부적 검정을 한다고 했어요. 중회귀에서도 마찬가지로 변수가 여러 개라, 유의성 검정은 <b>\(F\)검정으로 전체적 검정</b>을 하고, 귀무가설이 기각되면 <b>\(t\)검정으로 각 변수의 계수가 0인지 아닌지</b>를 봐요.</p>
+  <p>검정통계량은 단순회귀에서 본 것과 같고 자유도만 바뀐다고 보면 돼요.</p>
+  <p class="caution"><span class="caution-label">주의</span>다만 변수가 여러 개가 되면서 \(\hat\beta_j\)의 표준오차는 \(\sqrt{MSE/S_{(xx)}}\)가 아니게 되고, 손으로 구할 수 없어요. 그래서 \(SE(\hat\beta_j)\)는 <b>컴퓨터 출력에서 읽어 와야</b> 해요.</p>
+</section>
+
+<section id="out">
+  <div class="sec-head"><h2>(중회귀) 컴퓨터 출력 읽기</h2><span class="slide-tag">슬라이드 19</span></div>
+  <div class="table-scroll"><pre class="rout">Call: lm(formula = score ~ hours + sleep)
+
+            Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)  35.2274     9.5411   3.692  0.00498
+<b>hours         2.6629     0.4018   6.627 9.63e-05</b>
+<b>sleep         1.0591     1.4170   0.747  0.47387</b>
+
+Residual standard error: 4.787 on 9 degrees of freedom
+<b>Multiple R-squared: 0.8354, Adjusted R-squared: 0.7988</b>
+<b>F-statistic: 22.83 on 2 and 9 DF,  p-value: 0.000298</b></pre></div>
+  <p class="where">가상의 학생 12명: 점수(score)를 공부 시간(hours)과 수면 시간(sleep)으로 설명</p>
+  <p>중회귀분석부터는 손으로 풀기에 너무 오래 걸려서, 문제도 R이나 파이썬 출력 결과를 주고 이걸 토대로 검정하게 할 거예요. 그래서 이 출력 형태에 익숙해지는 게 중요해요.</p>
+  <p>먼저 맨 아래 F 부분을 보면, p-value가 보통 유의수준으로 정하는 0.05보다 훨씬 작으므로 <b>모형 전체는 유의</b>하다고 볼 수 있어요.</p>
+  <p>그 위쪽의 변수별 부분을 보면, Intercept는 \(y\)절편으로 35.2274가 \(\hat\beta_0\)이고, 2.6629는 hours의 계수 추정치, 1.0591은 sleep의 계수 추정치예요. 각 계수 추정치의 p-value를 보면 hours는 충분히 작은데 sleep은 아주 커요. 그래서 <b>sleep은 유의하지 않다</b>고 볼 수 있어요.</p>
+  <p>아래쪽에서는 결정계수와 수정된 결정계수를 볼 수 있고, 앞에서 배웠듯이 수정된 결정계수가 패널티를 줘서 보정되어 더 작은 걸 확인할 수 있어요.</p>
+</section>
+
+<section id="etc">
+  <div class="sec-head"><h2>(중회귀) 나머지</h2><span class="slide-tag">슬라이드 20</span></div>
+  <div class="tree">
+    <div class="tree-leaves">
+      <div class="leaf"><p class="leaf-h">다중공선성</p><p>설명변수끼리 강한 상관</p></div>
+      <div class="leaf"><p class="leaf-h">변수 선택</p><p>전진 선택법, 후진 선택법</p></div>
+      <div class="leaf"><p class="leaf-h">가변수</p><p>범주형 \(x\) → 0, 1<br>범주 \(k\)개 → \(k-1\)개</p></div>
+    </div>
+  </div>
+  <p><b>다중공선성</b>은 설명변수끼리 강하게 상관되어 있으면(예: 집 크기와 방 개수) 둘이 설명하는 부분이 겹쳐서, 모형 전체 \(F\)는 유의한데 각자의 \(t\)검정에서는 둘 다 유의하지 않게 나오는 일이 생기는 거예요. 대처는 겹치는 변수를 빼는 것이고, 이때 어떤 변수를 뺄지가 변수 선택이에요.</p>
+  <p><b>변수 선택</b>은 간단하게는 p value가 가장 큰 변수부터 하나씩 빼는 식으로 해 볼 수 있고, 전진 선택법이나 후진 선택법을 쓸 수도 있어요. 전진 선택법은 상수항만 있는 모형에서 유의한 변수를 하나씩 넣는 것이고, 후진 선택법은 모든 변수를 넣은 모형에서 유의하지 않은 변수를 하나씩 빼는 거예요.</p>
+  <p><b>가변수</b>(dummy variable)는 성별이나 지역 같은 범주형 변수를 회귀에 넣으려고 값을 0/1로 바꾼 거예요. 범주가 \(k\)개면 가변수를 \(k-1\)개 만들어서, 가변수에 어떤 조합으로 값을 넣느냐에 따라 범주가 정해지게 해요.</p>
+  <div class="table-scroll"><table class="plain">
+    <thead><tr><th>거주 형태</th><th>\(D_1\)</th><th>\(D_2\)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">기숙사 (기준)</th><td>0</td><td>0</td></tr>
+      <tr><th scope="row">자취</th><td>1</td><td>0</td></tr>
+      <tr><th scope="row">본가</th><td>0</td><td>1</td></tr>
+    </tbody>
+  </table></div>
+  \[\hat y=\hat\beta_0+\hat\beta_1x+\hat\beta_2D_1+\hat\beta_3D_2\]
+  <p>이 예시처럼 모든 가변수가 0일 때의 범주를 <b>기준 범주</b>로 해서, 각 가변수에 곱해지는 계수는 <b>기준 범주와의 차이</b>를 뜻해요.</p>
+</section>
+
+<section id="map2">
+  <div class="sec-head"><h2>큰 그림 다시</h2><span class="slide-tag">슬라이드 21</span></div>
+  <div class="tree">
+    <p class="tree-root">8장: 상관분석과 회귀분석</p>
+    <div class="tree-row">
+      <div class="tree-grp">
+        <p class="tree-head">상관분석</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">상관계수와 그 검정</p><p>두 변수의 직선 관계 세기</p><p class="leaf-q"><b>연습 1번</b></p></div>
+        </div>
+      </div>
+      <div class="tree-grp">
+        <p class="tree-head">회귀분석 <span class="tree-tag">x로 Y를 설명, 예측</span></p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">선형회귀: 단순회귀</p><p>설명변수 1개</p><p class="leaf-q"><b>연습 2번</b>, 추가 4번</p></div>
+          <div class="leaf"><p class="leaf-h">선형회귀: 중회귀</p><p>설명변수 2개 이상</p><p class="leaf-q"><b>연습 3번</b>, 추가 5번</p></div>
+          <div class="leaf"><p class="leaf-h" style="color:var(--muted)">그 밖의 회귀</p><p style="color:var(--muted)">이 수업에서는 다루지 않음</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>처음에 봤던 그림에 연습문제가 어느 가지에 해당하는지 표시해 두었어요. 굵은 글씨는 수업 때 푼 문제, 나머지는 추가 문제예요.</p>
+</section>
+
+<section id="practice">
+  <div class="sec-head"><h2>연습문제</h2><span class="slide-tag">슬라이드 22–24</span></div>
+  <p>먼저 풀어 보고 풀이를 열어 보세요. 4번부터는 추가 문제예요.</p>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">1</span>대학생 10명의 하루 스마트폰 사용 시간 \(x\)(시간)와 수면 시간 \(y\)(시간)를 조사하였다. \((x,\ y)\)는 이변량 정규분포를 따른다고 하자.</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>학생</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">\(x\)</th><td>1</td><td>2</td><td>2</td><td>3</td><td>4</td><td>4</td><td>5</td><td>6</td><td>6</td><td>7</td></tr>
+        <tr><th scope="row">\(y\)</th><td>7.5</td><td>7</td><td>8</td><td>6.5</td><td>7</td><td>6</td><td>6.5</td><td>5.5</td><td>6.5</td><td>6</td></tr>
+      </tbody>
+    </table></div>
+    <p class="where">\(\sum x_i=40,\ \sum y_i=66.5,\ \sum x_i^2=196,\ \sum y_i^2=447.25,\ \sum x_iy_i=255.5\)</p>
+    <ol class="q-sub">
+      <li>(1) \(S_{(xx)},\ S_{(yy)},\ S_{(xy)}\)를 구하시오.</li>
+      <li>(2) 표본상관계수 \(r\)을 구하고, 그 의미를 쓰시오.</li>
+      <li>(3) 두 변수 사이에 상관관계가 있는지 유의수준 5%에서 검정하시오.</li>
+      <li>(4) 같은 표본상관계수가 5명의 자료에서 나왔다면 (3)의 결론은 어떻게 되는가?</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) \(\bar x=4,\ \bar y=6.65\). \(S_{(xx)}=196-10(4)^2=36\), \(S_{(yy)}=447.25-10(6.65)^2=447.25-442.225=5.025\), \(S_{(xy)}=255.5-10(4)(6.65)=255.5-266=-10.5\)</p>
+      <p>(2) \(r=\dfrac{-10.5}{\sqrt{36}\sqrt{5.025}}=\dfrac{-10.5}{6\times2.2417}=-0.781\). 스마트폰 사용 시간이 길수록 수면 시간이 짧은 경향이 있고, 직선 관계가 꽤 강하다.</p>
+      <p>(3) \(H_0:\rho=0\) vs \(H_1:\rho\ne0\). \(1-r^2=0.3906\), \(T=\sqrt8\times\dfrac{-0.781}{\sqrt{0.3906}}=2.828\times\dfrac{-0.781}{0.625}=-3.53\). \(|T|=3.53\gt t_{0.025}(8)=2.306\) → 기각. 상관관계가 있다고 할 수 있다.</p>
+      <p>(4) \(n=5\): \(T=\sqrt3\times(-0.781)/0.625=-2.16\), \(|T|=2.16\lt t_{0.025}(3)=3.182\) → 기각하지 못한다. 상관관계가 있다고 할 근거가 부족하다.</p>
+      <p class="sol-note">합계만 주어지면 \(S\) 간편계산식부터. \(r\)이 같아도 \(n\)이 작으면 표준오차 \(\sqrt{(1-r^2)/(n-2)}\)가 커져서 기각하지 못할 수 있어요. 자유도는 \(n-2\).</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">2</span>학생 15명을 무작위로 뽑아 주당 운동 시간(\(x\), 시간)과 스트레스 점수(\(y\))를 조사하여 다음 요약 통계량을 얻었다. 단순선형회귀모형 \(Y=\alpha+\beta x+e\)를 적용하며, 오차항에 대한 기본 가정과 정규성 가정은 모두 만족한다고 하자.</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>표본 수</th><th>\(x\) 평균</th><th>\(x\) 표준편차</th><th>\(y\) 평균</th><th>\(y\) 표준편차</th><th>상관계수</th></tr></thead>
+      <tbody><tr><td>15</td><td>4</td><td>2</td><td>60</td><td>10</td><td>−0.6</td></tr></tbody>
+    </table></div>
+    <ol class="q-sub">
+      <li>(1) 최소제곱 회귀직선을 구하고, 기울기의 의미를 쓰시오.</li>
+      <li>(2) 결정계수를 구하고, 그 의미를 쓰시오.</li>
+      <li>(3) 운동 시간과 스트레스 점수 사이에 유의한 음의 선형관계가 있는지 유의수준 5%에서 두 가지 방법(상관계수의 검정, 기울기의 \(t\)검정)으로 각각 검정하시오.</li>
+      <li>(4) 분산분석표를 완성하여 \(F\)검정을 하고, \(F\)와 (3)의 \(T\) 사이의 관계를 쓰시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) \(\hat\beta=r\dfrac{s_y}{s_x}=-0.6\times\dfrac{10}{2}=-3\), \(\hat\alpha=\bar y-\hat\beta\bar x=60-(-3)(4)=72\) → \(\hat y=72-3x\). 운동 시간이 1시간 늘면 스트레스 점수의 평균이 3점 낮다.</p>
+      <p>(2) 단순회귀이므로 \(R^2=r^2=(-0.6)^2=0.36\). 스트레스 점수 전체 흩어짐의 36%를 운동 시간과의 직선 관계로 설명한다.</p>
+      <p>(3) 방법 1 (상관계수의 검정): \(H_0:\rho=0\) vs \(H_1:\rho\lt0\). \(T=\sqrt{13}\times\dfrac{-0.6}{\sqrt{1-0.36}}=3.606\times\dfrac{-0.6}{0.8}=-2.70\)</p>
+      <p>방법 2 (기울기의 \(t\)검정): \(H_0:\beta=0\) vs \(H_1:\beta\lt0\). \(S_{(xx)}=(n-1)s_x^2=14\times4=56\), \(S_{(yy)}=14\times100=1400\), \(SSE=S_{(yy)}(1-r^2)=1400\times0.64=896\), \(MSE=896/13=68.92\), \(SE(\hat\beta)=\sqrt{68.92/56}=1.109\), \(T=-3/1.109=-2.70\)</p>
+      <p>두 방법 모두 \(T=-2.70\lt-t_{0.05}(13)=-1.771\) → 기각. 유의한 음의 선형관계가 있다고 할 수 있다.</p>
+      <p>(4) \(SSR=S_{(yy)}-SSE=1400-896=504\).</p>
+      <div class="table-scroll"><table class="plain">
+        <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">회귀</th><td>504</td><td>1</td><td>504</td><td>7.31</td></tr>
+          <tr><th scope="row">잔차</th><td>896</td><td>13</td><td>68.92</td><td></td></tr>
+          <tr><th scope="row">전체</th><td>1400</td><td>14</td><td></td><td></td></tr>
+        </tbody>
+      </table></div>
+      <p>\(F=504/68.92=7.31\gt F_{0.05}(1,\ 13)=4.67\) → 기각. \(F=T^2\) (\(7.31=2.70^2\)). 단 \(F\)검정은 "관계가 있는가"(양측)만 볼 수 있으므로, 음의 방향은 \(t\)로 판단한다.</p>
+      <p class="sol-note">요약통계량이 주어지면 \(\hat\beta=r\,s_y/s_x\), \(S_{(xx)}=(n-1)s_x^2\). 상관계수 검정과 기울기 검정은 같은 \(T\)예요. 단측이면 \(t_{0.05}\), 양측이면 \(t_{0.025}\).</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">3</span>중고차 20대의 가격(price, 만원)을 주행거리(km, 만 km)와 흰색 여부(white: 흰색이면 1, 아니면 0)로 설명하는 중회귀분석을 실행한 결과이다. 회귀분석의 기본 가정은 모두 만족한다고 하자.</p>
+    <div class="table-scroll"><pre class="rout">Call: lm(formula = price ~ km + white)
+            Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept) 2253.446     82.141  27.434 1.62e-15
+km           -87.677      8.301 -10.562 6.90e-09
+white         55.089     63.385   0.869    0.397
+Residual standard error: 136.1 on 17 degrees of freedom
+Multiple R-squared: 0.8717, Adjusted R-squared: 0.8566
+F-statistic: 57.73 on 2 and 17 DF,  p-value: 2.64e-08</pre></div>
+    <ol class="q-sub">
+      <li>(1) 추정된 회귀식을 쓰고, km의 계수가 뜻하는 바를 쓰시오.</li>
+      <li>(2) 추정된 회귀모형은 유의한가? 가설을 쓰고 유의확률을 이용하여 유의수준 5%에서 검정하시오.</li>
+      <li>(3) 흰색 여부는 가격을 설명하는 유의한 변수인가? 가설을 쓰고 유의수준 5%에서 검정하시오.</li>
+      <li>(4) white의 계수 55.089는 무엇을 뜻하는가?</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) \(\widehat{price}=2253.45-87.68\,km+55.09\,white\). 흰색 여부가 같을 때 주행거리가 1만 km 늘면 가격의 평균이 약 87.7만원 낮다.</p>
+      <p>(2) \(H_0:\beta_1=\beta_2=0\) vs \(H_1\): 적어도 하나는 0이 아니다. \(F=57.73\) (자유도 2, 17), p value \(=2.64\times10^{-8}\lt0.05\) → 기각. 주행거리와 흰색 여부 중 적어도 하나는 가격을 설명하는 데 유의하다.</p>
+      <p>(3) \(H_0:\beta_2=0\) vs \(H_1:\beta_2\ne0\). \(t=0.869\) (자유도 17), p value \(=0.397\gt0.05\) → 기각하지 못한다. 흰색 여부는 유의한 변수라고 할 수 없다.</p>
+      <p>(4) 주행거리가 같을 때 흰색 차가 흰색이 아닌 차(기준 범주)보다 가격의 평균이 약 55.1만원 높게 추정된다. 단 (3)에서 유의하지 않았으므로 실제 차이가 있다고 말할 근거는 부족하다.</p>
+      <p class="sol-note">\(F\)로 모형 전체 → \(t\)로 변수 하나씩. \(F\) 기각이 모든 변수가 유의하다는 뜻은 아니에요. 계수 해석에는 "다른 변수가 같을 때"와 "평균"을 붙여요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">4</span>(추가 문제) 다음 문장이 맞으면 O, 틀리면 X를 쓰시오.</p>
+    <ol class="q-sub">
+      <li>(1) 상관계수가 0이면 두 변수 사이에는 아무 관계도 없다.</li>
+      <li>(2) 단순회귀에서 결정계수가 0.81이면 상관계수는 0.9이다.</li>
+      <li>(3) 최소제곱 회귀직선은 항상 점 \((\bar x,\ \bar y)\)를 지난다.</li>
+      <li>(4) 단순회귀에서 기울기에 대한 양측 \(t\)검정과 \(F\)검정은 같은 결론을 준다.</li>
+      <li>(5) 중회귀에서 설명변수를 하나 더 넣으면 수정된 결정계수도 반드시 커진다.</li>
+      <li>(6) 잔차그림에서 \(x\)가 커질수록 잔차가 넓게 퍼지면 등분산성 가정을 의심해야 한다.</li>
+      <li>(7) 중회귀에서 \(F\)검정의 귀무가설을 기각하면 모든 설명변수가 유의하다.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>X X O O X O X</p>
+      <p>(1) \(r\)은 직선 관계만 재요. 곡선 관계는 뚜렷해도 \(r\approx0\)일 수 있어요.</p>
+      <p>(2) \(r=\pm0.9\). 부호는 기울기 부호를 따라요.</p>
+      <p>(3) \(\hat\alpha=\bar y-\hat\beta\bar x\)를 옮기면 \(\bar y=\hat\alpha+\hat\beta\bar x\).</p>
+      <p>(4) \(F=T^2\)이고 \(F_{0.05}(1,\ n-2)=t_{0.025}(n-2)^2\).</p>
+      <p>(5) 반드시 커지는 것은 결정계수 \(R^2\). 수정된 결정계수는 유의하지 않은 변수를 넣으면 줄어들 수 있어요.</p>
+      <p>(6) 깔때기 모양은 등분산성 위반이에요.</p>
+      <p>(7) \(F\) 기각은 "적어도 하나는 0이 아니다"일 뿐이에요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">5</span>(추가 문제) 아파트 24채의 가격을 면적, 역까지 거리, 층수의 세 설명변수로 설명하는 중회귀분석을 하여 다음 분산분석표를 얻었다.</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">회귀</th><td>(가)</td><td>(나)</td><td>(다)</td><td>(라)</td></tr>
+        <tr><th scope="row">잔차</th><td>300</td><td>(마)</td><td>(바)</td><td></td></tr>
+        <tr><th scope="row">전체</th><td>1200</td><td>23</td><td></td><td></td></tr>
+      </tbody>
+    </table></div>
+    <ol class="q-sub">
+      <li>(1) (가)~(바)를 채우시오.</li>
+      <li>(2) 회귀모형이 유의한지 유의수준 5%에서 검정하시오.</li>
+      <li>(3) 결정계수와 수정된 결정계수를 구하시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) (가) \(SSR=1200-300=900\), (나) \(k=3\), (다) \(MSR=900/3=300\), (마) \(n-k-1=24-3-1=20\), (바) \(MSE=300/20=15\), (라) \(F=300/15=20\)</p>
+      <p>(2) \(H_0:\beta_1=\beta_2=\beta_3=0\) vs \(H_1\): 적어도 하나는 0이 아니다. \(F=20\gt F_{0.05}(3,\ 20)=3.10\) → 기각. 세 설명변수 중 적어도 하나는 가격을 설명하는 데 유의하다.</p>
+      <p>(3) \(R^2=900/1200=0.75\), \(R_a^2=1-\dfrac{300/20}{1200/23}=1-\dfrac{15}{52.17}=0.7125\)</p>
+      <p class="sol-note">자유도: 회귀 \(k\), 잔차 \(n-k-1\), 전체 \(n-1\). 수정된 결정계수는 SSE와 SST를 각자 자유도로 나눈 뒤 비교하므로 \(R^2\)보다 작아요.</p>
+    </details>
+  </article>
+</section>
+
+</main>
