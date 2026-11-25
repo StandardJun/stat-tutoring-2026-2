@@ -260,6 +260,22 @@
   \[F=\frac{SStr/(k-1)}{SSE/\{(k-1)(p-1)\}}=\frac{MStr}{MSE}\]
   <p>일원배치법과 랜덤화 블록을 비교하면, SStr은 그대로니까 검정통계량 \(F=MStr/MSE\)의 분자는 같은데, 랜덤화 블록에서는 분모 MSE가 작아지면서 \(F\)가 커져서 처리 차이를 더 잘 찾아낼 수 있게 돼요.</p>
   <p class="caution"><span class="caution-label">주의</span>SSE의 자유도도 \(p-1\)만큼 줄어들어요. 그래서 블록끼리 차이가 별로 없는데 블록으로 나누면, SSE는 별로 안 줄고 자유도만 잃어서 오히려 손해일 수 있어요. 이걸 확인하는 게 다음에 나오는 블록 검정이에요.</p>
+
+  <p>아래에서 같은 18명 자료로 조 효과를 직접 빼 보세요. SSE에 들어 있던 조 사이 실력 차이가 빠져나가는 게 보여요.</p>
+
+  <div class="panel" id="bs11-w">
+    <div class="panel-head">
+      <p class="panel-title">조 효과를 빼면 반 안 흩어짐이 얼마나 남나</p>
+      <div class="seg" role="group" aria-label="보기 선택" id="bs11-mode">
+        <button type="button" data-m="raw" class="on" aria-pressed="true">반으로만 보기</button>
+        <button type="button" data-m="adj" aria-pressed="false">조 효과 빼기</button>
+      </div>
+    </div>
+    <p class="panel-sub">6조 × 3반 = 18명. 검은 막대는 반 평균(\(60,\ 65,\ 70\)). 유의수준 5%</p>
+    <svg id="bs11-svg" viewBox="0 0 560 260" role="img" aria-label="A반, B반, C반의 점수 18개. 같은 조끼리 선으로 이어져 있고, 조 효과 빼기를 누르면 각 조의 점들이 조 효과만큼 위아래로 움직여 반 평균 근처로 모인다"></svg>
+    <div class="w3-out" id="bs11-out" aria-live="polite" style="margin-top:12px"></div>
+    <p class="panel-note" id="bs11-note"></p>
+  </div>
 </section>
 
 <section id="btest">
@@ -324,6 +340,24 @@
   <p>그래서 제곱합은 \(SST=SSA+SSB+SSE\)이고, 자유도는 \(N-1=(p-1)+(q-1)+(p-1)(q-1)\)이에요.</p>
   <p>랜덤화 블록과는 해석에서 차이가 드러나요. 랜덤화 블록은 관심 있는 요인 1개에 관심 없는 블록이 붙은 거였다면, 반복 없는 이원배치법은 두 요인이 모두 관심 대상이라 A, B 둘 다 검정해요(\(F_A=MSA/MSE\), \(F_B=MSB/MSE\)).</p>
   <p>제목에 쓰여 있듯이 반복 없는 경우가 있으면 반복 있는 경우도 있어요. 둘의 차이는 두 인자 수준의 조합으로 만들어지는 처리 하나에 대해 값을 한 번만 구하느냐, 여러 번 구하느냐예요. 지금처럼 반복이 없으면 처리 하나당 값을 딱 하나만 보기 때문에, 그 처리에서 생기는 효과와 오차를 구분할 수 없어요. A, B 효과만으로는 설명이 안 되고 그 칸에서만 추가로 생기는 효과를 <b>교호작용</b>이라고 하는데, 반복이 없으면 교호작용을 따로 볼 수가 없어요. 그래서 반복 없는 이원배치법에서는 교호작용이 없다고 보고 분석해요.</p>
+
+  <p>아래 표는 요인 A 3수준, 요인 B 4수준, 칸마다 값이 1개인 자료예요. A 효과, B 효과를 바꿔 보고, 마지막 슬라이더로 실제로는 교호작용이 있는 자료를 만들어 보세요. 반복이 없으면 그 교호작용이 어디로 가는지 확인할 수 있어요.</p>
+
+  <div class="panel" id="tw11-w">
+    <div class="panel-head">
+      <p class="panel-title">반복 없는 이원배치: 숨은 교호작용은 어디로 가나</p>
+    </div>
+    <p class="panel-sub">\(p=3,\ q=4,\ N=12\). 유의수준 5%, 임계값 \(F_{0.05}(2,\ 6)=5.14\), \(F_{0.05}(3,\ 6)=4.76\)</p>
+    <div class="table-scroll"><table class="plain" id="tw11-tab"></table></div>
+    <svg id="tw11-svg" viewBox="0 0 560 100" role="img" aria-label="SST를 SSA, SSB, SSE로 나눈 가로 막대"></svg>
+    <div class="sliders three">
+      <label class="sl">A 효과 크기 <input type="range" id="tw11-a" min="0" max="6" step="0.5" value="4"><span class="val" id="tw11-a-v">4.0</span></label>
+      <label class="sl">B 효과 크기 <input type="range" id="tw11-b" min="0" max="6" step="0.5" value="3"><span class="val" id="tw11-b-v">3.0</span></label>
+      <label class="sl">숨은 교호작용 <input type="range" id="tw11-g" min="0" max="4" step="0.25" value="0"><span class="val" id="tw11-g-v">0.0</span></label>
+    </div>
+    <div class="w3-out" id="tw11-out" aria-live="polite" style="margin-top:12px"></div>
+    <p class="panel-note" id="tw11-note"></p>
+  </div>
 </section>
 
 <section id="two1">
@@ -374,6 +408,29 @@
   <p class="key"><span class="c-red">교호작용이 유의하면 주효과 검정은 하지 않음</span></p>
   <p>반복 있는 이원배치법은 \(F\)가 3개 나오는데, 검정하는 순서가 정해져 있어요.</p>
   <p>먼저 교호작용부터 검정해요. 귀무가설을 모든 \(\gamma_{ij}=0\), 즉 교호작용이 없다로 잡고 \(F\)검정을 해요. 교호작용이 유의하지 않으면, 즉 귀무가설이 기각되지 않으면 그다음에 주효과 A, B를 각각 \(F_A=MSA/MSE\), \(F_B=MSB/MSE\)로 검정해요. 반대로 교호작용이 유의하면, 즉 귀무가설이 기각되면 두 주효과가 서로 얽혀 있다는 뜻이므로 주효과 검정은 따로 하지 않아요.</p>
+
+  <p>아래에서 교재(A, B)와 복습량(적음, 보통, 많음)의 효과, 교호작용, 칸 안 흩어짐을 바꿔 보면서 교호작용 그림과 검정 순서를 함께 확인해 보세요. 위의 버튼은 슬라이드 20의 세 그림이에요.</p>
+
+  <div class="panel" id="ip11-w">
+    <div class="panel-head">
+      <p class="panel-title">교호작용 그림과 검정 순서</p>
+      <div class="seg" role="group" aria-label="예시 선택" id="ip11-pre">
+        <button type="button" data-p="par" class="on" aria-pressed="true">평행</button>
+        <button type="button" data-p="wide" aria-pressed="false">벌어짐</button>
+        <button type="button" data-p="cross" aria-pressed="false">교차</button>
+      </div>
+    </div>
+    <p class="panel-sub">\(p=2,\ q=3,\ r=4,\ N=24\). 유의수준 5%, 임계값 \(F_{0.05}(1,\ 18)=4.41\), \(F_{0.05}(2,\ 18)=3.55\)</p>
+    <svg id="ip11-svg" viewBox="0 0 560 260" role="img" aria-label="가로축은 복습 적음, 보통, 많음, 교재 A(파랑)와 교재 B(주황)의 칸 평균을 이은 두 선과 칸 안의 점들"></svg>
+    <div class="sliders four">
+      <label class="sl">교재 차이 (B − A) <input type="range" id="ip11-t" min="-10" max="10" step="0.5" value="6"><span class="val" id="ip11-t-v">6.0</span></label>
+      <label class="sl">복습 효과 <input type="range" id="ip11-s" min="0" max="16" step="0.5" value="10"><span class="val" id="ip11-s-v">10.0</span></label>
+      <label class="sl">교호작용 (간격 변화) <input type="range" id="ip11-g" min="-16" max="16" step="0.5" value="0"><span class="val" id="ip11-g-v">0.0</span></label>
+      <label class="sl">칸 안 흩어짐 <input type="range" id="ip11-e" min="0.5" max="8" step="0.5" value="3"><span class="val" id="ip11-e-v">3.0</span></label>
+    </div>
+    <div class="w3-out" id="ip11-out" aria-live="polite" style="margin-top:12px"></div>
+    <p class="panel-note" id="ip11-note"></p>
+  </div>
 </section>
 
 <section id="fill">

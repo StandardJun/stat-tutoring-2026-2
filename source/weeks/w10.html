@@ -218,6 +218,22 @@
   <p>이렇게 나누는 이유는 모델이 얼마나 설명하는지를 수치로 해석하려는 거예요. 그 맥락에서 <b>설명력</b>을 생각할 수 있고, 설명력은 <b>결정계수</b>로 나타내요. 보통 \(R^2\)으로 쓰고, 강의에서는 그냥 \(r^2\)으로 썼을 수도 있어요. \(R^2\)은 원래 SSR/SST로 정의되고, 전체 중에 얼마만큼이 설명되는지를 뜻해요. 선형 단순회귀에서는 이게 상관계수의 제곱 \(r^2\)과 값이 같아서 \(r^2\)으로 쓰기도 해요. SSR/SST는 (SST − SSE)/SST로 바꿔 1 − SSE/SST로도 쓸 수 있으니, 알고 있는 값에 따라 편한 형태로 쓰면 돼요.</p>
   <p>식을 외우기보다 의미로 이해하면 좋아요. \(R^2\)은 "얼마나 설명되는가"이고, 그건 전체 SST 중 모델이 설명하는 SSR의 비율이에요. 또는 전체 1에서, SST 중 모델이 설명하지 못하는 SSE의 비율을 뺀 것이에요.</p>
   <p>마지막으로, 오차에 등분산성을 가정하면서 어느 \(x\)에서든 분산이 \(\sigma^2\)으로 같다고 했어요. 모수 \(\sigma^2\)은 알 수 없지만 추정량은 구할 수 있어요. 그게 <b>MSE</b>예요. MS가 붙은 건 SS를 자유도로 나눈 것이니, SSE를 자유도 \(n-2\)로 나눈 게 오차분산의 추정량이에요. 식 구조도 표본분산과 비슷해서 \(\hat\sigma^2\)이라고 보면 돼요.</p>
+
+  <p>아래에서 기울기와 잡음 크기를 바꿔 보면서 파란 부분(SSR)과 주황 부분(SSE)이 어떻게 변하는지, 그에 따라 \(R^2\)과 다음 슬라이드의 \(F\)가 어떻게 움직이는지 확인해 보세요.</p>
+
+  <div class="panel" id="r210-w">
+    <div class="panel-head">
+      <p class="panel-title">SST를 SSR과 SSE로 쪼개 보기</p>
+    </div>
+    <p class="panel-sub">최소제곱법 위젯과 같은 12명 자료에서 기울기와 잡음 크기만 바꿔요. 유의수준 5%, 임계값 \(F_{0.05}(1,\ 10)=4.96\)</p>
+    <svg id="r210-svg" viewBox="0 0 560 322" role="img" aria-label="공부 시간과 점수 산점도. 각 점마다 평균선에서 회귀직선까지의 파란 막대와 회귀직선에서 점까지의 주황 막대가 있고, 아래에 SST를 SSR과 SSE로 나눈 가로 막대가 있다"></svg>
+    <div class="sliders two">
+      <label class="sl">기울기 <input type="range" id="r210-b" min="0" max="4" step="0.01" value="2"><span class="val" id="r210-b-v">2.00</span></label>
+      <label class="sl">잡음 크기 <input type="range" id="r210-s" min="0.1" max="3" step="0.05" value="1"><span class="val" id="r210-s-v">1.00배</span></label>
+    </div>
+    <div class="w3-out" id="r210-out" aria-live="polite" style="margin-top:12px"></div>
+    <p class="panel-note" id="r210-note"></p>
+  </div>
 </section>
 
 <section id="ftest">
@@ -247,6 +263,22 @@
   <p>\(S_{(xx)}\)는 \(x\)가 넓게 퍼져 있을수록 커지는데, 분산의 분모에 있으니 분산이 작아져요. \(x\)에 대한 정보가 많을수록 \(\hat\beta\)가 \(\beta\) 근처에 더 몰려서 분포한다는 뜻이에요.</p>
   <p>이걸로 검정하려고 보니 \(\sigma^2\)은 모수라 몰라요. 그래서 추정량 \(\hat\sigma^2\), 즉 MSE(SSE를 자유도 \(n-2\)로 나눈 것)를 쓰고, 그 대신 정규분포를 \(t\)분포로 바꿔 \(t\)검정을 하면 돼요.</p>
   <p>그런데 이 검정통계량은 사실 앞의 상관계수 검정의 검정통계량과 <b>똑같아요</b>. 회귀직선이 의미가 없다면 상관계수가 말해 주는 선형성도 없을 테니 서로 통한다고 보면 돼요. 그래서 앞의 \(F\)검정, 여기의 \(t\)검정, 상관분석의 \(t\)검정이 모두 같은 의미예요. 이제서야 상관계수 검정의 자유도가 \(n-2\)인 이유도 알 수 있어요. SSE의 자유도가 \(n-2\)였기 때문이에요.</p>
+
+  <p>아래에서 \(x\)를 모으는 범위와 표본 크기를 바꿔 보세요. 진짜 기울기가 2인 같은 모델에서 표본을 30번 뽑아 직선을 각각 구했어요. \(S_{(xx)}\)가 커질수록 직선들이 어떻게 모이는지 보면 \(\hat\beta\)의 분산 \(\sigma^2/S_{(xx)}\)가 눈에 들어와요.</p>
+
+  <div class="panel" id="bs10-w">
+    <div class="panel-head">
+      <p class="panel-title">\(x\)를 넓게 모을수록 \(\hat\beta\)가 덜 흔들린다</p>
+    </div>
+    <p class="panel-sub">진짜 모델 \(Y=60+2(x-8)+e,\ \sigma=6\). \(x\)는 8시간을 중심으로 고르게 모아요. 유의수준 5% 양측</p>
+    <svg id="bs10-svg" viewBox="0 0 560 280" role="img" aria-label="진짜 회귀직선(점선)과 표본 30개로 각각 구한 회귀직선 30개(주황). x를 모은 범위가 파란 띠로 표시된다"></svg>
+    <div class="sliders two">
+      <label class="sl">x 범위 <input type="range" id="bs10-x" min="0.5" max="7" step="0.5" value="2"><span class="val" id="bs10-x-v">±2.0시간</span></label>
+      <label class="sl">표본 크기 n <input type="range" id="bs10-n" min="5" max="40" step="1" value="10"><span class="val" id="bs10-n-v">10</span></label>
+    </div>
+    <div class="w3-out" id="bs10-out" aria-live="polite" style="margin-top:12px"></div>
+    <p class="panel-note" id="bs10-note"></p>
+  </div>
   <p class="caution"><span class="caution-label">주의</span>\(F\)검정은 그 자체로는 오른쪽 꼬리만 보지만, 대립가설로는 "\(\beta\ne0\)"만 말할 수 있어요. "\(\beta\)가 0보다 크다(작다)"처럼 방향이 있는 검정은 \(F\)로 못 하고 \(t\)검정으로 해야 해요. 그래서 \(F\)검정과 같다고 할 수 있는 \(t\)검정은, 카이제곱검정과 모비율 검정 때처럼 <b>양측검정일 때만</b> 통해요.</p>
   <p class="key"><span class="c-red">단측검정은 \(t\)로만! \(F\)는 방향을 못 봄</span></p>
 </section>
@@ -256,6 +288,26 @@
   <figure class="plate wide"><img src="{{IMG:w10_resid}}" alt="잔차 그림 세 개. 왼쪽은 0 주변에 고르게 퍼진 띠 모양(OK), 가운데는 x가 커질수록 넓어지는 깔때기 모양(등분산 위반), 오른쪽은 U자 곡선 패턴(선형성 위반)" width="1400" height="420"><figcaption>왼쪽: 가정 OK / 가운데: 등분산성 X / 오른쪽: 선형성 X</figcaption></figure>
   <p>앞에서 이야기한 것들은 모두 오차 \(e\)에 대한 가정을 전제로 한 거예요. 이 전제가 맞지 않으면 앞의 이야기가 소용없어져요. 그래서 가정이 맞는지도 확인해야 하는데, 오차 \(e\)는 알 수 없으니 대신 잔차 \(\hat e\)로 확인해요. 이걸 <b>잔차분석</b>이라고 해요.</p>
   <p>잔차분석에서는 잔차의 산점도를 보고 가정이 맞는지 확인해요. 검정통계량으로 검정하는 정도는 아니고, 눈으로 산점도에 이상이 없는지 보면 돼요. 가정이 모두 맞는다면 잔차 대부분이 ±표준편차의 2배 범위 안에 들어와야 해요. 표준화하면 ±2 안에 약 95%가 들어와야 해요(정규분포에서 \(2\sigma\) 범위 안에 약 95%가 들어왔으니까요). 또 특정한 모양을 띠지 않고 띠 안에 분포해야 해요. 왼쪽 그림처럼 보이면 가정이 성립하는 거예요. 가운데나 오른쪽 그림처럼 특정한 모양을 보이거나 띠를 벗어난 점이 너무 많으면 오차에 대한 가정이 성립하지 않는다고 판단해요.</p>
+
+  <p>아래에서 세 가지 자료를 골라 산점도와 잔차 그림을 비교해 보세요. 위 산점도만으로는 잘 안 보이는 문제가 잔차 그림에서는 드러나요.</p>
+
+  <div class="panel" id="rd10-w">
+    <div class="panel-head">
+      <p class="panel-title">잔차 그림으로 가정 확인하기</p>
+      <div class="seg" role="group" aria-label="자료 선택" id="rd10-mode">
+        <button type="button" data-m="ok" class="on" aria-pressed="true">가정 OK</button>
+        <button type="button" data-m="fan" aria-pressed="false">깔때기</button>
+        <button type="button" data-m="curve" aria-pressed="false">곡선</button>
+      </div>
+    </div>
+    <p class="panel-sub">가상 자료 40개. 위는 산점도와 최소제곱 직선, 아래는 표준화 잔차(잔차 ÷ \(\sqrt{MSE}\))</p>
+    <svg id="rd10-svg" viewBox="0 0 560 384" role="img" aria-label="위쪽은 산점도와 최소제곱 직선, 아래쪽은 x에 따른 표준화 잔차 그림. ±2 범위가 초록 띠로 표시되고, 띠 밖의 점은 빨강"></svg>
+    <div class="sliders two">
+      <label class="sl">패턴 정도 <input type="range" id="rd10-k" min="0" max="1" step="0.05" value="0.7"><span class="val" id="rd10-k-v">0.70</span></label>
+    </div>
+    <div class="w3-out" id="rd10-out" aria-live="polite" style="margin-top:12px"></div>
+    <p class="panel-note" id="rd10-note"></p>
+  </div>
   <div class="chain">
     <p>산점도 → 최소제곱 직선 → 잔차분석 → 결정계수 → 유의성 검정</p>
   </div>
@@ -320,6 +372,21 @@ Residual standard error: 4.787 on 9 degrees of freedom
     </div>
   </div>
   <p><b>다중공선성</b>은 설명변수끼리 강하게 상관되어 있으면(예: 집 크기와 방 개수) 둘이 설명하는 부분이 겹쳐서, 모형 전체 \(F\)는 유의한데 각자의 \(t\)검정에서는 둘 다 유의하지 않게 나오는 일이 생기는 거예요. 대처는 겹치는 변수를 빼는 것이고, 이때 어떤 변수를 뺄지가 변수 선택이에요.</p>
+
+  <p>아래에서 두 설명변수(집 크기, 방 개수)의 상관을 키워 보세요. 모형 전체 \(F\)는 유의한데 개별 \(t\)는 둘 다 유의하지 않게 되는 순간을 찾을 수 있어요.</p>
+
+  <div class="panel" id="mc10-w">
+    <div class="panel-head">
+      <p class="panel-title">다중공선성: 설명변수끼리 상관이 커지면</p>
+    </div>
+    <p class="panel-sub">집값 = 집 크기 + 방 개수 + 오차, \(n=30\). 두 변수의 실제 효과는 같은 크기. 같은 조건으로 자료를 여러 번 뽑을 때 평균적으로 나오는 값이에요. 유의수준 5%</p>
+    <svg id="mc10-svg" viewBox="0 0 560 172" role="img" aria-label="집 크기와 방 개수의 t 값, 모형 전체 F 값을 기준선과 함께 보여 주는 가로 막대 세 개"></svg>
+    <div class="sliders two">
+      <label class="sl">집 크기와 방 개수의 상관 ρ <input type="range" id="mc10-r" min="0" max="0.98" step="0.01" value="0.2"><span class="val" id="mc10-r-v">0.20</span></label>
+    </div>
+    <div class="w3-out" id="mc10-out" aria-live="polite" style="margin-top:12px"></div>
+    <p class="panel-note" id="mc10-note"></p>
+  </div>
   <p><b>변수 선택</b>은 간단하게는 p value가 가장 큰 변수부터 하나씩 빼는 식으로 해 볼 수 있고, 전진 선택법이나 후진 선택법을 쓸 수도 있어요. 전진 선택법은 상수항만 있는 모형에서 유의한 변수를 하나씩 넣는 것이고, 후진 선택법은 모든 변수를 넣은 모형에서 유의하지 않은 변수를 하나씩 빼는 거예요.</p>
   <p><b>가변수</b>(dummy variable)는 성별이나 지역 같은 범주형 변수를 회귀에 넣으려고 값을 0/1로 바꾼 거예요. 범주가 \(k\)개면 가변수를 \(k-1\)개 만들어서, 가변수에 어떤 조합으로 값을 넣느냐에 따라 범주가 정해지게 해요.</p>
   <div class="table-scroll"><table class="plain">
