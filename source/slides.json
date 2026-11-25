@@ -9,5 +9,6 @@
   "11/4":  { "path": "files/slides/261104.pdf", "save": "261104_6장.pdf" },
   "11/11": { "path": "files/slides/261111.pdf", "save": "261111_7장(모비율).pdf" },
   "11/12": { "path": "files/slides/261112.pdf", "save": "261112_7장(카이제곱 검정).pdf" },
-  "11/18": { "path": "files/slides/261118.pdf", "save": "261118_8장(상관분석, 회귀분석).pdf" }
+  "11/18": { "path": "files/slides/261118.pdf", "save": "261118_8장(상관분석, 회귀분석).pdf" },
+  "11/25": { "path": "files/slides/261125.pdf", "save": "261125_9장(분산분석).pdf" }
 }

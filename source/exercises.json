@@ -54,5 +54,12 @@
       "path": "files/exercises/261118.pdf",
       "save": "261118_연습문제(상관분석, 회귀분석).pdf"
     }
+  ],
+  "11/25": [
+    {
+      "label": "연습문제",
+      "path": "files/exercises/261125.pdf",
+      "save": "261125_연습문제(분산분석).pdf"
+    }
   ]
 }

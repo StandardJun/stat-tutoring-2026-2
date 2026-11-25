@@ -1,0 +1,611 @@
+<nav class="toc" aria-label="목차">
+  <a href="#today">오늘의 범위</a>
+  <a href="#map">큰 그림</a>
+  <a href="#why">왜 분산?</a>
+  <a href="#terms">요인과 처리</a>
+  <a href="#data">자료 구조</a>
+  <a href="#model">모형과 가정</a>
+  <a href="#hyp">가설</a>
+  <a href="#decomp">변동 쪼개기</a>
+  <a href="#ftest">F검정</a>
+  <a href="#anova">분산분석표</a>
+  <a href="#tvsf">t검정 vs 분산분석</a>
+  <a href="#multi">다중비교</a>
+  <a href="#block">랜덤화 블록</a>
+  <a href="#bsplit">블록 변동</a>
+  <a href="#btest">블록 검정</a>
+  <a href="#bex">조로 묶으면</a>
+  <a href="#two0">반복 없음</a>
+  <a href="#two1">교호작용</a>
+  <a href="#iplot">교호작용 그림</a>
+  <a href="#two1t">반복 있음 표</a>
+  <a href="#order">검정 순서</a>
+  <a href="#fill">빈칸 채우기</a>
+  <a href="#map2">큰 그림 다시</a>
+  <a href="#practice">연습문제</a>
+</nav>
+
+<main>
+
+<section id="today">
+  <div class="sec-head"><h2>오늘의 범위</h2><span class="slide-tag">슬라이드 2</span></div>
+  <p>오늘은 이 표에서 마지막으로 남은 9장 분산분석을 봐요. 표에서 보듯이 분산분석은 <b>평균을 3개 이상의 집단에서 비교</b>하는 내용이에요.</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>무엇 ↓ &nbsp;몇 개 →</th><th>1개</th><th>2개</th><th>3개 이상</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">평균</th><td>중간고사 범위<br>\(t,\ Z\)</td><td>이표본, 대응비교<br>\(t\) <span class="nw">(6장)</span></td><td><span class="c-red"><b>분산분석</b><br>\(F\) <span class="nw">(9장)</span></span></td></tr>
+      <tr><th scope="row">분산</th><td>분산 1개<br>\(\chi^2\) <span class="nw">(6장)</span></td><td>분산 2개<br>\(F\) <span class="nw">(6장)</span></td><td></td></tr>
+      <tr><th scope="row">비율, 범주</th><td>비율 1개<br>\(Z\) <span class="nw">(7장)</span></td><td>비율 2개<br>\(Z\) <span class="nw">(7장)</span></td><td>비율 여러 개<br>\(\chi^2\) <span class="nw">(7장)</span></td></tr>
+      <tr><th scope="row">관계<br>(변수 2개)</th><td colspan="3">숫자 변수 2개: 상관분석, 회귀분석 \(t,\ F\) <span class="nw">(8장)</span><br>범주 변수 2개: 독립성 검정 \(\chi^2\) <span class="nw">(7장)</span></td></tr>
+    </tbody>
+  </table></div>
+  <p>분산분석에서 쓰는 분포는 \(F\)분포이고, 오늘 내용은 8장에서 본 \(SST=SSR+SSE\)와 비슷해요. 분산분석표도 거의 그대로 다시 쓰니까 지난 회차 내용을 떠올리면서 읽으면 좋아요.</p>
+</section>
+
+<section id="map">
+  <div class="sec-head"><h2>9장의 큰 그림</h2><span class="slide-tag">슬라이드 3</span></div>
+  <div class="tree">
+    <p class="tree-root">9장: 분산분석 (여러 집단의 평균 비교)</p>
+    <div class="tree-row">
+      <div class="tree-grp">
+        <p class="tree-head">요인 1개</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">일원배치법</p><p>요인 1개</p><p>→ 다중비교<br>(어디가 다른지)</p></div>
+          <div class="leaf"><p class="leaf-h">랜덤화 블록</p><p>요인 1개 + 블록</p></div>
+        </div>
+      </div>
+      <div class="tree-grp">
+        <p class="tree-head">이원배치법 <span class="tree-tag">요인 2개</span></p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">반복 없음</p><p>교호작용 X</p></div>
+          <div class="leaf"><p class="leaf-h">반복 있음</p><p>교호작용 O</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>지난 회차 회귀분석에서 변수가 몇 개인지를 기준으로 단순회귀와 중회귀를 나눴던 것처럼, 분산분석에는 <b>요인</b>이라는 게 있고 이게 몇 개냐에 따라 요인이 1개인 <b>일원배치법</b>과 요인이 2개인 <b>이원배치법</b>으로 나뉘어요. 그리고 요인은 1개인데 비슷한 대상끼리 묶어서 '블록'을 같이 고려하는 <b>랜덤화 블록</b>도 있어요. 이건 대응비교를 확장한 버전이라고 보면 돼요.</p>
+  <p>지난 회차에 단순회귀를 자세히 보고 중회귀는 단순회귀에서 무엇이 어떻게 달라졌는지를 짚었던 것처럼, 오늘은 가장 기본이 되는 일원배치법을 제일 자세히 보고, 나머지는 <b>무엇이 어떻게 달라졌는가</b>를 중심으로 봐요. 다중비교, 교호작용 같은 내용은 지금은 그런 게 있구나 하고 넘어가고, 뒤에서 나올 때 뭔지 이해하면 돼요.</p>
+</section>
+
+<section id="why">
+  <div class="sec-head"><h2>분산분석? 평균 비교인데 왜 분산</h2><span class="slide-tag">슬라이드 4</span></div>
+  <figure class="plate wide"><img src="{{IMG:w11_why}}" alt="두 그림. 둘 다 A반, B반, C반 6명씩의 시험 점수이고 반 평균은 60, 65, 70으로 같다. 왼쪽은 반 안의 점들이 평균 근처에 모여 있고, 오른쪽은 반 안의 점들이 넓게 퍼져 있어서 A반 최고점이 C반 최저점보다 높다" width="1920" height="800"><figcaption>두 그림 모두 세 반의 평균은 60, 65, 70으로 같아요</figcaption></figure>
+  <p>분산분석은 이름 때문에 분산을 비교하는 방법이라고 생각하기 쉬운데, 사실은 <b>평균을 비교</b>하기 위한 방법이에요. <b>분산을 이용해서 평균을 비교</b>하는 방법을 분산분석이라고 해요.</p>
+  <p>왜 분산을 이용할까요? 위의 왼쪽과 오른쪽 모두 세 반의 평균은 60, 65, 70으로 똑같아요. 그런데 오른쪽은 분산이 커서, 같은 모집단에서 표본을 새로 뽑으면 평균이 확 달라질 수 있어요. 반면 왼쪽은 분산이 작아서, 같은 모집단에서 표본을 새로 뽑아도 평균이 많이 달라지지 않을 거라고 기대할 수 있어요.</p>
+  <p>즉 분산이 표본평균과 관련이 있기 때문에, 평균이 같은지 다른지 비교하려면 분산을 같이 고려해야 해요. '이만큼의 차이는 분산이 큰 데 비해 작아서 유의하다고 보기 어렵다', 혹은 '이만큼의 차이는 분산을 고려해도 확실히 다른 게 맞다'처럼 생각하려는 거예요.</p>
+</section>
+
+<section id="terms">
+  <div class="sec-head"><h2>(분산분석) 여러 집단의 평균 비교</h2><span class="slide-tag">슬라이드 5</span></div>
+  <figure class="plate narrow"><img src="{{IMG:w11_dots}}" alt="A반, B반, C반 각 6명의 시험 점수를 주황 점으로 찍고, 반 평균 60, 65, 70에 검은 가로 막대를 그린 그림" width="1120" height="840"><figcaption>수업 방식(A, B, C반)에 따른 시험 점수</figcaption></figure>
+  \[Y=\text{요인 효과}+\text{오차}\]
+  <ul>
+    <li><b>요인</b>(= 인자): 수업 방식</li>
+    <li><b>인자 수준</b>: A, B, C 방식 (A반, B반, C반)</li>
+    <li><b>처리</b>: 실제로 적용한 조건 (지금은 각 반 수업)</li>
+    <li><b>반응변수</b> \(Y\): 시험 점수</li>
+  </ul>
+  <p>분산분석은 여러 집단의 평균을 비교하는 데 쓰이고, 지난 회차 회귀분석과 비슷한 점이 많아요.</p>
+  <p>회귀분석에서 \(Y\)가 \(x\)와 오차로 결정된다고 봤던 것처럼, 분산분석에서도 결과값 \(Y\)가 회귀분석의 \(x\)에 대응되는 <b>요인 효과</b>와 <b>오차</b>로 결정된다고 모델링해요. 다만 여기서는 입력으로 들어가는 게 회귀의 \(x\)처럼 연속형 숫자가 아니라, 집단을 가르는 <b>범주형 자료</b>예요. 이걸 <b>요인</b> 또는 <b>인자</b>라고 해요.</p>
+  <p>예를 들면 이해가 쉬워요. 수업 방식에 따라 시험 점수가 어떻게 되는지, 그 점수 차이가 유의한지 보고 싶다면 위 그림처럼 나타내 볼 수 있어요. 여기서 다르게 준 입력은 <b>어떤 수업 방식을 받았는지</b>이고, 이게 바로 인자예요.</p>
+  <p><b>인자 수준</b>은 그 인자가 어떤 값들을 가질 수 있는지를 말하고, 실제로 적용한 조건을 <b>처리</b>라고 불러요. 인자가 하나일 때는 인자 수준과 처리가 비슷해 보이는데, 인자가 두 개가 되면 두 인자 수준의 조합이 처리가 돼요. 뒤에서 이원배치법을 보고 나면 용어가 익숙해질 거예요.</p>
+  <p>여기서 인자 수준은 반별 수업 방식이고, 처리는 각 반이 받은 수업이에요. 마지막으로 우리가 관찰하려는 결과값, 여기서 평균을 비교하려는 대상은 시험 점수이므로 시험 점수가 <b>반응변수</b> \(Y\)예요.</p>
+</section>
+
+<section id="data">
+  <div class="sec-head"><h2>(일원배치법) 자료 구조</h2><span class="slide-tag">슬라이드 6</span></div>
+  \[\begin{array}{c|ccc} & \text{처리 }1 & \cdots & \text{처리 }k \\ \hline & y_{11} & \cdots & y_{k1} \\ & \vdots & & \vdots \\ & y_{1n_1} & \cdots & y_{kn_k} \\ \hline \text{표본평균} & \bar y_{1\cdot} & \cdots & \bar y_{k\cdot} \\ \text{표본분산} & s_1^2 & \cdots & s_k^2 \end{array}\]
+  \[\bar y_{i\cdot}=\frac{1}{n_i}\sum_{j=1}^{n_i}y_{ij}\]
+  \[s_i^2=\frac{1}{n_i-1}\sum_{j=1}^{n_i}(y_{ij}-\bar y_{i\cdot})^2\]
+  \[\bar y_{\cdot\cdot}=\frac{1}{N}\sum_{i=1}^{k}\sum_{j=1}^{n_i}y_{ij},\qquad N=n_1+n_2+\cdots+n_k\]
+  <p>분산분석에서 가장 기본은 인자를 한 가지만 볼 때이고, 이걸 <b>일원배치법</b>이라고 해요. 회귀분석에서 단순회귀를 잘 이해하면 나머지가 쉬웠던 것처럼, 분산분석에서는 일원배치법만 잘 이해하면 나머지는 확장으로 받아들일 수 있어요.</p>
+  <p>분산분석에서 쓰는 자료는 보통 위처럼 표로 정리해요. 같은 처리를 받은 값을 같은 열(세로줄)에 넣고, 아래쪽에 그 열의 표본평균과 표본분산을 구해 둬요. 이때 처리마다 표본의 크기는 다를 수 있어요.</p>
+  <p>아래첨자에 찍힌 <b>점(·)</b>은 그 자리의 첨자를 다 돌면서 평균을 냈다는 표시예요. \(\bar y_{i\cdot}\)는 \(i\)번째 처리 안에서 \(j\)를 다 돌며 낸 평균(그 열의 평균)이고, \(\bar y_{\cdot\cdot}\)는 \(i\)와 \(j\)를 모두 돌며 낸 평균(전체 평균)이에요.</p>
+  <p>각 표본평균은 해당 열의 \(y\)들로 평균을 구하면 되고(첫 번째 식), 각 표본분산도 그 열의 \(y\)끼리 표본분산의 정의대로 구하면 돼요(두 번째 식). 전체 평균 \(\bar y_{\cdot\cdot}\)는 모든 \(y\)를 더해서 표본 크기의 총합 \(N\)으로 나누면 돼요(세 번째 식).</p>
+</section>
+
+<section id="model">
+  <div class="sec-head"><h2>(일원배치법) 모형과 가정</h2><span class="slide-tag">슬라이드 7</span></div>
+  \[Y_{ij}=\mu+\alpha_i+e_{ij}\]
+  \[\alpha_i=\mu_i-\mu\quad(i\text{번째 처리 효과})\]
+  \[e_{ij}\ \overset{ind}{\sim}\ N(0,\ \sigma^2)\]
+  <figure class="plate narrow"><img src="{{IMG:w11_model}}" alt="가로 점선 μ를 기준으로, 처리 1, 2, 3마다 정규분포 곡선이 그려져 있다. 각 곡선의 중심 μ1, μ2, μ3은 μ에서 빨간 화살표 α1(아래), α2(위), α3(조금 아래)만큼 떨어져 있다" width="1240" height="880"><figcaption>\(\mu\)에서 출발해 처리 효과 \(\alpha_i\)만큼 옮긴 곳이 각 처리의 모평균 \(\mu_i\)</figcaption></figure>
+  <ul>
+    <li><b>선형성</b>: 오차의 평균은 0 (자동 만족)</li>
+    <li><span class="c-red"><b>독립성</b>: 꼭 필요!</span></li>
+    <li><b>정규성, 등분산성</b>: 조금 어긋나도 괜찮음 (강건함)</li>
+  </ul>
+  <p>앞에서 분산분석은 요인 효과에 오차를 더한 것으로 모델링한다고 했어요. 식으로 쓰면 \(Y_{ij}=\mu+\alpha_i+e_{ij}\)예요.</p>
+  <p>하나씩 보면, 어떤 처리를 하든 전체적인 모평균이 있다고 생각하고 이걸 \(\mu\)로 나타내요. 거기에서 어떤 처리를 해서 생기는 차이를 \(\alpha_i\)라고 하고, 이걸 <b>처리 효과</b>라고 해요. 그런데 같은 처리 안에서도 값이 다를 수 있는데, 이건 오차에 의한 것으로 모델링해요. 그래서 전체 모델은 전체 모평균에 처리에 의한 효과를 더한 뒤, 그 처리 안에서 오차에 의해 데이터 하나하나의 값이 정해진다고 보는 거예요.</p>
+  <p>위 그림을 보면 \(\mu\)는 처리에 관계없이 일정한 전체 모평균이고, 거기에서 시작해서 처리마다의 처리 효과 \(\alpha_i\)가 각 처리 집단의 모평균을 완성해요. 그리고 데이터 하나하나는 오차 때문에 차이가 나요.</p>
+  <p>지난 회차 회귀분석 때와 마찬가지로 이 오차항에 대해 가정을 해야 하는데, 똑같이 선형성, 등분산성, 정규성, 독립성 네 가지를 가정해요. 여기서 선형성은 오차의 평균이 0이라는 건데, 이건 자동으로 성립해요. 정규성과 등분산성은 강건해서(조금 어긋나도 괜찮아서) 괜찮지만, <b>독립성만큼은 꼭 필요</b>해요. 분산분석에서는 오차항의 독립성 가정을 꼭 해야 한다는 걸 기억해 두세요.</p>
+  <p>이 가정이 맞는지는 회귀분석 때처럼 오차를 직접 확인할 수 없어서, 관측할 수 있는 잔차로 <b>잔차분석</b>을 해서 확인해요.</p>
+</section>
+
+<section id="hyp">
+  <div class="sec-head"><h2>(일원배치법) 가설</h2><span class="slide-tag">슬라이드 8</span></div>
+  \[H_0:\ \alpha_1=\alpha_2=\cdots=\alpha_k=0\]
+  \[\htmlClass{c-mu}{\Leftrightarrow\ \ \mu_1=\mu_2=\cdots=\mu_k}\]
+  \[H_1:\ \text{적어도 하나의 }\alpha_i\neq0\]
+  <figure class="plate wide"><img src="{{IMG:w11_hyp}}" alt="두 그림. 왼쪽 H0는 처리 1, 2, 3의 분포 곡선 중심이 모두 같은 높이, 오른쪽 H1은 처리 3의 곡선만 위로 올라가 있다" width="1720" height="720"><figcaption>처리 하나만 달라도 \(H_1\)</figcaption></figure>
+  <p>일원배치법의 귀무가설은 모든 처리의 처리 효과가 똑같이 없다(모두 0)는 것으로 잡고, 대립가설은 적어도 하나의 처리는 효과가 있다는 것으로 해요. 앞서 카이제곱검정과 회귀분석에서 봤던 <b>전체적 검정</b>을 하는 거예요.</p>
+</section>
+
+<section id="decomp">
+  <div class="sec-head"><h2>(일원배치법) 변동 쪼개기</h2><span class="slide-tag">슬라이드 9</span></div>
+  <figure class="plate narrow"><img src="{{IMG:w11_decomp}}" alt="세 반의 점과 반 평균 막대, 전체 평균 점선. C반의 한 점에서 전체 평균까지의 거리를, 전체 평균에서 C반 평균까지(파랑)와 C반 평균에서 그 점까지(주황)로 나눠 화살표로 표시했다" width="1440" height="920"><figcaption>전체 편차 = 처리 효과로 설명되는 부분(파랑) + 잔차(주황)</figcaption></figure>
+  \[Y_{ij}=\mu+\alpha_i+e_{ij}\]
+  \[y_{ij}=\underbrace{\bar y_{\cdot\cdot}}_{\hat\mu}+\underbrace{(\bar y_{i\cdot}-\bar y_{\cdot\cdot})}_{\hat\alpha_i}+\underbrace{(y_{ij}-\bar y_{i\cdot})}_{\hat e_{ij}}\]
+  <ul>
+    <li><b>SST</b> 총제곱합: 전체 흩어짐</li>
+    <li><b>SStr</b> 처리제곱합: 처리 사이 (급간)</li>
+    <li><b>SSE</b> 잔차제곱합: 처리 안 (급내)</li>
+  </ul>
+  <p>분산분석 모델 자체는 바로 알 수 없고 표본으로 추정하기 때문에, 실제로는 \(y_{ij}=\hat\mu+\hat\alpha_i+\hat e_{ij}\)라는, 표본으로 구한 모델을 써요.</p>
+  <p>회귀분석에서 SST를 설명할 수 있는 부분 SSR과 설명할 수 없는 부분 SSE로 나눴듯이, 분산분석에서도 설명할 수 있는 부분과 설명할 수 없는 부분을 쪼개서 봐요. 분산분석에서 설명할 수 있는 부분은 처리 효과에 의한 것, 즉 처리마다 다르다고 <b>납득할 수 있는 부분</b>이라고 생각하면 돼요.</p>
+  <p>위 그림처럼 각 데이터 값은 전체 표본평균 \(\bar y_{\cdot\cdot}\)에서 출발해서, \(\bar y_{\cdot\cdot}\)에서 \(\bar y_{i\cdot}\)까지 처리 효과로 설명되는 부분과, 처리 효과가 설명하지 못하는 \(\bar y_{i\cdot}\)에서 \(y_{ij}\)까지의 잔차 부분의 합으로 나타내요. 회귀분석과 마찬가지로 총제곱합과 잔차제곱합은 똑같이 SST, SSE라고 하고, 회귀에서 SSR이었던 부분만 <b>처리제곱합</b> SStr로 바뀌어요. 이름과 상황만 조금 바뀌었을 뿐, SSR과 마찬가지로 '설명할 수 있는 부분'이라는 의미는 같아요.</p>
+  \[\underbrace{\sum_i\sum_j(y_{ij}-\bar y_{\cdot\cdot})^2}_{SST\ \ (N-1)}=\underbrace{\sum_i\sum_j(\bar y_{i\cdot}-\bar y_{\cdot\cdot})^2}_{SStr\ \ (k-1)}+\underbrace{\sum_i\sum_j(y_{ij}-\bar y_{i\cdot})^2}_{SSE\ \ (N-k)}\]
+  <p>그래서 위 식처럼 실제 데이터 \(y_{ij}\)와 \(\mu\)의 추정치 \(\bar y_{\cdot\cdot}\)의 차이제곱합 SST가 처리제곱합 SStr과 잔차제곱합 SSE로 쪼개지고, 여기서도 좌변의 자유도가 우변 자유도의 합과 같아요.</p>
+  <p>SST의 자유도는 회귀분석 때와 마찬가지로 전체 표본 크기에서 1을 뺀 \(N-1\)이고, SStr의 자유도는 처리가 \(k\)가지 있다면 \(k-1\)이에요. 중회귀에서는 변수 개수만큼이 SSR의 자유도였는데, 여기서 SStr의 자유도가 \(k\)가 아니라 \(k-1\)인 이유는 \(\bar y_{i\cdot}\)들로 평균을 낸 \(\bar y_{\cdot\cdot}\)라는 제약 조건 때문에 자유도가 하나 깎이기 때문이에요. SSE는 전체 \(N\)개에서 \(\bar y_{i\cdot}\)를 하나씩 정할 때마다 자유도가 하나씩 깎여서 \(N-k\)가 돼요.</p>
+</section>
+
+<section id="ftest">
+  <div class="sec-head"><h2>(일원배치법) F검정</h2><span class="slide-tag">슬라이드 10</span></div>
+  \[\htmlClass{c-red}{F=\frac{SStr/(k-1)}{SSE/(N-k)}=\frac{MStr}{MSE}\ \sim\ F(k-1,\ N-k)}\]
+  <figure class="plate wide"><img src="{{IMG:w11_fcomp}}" alt="슬라이드 4와 같은 두 그림에 F 값을 붙였다. 집단 안 흩어짐이 작은 왼쪽은 F = 26.79, 큰 오른쪽은 F = 1.67" width="1920" height="800"><figcaption>반 평균이 같아도 반 안 흩어짐이 크면 \(F\)가 작아져요</figcaption></figure>
+  <p class="key"><span class="c-red">\(F\)가 크면 기각! (단측검정)</span></p>
+  <p>이걸 바탕으로 앞에서 세운 전체적 검정의 귀무가설, 모든 처리 효과가 0이라서 의미가 없다는 걸 검정하려고 검정통계량 \(MStr/MSE\)를 써요. 회귀분석 때와 같은 구조이고 \(F\)분포를 따라요. MSE는 설명할 수 없는 부분이고, MStr은 설명할 수 있는 부분, 즉 처리마다 다르다고 납득할 수 있는 부분이에요.</p>
+  <p>분산이 커지면(노이즈가 커지면) MSE가 커져서 검정통계량이 작아지고, 반대로 분산이 작아지면(노이즈가 줄어들면) MSE가 작아져서 검정통계량이 커져요. 이때 MStr은 그대로예요.</p>
+  <p>카이제곱검정, 회귀직선의 유의성 검정 때와 마찬가지로 이 \(F\)가 커지면 귀무가설을 기각하고, 작으면 기각하지 않아요. 앞의 내용들과 같은 맥락으로, \(F\)라는 검정통계량에 대해서는 오른쪽 꼬리만 보고 단측검정을 하지만, 그 의미는 '\(H_0\)가 아니다'라는 양측검정의 의미, 엄밀히 말하면 전체적 검정의 의미를 가진다는 걸 다시 한 번 연결해서 생각해 보세요.</p>
+  <p>아래에서 반 평균 간격과 반 안 흩어짐을 바꿔 보면서 MStr, MSE, \(F\)가 어떻게 움직이는지 확인해 보세요.</p>
+
+  <div class="panel" id="f11-w">
+    <div class="panel-head">
+      <p class="panel-title">반 평균 간격과 반 안 흩어짐에 따라 \(F\)가 어떻게 바뀌나</p>
+    </div>
+    <p class="panel-sub">반마다 6명, 반 평균은 \(65-d,\ 65,\ 65+d\). 유의수준 5%, 임계값 \(F_{0.05}(2,\ 15)=3.68\)</p>
+    <svg id="f11-svg" viewBox="0 0 560 260" role="img" aria-label="A반, B반, C반 6명씩의 점수 점과 반 평균 막대, 전체 평균 점선. 반 평균 간격과 반 안 흩어짐을 슬라이더로 바꿀 수 있다"></svg>
+    <div class="sliders two">
+      <label class="sl">반 평균 간격 d <input type="range" id="f11-d" min="0" max="8" step="0.5" value="5"><span class="val" id="f11-d-v">5.0</span></label>
+      <label class="sl">반 안 흩어짐 <input type="range" id="f11-c" min="0.5" max="5" step="0.1" value="1"><span class="val" id="f11-c-v">1.0배</span></label>
+    </div>
+    <div class="w3-out" id="f11-out" aria-live="polite"></div>
+    <p class="panel-note" id="f11-note"></p>
+  </div>
+</section>
+
+<section id="anova">
+  <div class="sec-head"><h2>(일원배치법) 분산분석표</h2><span class="slide-tag">슬라이드 11</span></div>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">처리</th><td>SStr</td><td>\(k-1\)</td><td>MStr = SStr / \((k-1)\)</td><td>MStr / MSE</td></tr>
+      <tr><th scope="row">잔차</th><td>SSE</td><td>\(N-k\)</td><td>MSE = SSE / \((N-k)\)</td><td></td></tr>
+      <tr><th scope="row">전체</th><td>SST</td><td>\(N-1\)</td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+  \[SST=\sum_i\sum_j y_{ij}^2-N\,\bar y_{\cdot\cdot}^{\,2}\]
+  \[SStr=\sum_{i=1}^{k} n_i(\bar y_{i\cdot}-\bar y_{\cdot\cdot})^2\]
+  \[SSE=\sum_{i=1}^{k}(n_i-1)\,s_i^2\]
+  \[MSE=\frac{\sum_{i=1}^{k}(n_i-1)\,s_i^2}{N-k}\]
+  \[\htmlClass{c-mu}{k=2\text{이면 }\ s_p^2=\frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{n_1+n_2-2}}\]
+  <p>앞의 회귀분석에서도 분산분석표라고 소개하고 썼던 표인데, 이름 그대로 분산분석에서도 이 표로 검정통계량 \(F\)까지 구할 수 있어요. 문제를 풀 때 실용적으로 많이 도움이 돼요.</p>
+  <p>문제는 실제로 SST, SStr, SSE를 구하는 건데, SST는 회귀분석 때처럼 표본분산 간편식과 같은 원리로 구하면 되고, SSE는 처리별 표본분산으로 구할 수 있어요. SStr은 생소해 보일 수 있는데, 식을 잘 보면 SStr의 정의인 \(\bar y_{i\cdot}-\bar y_{\cdot\cdot}\)의 제곱이 그대로 들어가 있어요. 시그마 두 개 중 하나를 푼 것뿐이에요. \(\bar y_{i\cdot}\)와 \(\bar y_{\cdot\cdot}\)는 구할 수 있으니, 표본 크기만 알면 이것도 한두 번 연습하면 쉽게 구할 수 있어요.</p>
+  <p>그런데 이미 \(SST=SStr+SSE\)라는 걸 알고 있으니 세 개를 다 손으로 구할 필요는 없어요. 문제마다 셋 중 구하기 쉬운 두 개만 구하면, 나머지는 이 관계로 바로 알 수 있어요.</p>
+  <p>앞의 회귀분석에서 MSE가 오차에 대해 가정한 분산 \(\sigma^2\)의 추정치라고 했는데, 분산분석의 MSE도 비슷한 의미예요. SSE를 자유도로 나눈 MSE는, 두 모평균을 비교할 때 등분산을 가정하면서 썼던 <b>합동표본분산을 일반화</b>한 것으로, 집단(여기서는 처리)이 여러 개일 때의 합동표본분산과 같은 의미예요. \(k=2\)이면 MSE가 등분산 가정에서 봤던 합동표본분산과 정확히 같아지는 걸 확인할 수 있어요(파란 식).</p>
+</section>
+
+<section id="tvsf">
+  <div class="sec-head"><h2>t검정 여러 번 vs 분산분석</h2><span class="slide-tag">슬라이드 12</span></div>
+  <div class="compare">
+    <div><p class="compare-label">\(t\)검정 여러 번</p><p>개별적 검정</p><p>계산이 많아짐</p><p>1종 오류가 쌓임</p><p>\(1-0.95^3\approx0.14\)</p></div>
+    <div><p class="compare-label">분산분석</p><p>전체적 검정</p><p>단측검정 불가</p><p>변동의 요인을 설명</p><p class="c-mu">\(k=2\)이면 \(F=T^2\)</p></div>
+  </div>
+  <p class="key">분산분석으로 전체 먼저 → 기각되면 다중비교</p>
+  <p>카이제곱검정이나 회귀분석에서 했듯이, \(F\)검정을 봤으니 자연스럽게 그에 대응되는 \(t\)검정을 생각해 볼 수 있어요. 그런데 분산분석에서는 \(F\)검정으로만 전체적 검정을 하고, 이걸 \(t\)검정 여러 번으로 대신하지는 않아요. 우선 계산량이 굉장히 많아지고, 유의수준을 0.05로 두더라도 검정을 여러 번 하면서 누적되다 보면 <b>1종 오류가 쌓여서</b> 점점 커지기 때문이에요.</p>
+  <p>물론 처리가 딱 2개라면 \(T^2=F\)라서 \(t\)검정으로 \(F\)검정을 대신할 수 있지만, 보통 분산분석은 처리가 3개 이상일 때가 많아서 대부분 \(F\)검정만 한다고 이해하면 돼요.</p>
+  <p>\(F\)검정의 특징은 앞 단원들에서 계속 본 것처럼, \(F\)라는 검정통계량에 대해서는 단측검정을 하지만 그 의미가 전체적 검정이라서 \(\mu_1\gt\mu_2\)처럼 방향이 있는 대립가설은 검정할 수 없다는 점이에요. 그래서 전체적 검정에서 '\(H_0\)가 아니다'라는 대립가설을 확인하려는 목적으로 \(F\)검정을 한다는 걸 기억하면 돼요.</p>
+  <p>그래서 분산분석에서는 \(F\)검정으로 전체적 검정을 하고, 기각되면 하나하나 살펴보는 세부적 검정을 하는데, 이걸 <b>다중비교</b>라고 해요.</p>
+</section>
+
+<section id="multi">
+  <div class="sec-head"><h2>(일원배치법) 다중비교</h2><span class="slide-tag">슬라이드 13</span></div>
+  <div class="compare">
+    <div><p class="compare-label">Bonferroni</p>\[\alpha^{*}=\frac{\alpha}{m}\quad(m=\text{비교 횟수})\]\[\htmlClass{c-mu}{\text{비교 3번: }\ \frac{0.05}{3}\approx0.0167}\]</div>
+    <div><p class="compare-label">Tukey HSD</p><p>모든 쌍의 평균 차이에 대한 동시 신뢰구간</p><p>0을 포함하지 않으면 차이가 있다</p></div>
+  </div>
+  <figure class="plate narrow"><img src="{{IMG:w11_tukey}}" alt="B반 − A반, C반 − A반, C반 − B반 세 쌍의 평균 차이 95% 동시 신뢰구간을 빨간 가로 막대로 그린 그림. 세 구간 모두 0을 나타내는 세로 점선의 오른쪽에 있다" width="1280" height="680"><figcaption>Tukey HSD: 슬라이드 4 왼쪽 자료의 세 쌍. 세 구간 모두 0을 포함하지 않아요</figcaption></figure>
+  <p>분산분석에서 \(F\)검정으로 전체적 검정을 했는데 귀무가설이 기각되면, 어떤 처리 효과가 유의하게 달랐는지 찾는 방법을 <b>다중비교</b>라고 해요. 앞에서 말했듯이 지금까지 하던 대로 그냥 \(t\)검정을 하면 1종 오류가 쌓이는 문제가 있어서 다른 방법을 써요.</p>
+  <p>크게 두 가지가 있어요. <b>Bonferroni 방법</b>은 1종 오류가 쌓이더라도 처음 원했던 유의수준을 넘지 않도록, 유의수준을 줄여서 \(t\)검정을 하는 방법이에요. <b>Tukey HSD</b>는 처리를 두 개씩 묶을 수 있는 모든 경우에 대해 그 차이의 신뢰구간을 구하고, 그 구간이 0을 포함하는지 봐요. 0을 포함하지 않으면 그 쌍은 차이가 있다고 보고, 0을 포함하면 차이가 있다고 볼 수 없어요.</p>
+  <p>이 부분은 연습문제 1번을 풀어 보면 이해가 잘 될 거예요. 아래에서는 처리 수를 바꿔 보면서, 쌍마다 \(t\)검정을 할 때 1종 오류가 얼마나 쌓이는지, Bonferroni로 유의수준을 줄이면 어떻게 되는지 확인해 보세요.</p>
+
+  <div class="panel" id="mc11-w">
+    <div class="panel-head">
+      <p class="panel-title">처리 수에 따라 1종 오류가 얼마나 쌓이나</p>
+    </div>
+    <p class="panel-sub">모든 쌍을 비교할 때 적어도 한 번 잘못 기각할 확률. 슬라이드처럼 \(1-(1-\text{쌍마다 유의수준})^m\)으로 대략 계산했어요</p>
+    <div class="sliders two">
+      <label class="sl">처리 수 k <input type="range" id="mc11-k" min="2" max="8" step="1" value="3"><span class="val" id="mc11-k-v">3</span></label>
+    </div>
+    <div class="bars" id="mc11-bars" style="margin-top:14px"></div>
+    <div class="w3-out" id="mc11-out" aria-live="polite" style="margin-top:12px"></div>
+    <p class="panel-note" id="mc11-note"></p>
+  </div>
+</section>
+
+<section id="block">
+  <div class="sec-head"><h2>(랜덤화 블록) 대응비교의 확장</h2><span class="slide-tag">슬라이드 14</span></div>
+  <p class="key">비슷한 것끼리 묶고(블록), 그 안에서 처리를 무작위로 배정</p>
+  <figure class="plate narrow"><img src="{{IMG:w11_groups}}" alt="1조부터 6조까지 여섯 칸. 각 조 안에 A, B, C가 서로 다른 순서로 놓여 있고, 조 번호가 클수록 칸 색이 진하다" width="1400" height="720"><figcaption>조마다 A, B, C 순서가 무작위. 색이 진할수록 실력이 높은 조</figcaption></figure>
+  \[\begin{array}{c|ccc|c} & \text{처리 }1 & \cdots & \text{처리 }k & \text{블록 평균}\\ \hline \text{블록 }1 & y_{11} & \cdots & y_{1k} & \bar y_{1\cdot}\\ \vdots & \vdots & & \vdots & \vdots\\ \text{블록 }p & y_{p1} & \cdots & y_{pk} & \bar y_{p\cdot}\\ \hline \text{평균} & \bar y_{\cdot1} & \cdots & \bar y_{\cdot k} & \bar y_{\cdot\cdot}\end{array}\]
+  <p class="where" style="text-align:center">블록 = 실력 비슷한 3명 (관심 X, 실력 차이를 걸러냄)</p>
+  \[y_{ij}=\mu+\underbrace{\alpha_j}_{\text{처리 효과}}+\underbrace{\beta_i}_{\text{블록 효과}}+e_{ij}\]
+  <p>이제 일원배치법에서 조금 확장한 <b>랜덤화 블록</b>을 봐요. 제목처럼 모평균 두 개를 비교할 때 했던 <b>대응비교를 확장</b>한 거라고 보면 돼요.</p>
+  <p>대응비교를 떠올려 보면, 같은 사람한테 처리 두 개를 다 해 보고 그 차이를 봐서 사람마다 원래 있던 차이(개인차)를 없앴어요. 랜덤화 블록도 같은 아이디어인데, 처리가 2개가 아니라 여러 개일 때로 넓힌 거예요. 대응비교는 보통 한 사람한테 두 처리를 다 하는 경우가 많았는데, 랜덤화 블록에서는 한 대상한테 여러 처리를 다 하기도 하고, 비슷한 다른 사람들에게 처리를 나눠서 하고 비슷한 사람끼리 묶는 방식을 쓰기도 해요.</p>
+  <p>예를 들어 세 수업 방식을 비교하고 싶은데 학생들 실력이 제각각이면, 시험 점수 차이가 수업 방식 때문인지 원래 실력 때문인지 섞여 버려요. 그래서 이미 알고 있는 시험 점수가 비슷한 학생 3명씩 묶어 조를 만들고, 조마다 3명을 A, B, C반에 한 명씩 무작위로 배정해요. 이렇게 하면 실력이 비슷한 학생끼리 세 수업 방식을 비교하게 되니까, 원래 있던 실력 차이라는 변인이 통제돼요. 위 그림에서 조마다 A, B, C 순서가 다른 게 무작위로 배정했다는 뜻이고, 색이 진할수록 실력이 높은 조예요.</p>
+  <p>여기서 이 조를 <b>블록</b>이라고 해요. 블록은 우리가 관심을 갖는 대상은 아니지만 결과에 영향을 주는 외부 요인이에요. 이 예시에서는 수업 방식과 상관없이 원래 실력이 좋은 조는 점수가 높게 나올 테니, 블록으로 나눠서 생기는 효과를 무시할 수 없어요. 이걸 <b>블록 효과</b>라고 하고, 모델에 반영해요.</p>
+  <p>위 표처럼 자료 구조는 행이 블록, 열이 처리이고, 칸마다 관측값이 1개씩 있어요. 그래서 블록이 \(p\)개, 처리가 \(k\)개면 \(N=kp\)예요. 이 예시에서는 \(p=6\), \(k=3\)이에요.</p>
+  <p>모형은 일원배치법 모형에 블록 효과 \(\beta_i\)를 추가한 \(y_{ij}=\mu+\alpha_j+\beta_i+e_{ij}\)로, 전체 모평균에 처리 효과와 블록 효과를 더하고 거기에 오차가 붙는다고 봐요.</p>
+  <p class="caution"><span class="caution-label">첨자 주의</span>처리 효과가 \(\alpha_i\)가 아니라 \(\alpha_j\)예요. 표에서 처리는 열마다 달라지므로, 관례적으로 열 번호에 쓰는 \(j\)로 바꿨어요.</p>
+</section>
+
+<section id="bsplit">
+  <div class="sec-head"><h2>(랜덤화 블록) 변동 쪼개기</h2><span class="slide-tag">슬라이드 15</span></div>
+  \[\underbrace{SST}_{N-1}=\underbrace{SStr}_{k-1}+\underbrace{SSB}_{p-1}+\underbrace{SSE}_{(k-1)(p-1)}\]
+  \[\htmlClass{c-mu}{(k-1)(p-1)=N-k-p+1}\]
+  <figure class="plate narrow"><img src="{{IMG:w11_split}}" alt="SST에서 SStr과 SSE로 갈라지는 나무 그림(일원배치법). SStr은 그대로이고, SSE가 다시 SSB(블록, 실력 차이)와 더 순수한 오차 SSE로 갈라진다" width="1440" height="660"><figcaption>SStr은 그대로, SSE만 쪼개짐</figcaption></figure>
+  <p>랜덤화 블록에서 변동을 쪼개는 것도 일원배치법과 거의 같은데, 블록에 의한 부분 <b>SSB</b>가 새로 하나 생겨요. SStr이 처리 평균(열 평균)들이 얼마나 흩어져 있는지를 뜻했다면, SSB는 블록 평균(행 평균)들이 얼마나 흩어져 있는지를 뜻해요. 즉 원래 비슷한 실력끼리 묶었으니, 그렇게 나눌 때 생긴 실력의 흩어짐을 맡는 부분이라고 이해하면 돼요. SSE는 처리 효과와 블록 효과를 둘 다 빼고 남은 부분으로, 노이즈, 설명할 수 없는 부분이에요.</p>
+  <p>자유도도 앞에서 설명한 것과 같은 원리예요. SST는 \(N-1\), SStr은 처리가 \(k\)개라 \(k-1\), SSB는 블록이 \(p\)개라 \(p-1\)이에요. SSE는 나머지라서 \(N-1-(k-1)-(p-1)=N-k-p+1\)인데, \(N=kp\)라서 정리하면 \((k-1)(p-1)\)이 돼요. 카이제곱검정에서 자유도가 \((r-1)(c-1)\)이었던 것과 같은 모양이에요.</p>
+  <p>여기가 핵심이에요. 위 그림처럼 같은 자료를 일원배치법으로 보면 \(SST=SStr+SSE\)로 쪼개져요. 랜덤화 블록은 이 SSE를 다시 블록에 의한 부분 SSB와 더 순수한 오차 SSE로 쪼갠 거예요. 즉 일원배치법에서는 '설명할 수 없는 부분'으로 SSE에 들어가 있던 것 중에, 사실은 블록(실력) 차이 때문이었던 부분을 따로 빼낸 거예요.</p>
+  \[F=\frac{SStr/(k-1)}{SSE/\{(k-1)(p-1)\}}=\frac{MStr}{MSE}\]
+  <p>일원배치법과 랜덤화 블록을 비교하면, SStr은 그대로니까 검정통계량 \(F=MStr/MSE\)의 분자는 같은데, 랜덤화 블록에서는 분모 MSE가 작아지면서 \(F\)가 커져서 처리 차이를 더 잘 찾아낼 수 있게 돼요.</p>
+  <p class="caution"><span class="caution-label">주의</span>SSE의 자유도도 \(p-1\)만큼 줄어들어요. 그래서 블록끼리 차이가 별로 없는데 블록으로 나누면, SSE는 별로 안 줄고 자유도만 잃어서 오히려 손해일 수 있어요. 이걸 확인하는 게 다음에 나오는 블록 검정이에요.</p>
+</section>
+
+<section id="btest">
+  <div class="sec-head"><h2>(랜덤화 블록) 분산분석표와 검정</h2><span class="slide-tag">슬라이드 16</span></div>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">처리</th><td>SStr</td><td>\(k-1\)</td><td>MStr</td><td>MStr / MSE</td></tr>
+      <tr><th scope="row">블록</th><td>SSB</td><td>\(p-1\)</td><td>MSB</td><td>MSB / MSE</td></tr>
+      <tr><th scope="row">잔차</th><td>SSE</td><td>\((k-1)(p-1)\)</td><td>MSE</td><td></td></tr>
+      <tr><th scope="row">전체</th><td>SST</td><td>\(N-1\)</td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+  \[F_1=\frac{MStr}{MSE}\ \sim\ F\big(k-1,\ (k-1)(p-1)\big)\]
+  <p class="where" style="text-align:center"><b>주된 관심</b>: 처리 차이가 있나</p>
+  \[F_2=\frac{MSB}{MSE}\ \sim\ F\big(p-1,\ (k-1)(p-1)\big)\]
+  <p class="where" style="text-align:center"><b>부산물</b>: 블록으로 묶은 게 효과 있었나</p>
+  <p>랜덤화 블록의 분산분석표도 일원배치법 표에 블록 줄이 하나 추가된 것뿐이에요.</p>
+  <p>여기서는 \(F\)가 두 개 나오는데, 주로 관심 있는 건 처리 쪽 \(F_1\)이에요. 처리 효과가 모두 0이라는 귀무가설에 대해 \(F_1=MStr/MSE\)를 쓰고, 이건 \(F\big(k-1,\ (k-1)(p-1)\big)\)을 따라요. 분모 자유도가 잔차 자유도 \((k-1)(p-1)\)인 것만 일원배치법과 달라요.</p>
+  <p>블록 쪽 \(F_2\)도 같은 원리로, 블록 효과가 모두 0이라는 귀무가설을 \(F_2=MSB/MSE\)로 검정할 수 있는데, 이건 부산물 같은 거예요. 블록 검정이 기각되면 설명할 수 없는 부분에 비해 블록 효과가 실제로 컸다는 뜻이니, 블록으로 묶은 설계가 효과적이었다, 이렇게 실험하는 게 맞았다고 해석해요. 기각하지 못하면 굳이 블록으로 묶을 필요는 크지 않았던 거예요.</p>
+  <p>문제에서 '현재 실험 설계는 효율적인가?' 같은 질문이 나오면 이 블록 검정을 묻는 거예요.</p>
+  <p>블록은 애초에 관심 대상이 아니라서, 블록 효과가 유의하게 나와도 '조마다(실력에 따라) 점수가 다르다' 정도로 보고, \(F_1\)만 제대로 해석하고 넘어가면 돼요.</p>
+</section>
+
+<section id="bex">
+  <div class="sec-head"><h2>(랜덤화 블록) 조로 묶으면?</h2><span class="slide-tag">슬라이드 17</span></div>
+  <figure class="plate wide"><img src="{{IMG:w11_block}}" alt="두 그림. 왼쪽은 반으로만 나눈 점수(F = 1.67)로 반 안 점들이 넓게 퍼져 있다. 오른쪽은 같은 점수를 조끼리 선으로 이은 그림(F = 35.16)으로, 여섯 조 모두 A반에서 C반으로 갈수록 올라간다" width="1920" height="820"><figcaption>같은 18명을 반으로만 나누면 \(F=1.67\), 조로 묶으면 \(F=35.16\)</figcaption></figure>
+  <p class="key">SSB를 빼면 SSE가 줄어듦</p>
+  <p>왼쪽 그림은 각 처리 안의 분산이 커서 \(F\)가 충분히 크지 못해, 일원배치법으로는 기각하지 못하는 자료예요(슬라이드 4의 오른쪽 자료). 이 자료가 사실은 3명씩 6조로 묶어서 A, B, C반에 한 명씩 배정한 학생들이었다고 하고 랜덤화 블록 분산분석을 해 볼게요.</p>
+  <p>같은 조끼리 선으로 이어 보면, 5조, 6조는 셋 다 높고 1조는 셋 다 낮지만, 모든 조에서 A반 \(\lt\) B반 \(\lt\) C반 모양이 똑같이 반복돼요. 즉 반 안에서 흩어져 보였던 것의 대부분이 사실은 조 사이의 실력 차이였던 거예요. 그래서 랜덤화 블록 분산분석을 하면 귀무가설을 기각해서, 반별 처리 효과가 다르다고 할 수 있어요.</p>
+  <p>6장 모평균 비교에서 같은 자료를 독립 이표본으로 계산할 때와 대응비교로 계산할 때 가설검정의 결과가 달라질 수 있었던 것처럼, 여기서도 같은 맥락으로 블록 효과 때문에 같은 자료로 다른 결과가 나올 수 있어요.</p>
+  <p>아래에서 반 평균 간격과 조 사이 실력 차이를 바꿔 보면서 두 분석의 \(F\)를 비교해 보세요. 조 사이 차이를 줄여 보면, 블록으로 묶는 게 오히려 손해가 되는 경우도 찾을 수 있어요.</p>
+
+  <div class="panel" id="bl11-w">
+    <div class="panel-head">
+      <p class="panel-title">반으로만 나눌 때 vs 조로 묶을 때</p>
+    </div>
+    <p class="panel-sub">위 그림의 18명 자료. 막대 길이는 제곱합(전체는 SST). 유의수준 5%</p>
+    <svg id="bl11-svg" viewBox="0 0 560 150" role="img" aria-label="일원배치와 랜덤화 블록의 제곱합을 나란히 보여 주는 가로 막대 두 개. 일원배치는 SStr과 SSE, 랜덤화 블록은 SStr, SSB, SSE로 나뉜다"></svg>
+    <div class="sliders two">
+      <label class="sl">반 평균 간격 d <input type="range" id="bl11-d" min="0" max="6" step="0.25" value="5"><span class="val" id="bl11-d-v">5.00</span></label>
+      <label class="sl">조 사이 실력 차이 <input type="range" id="bl11-b" min="0" max="1.2" step="0.05" value="1"><span class="val" id="bl11-b-v">1.00배</span></label>
+    </div>
+    <div class="w3-out" id="bl11-out" aria-live="polite"></div>
+    <p class="panel-note" id="bl11-note"></p>
+  </div>
+</section>
+
+<section id="two0">
+  <div class="sec-head"><h2>(이원배치법) 반복 없음</h2><span class="slide-tag">슬라이드 18</span></div>
+  <p class="key">요인 2개, 조합마다 관측값 1개 (\(N=pq\))</p>
+  \[y_{ij}=\mu+\underbrace{\alpha_i}_{A\text{ 효과}}+\underbrace{\beta_j}_{B\text{ 효과}}+e_{ij}\]
+  \[\begin{array}{c|ccc|c} & B_1 & \cdots & B_q & \text{평균}\\ \hline A_1 & y_{11} & \cdots & y_{1q} & \bar y_{1\cdot}\\ \vdots & \vdots & & \vdots & \vdots \\ A_p & y_{p1} & \cdots & y_{pq} & \bar y_{p\cdot}\\ \hline \text{평균} & \bar y_{\cdot1} & \cdots & \bar y_{\cdot q} & \bar y_{\cdot\cdot}\end{array}\]
+  \[\underbrace{SST}_{N-1}=\underbrace{SSA}_{p-1}+\underbrace{SSB}_{q-1}+\underbrace{SSE}_{(p-1)(q-1)}\]
+  <ul>
+    <li>계산은 랜덤화 블록과 같음 (블록 대신 관심 있는 요인 B)</li>
+    <li>칸마다 1개뿐이라 교호작용을 따로 못 봄</li>
+  </ul>
+  <p>이제 요인이 2개인 <b>이원배치법</b>이에요. 요인 A의 수준이 \(p\)개, 요인 B의 수준이 \(q\)개 있을 때 모든 조합에서 관측값을 얻는데, <b>반복이 없다</b>는 건 각 조합에서 딱 한 번씩만 관측했다는 뜻이에요. 그래서 전체 표본 크기 \(N\)은 \(pq\)예요.</p>
+  <p>모형은 \(y_{ij}=\mu+\alpha_i+\beta_j+e_{ij}\)로, \(\alpha_i\)는 A의 \(i\)번째 수준 효과, \(\beta_j\)는 B의 \(j\)번째 수준 효과예요. 그런데 이걸 보면 앞의 랜덤화 블록과 식이 똑같이 생겼어요. 실제로 제곱합 분해와 자유도 계산이 랜덤화 블록과 완전히 같아요. 다만 SStr과 SSB 대신, A 효과와 B 효과라는 의미에서 SSA와 SSB로 쪼개요.</p>
+  <p class="caution"><span class="caution-label">기호 주의</span>랜덤화 블록의 SSB는 블록(block)의 B이고, 여기서의 SSB는 요인 B 효과의 B예요. 기호는 겹치지만 의미가 달라요.</p>
+  <p>그래서 제곱합은 \(SST=SSA+SSB+SSE\)이고, 자유도는 \(N-1=(p-1)+(q-1)+(p-1)(q-1)\)이에요.</p>
+  <p>랜덤화 블록과는 해석에서 차이가 드러나요. 랜덤화 블록은 관심 있는 요인 1개에 관심 없는 블록이 붙은 거였다면, 반복 없는 이원배치법은 두 요인이 모두 관심 대상이라 A, B 둘 다 검정해요(\(F_A=MSA/MSE\), \(F_B=MSB/MSE\)).</p>
+  <p>제목에 쓰여 있듯이 반복 없는 경우가 있으면 반복 있는 경우도 있어요. 둘의 차이는 두 인자 수준의 조합으로 만들어지는 처리 하나에 대해 값을 한 번만 구하느냐, 여러 번 구하느냐예요. 지금처럼 반복이 없으면 처리 하나당 값을 딱 하나만 보기 때문에, 그 처리에서 생기는 효과와 오차를 구분할 수 없어요. A, B 효과만으로는 설명이 안 되고 그 칸에서만 추가로 생기는 효과를 <b>교호작용</b>이라고 하는데, 반복이 없으면 교호작용을 따로 볼 수가 없어요. 그래서 반복 없는 이원배치법에서는 교호작용이 없다고 보고 분석해요.</p>
+</section>
+
+<section id="two1">
+  <div class="sec-head"><h2>(이원배치법) 반복 있음: 교호작용</h2><span class="slide-tag">슬라이드 19</span></div>
+  \[y_{ijk}=\mu+\alpha_i+\beta_j+\htmlClass{c-red}{\gamma_{ij}}+e_{ijk}\]
+  <p class="key"><span class="c-red">\(\gamma_{ij}\)</span> 교호작용: 한 요인의 효과가 다른 요인 수준에 따라 달라짐</p>
+  <figure class="plate narrow" style="max-width:18rem"><img src="{{IMG:w11_rep}}" alt="반복 있는 이원배치 자료표. 행은 A1부터 Ap, 열은 B1부터 Bq. 칸마다 y_ij1부터 y_ijr까지 r개 값이 세로로 있고, 그 아래 가로줄 밑에 칸 평균 ȳ_ij·가 있다. 오른쪽 열은 행 평균 ȳ_i··, 맨 아래 줄은 열 평균 ȳ_·j·와 전체 평균 ȳ···" width="1252" height="1628"><figcaption>칸 \((i,\,j)\)마다 \(r\)개 → 칸 평균 \(\bar y_{ij\cdot}\), \(N=pqr\)</figcaption></figure>
+  <p>반복 없는 이원배치법에서는 그 칸에서만 생기는 효과인 교호작용을 오차와 구분할 수 없다고 했어요. 그런데 그 칸에서만 생기는 효과도 알아보고 싶어서, 처리마다 값을 여러 번 구하는 <b>반복 있는 이원배치법</b>을 쓰기도 해요. 처리 하나에서 값을 한 번만 구하지 않고 여러 번 구하니까 교호작용을 알아볼 수 있어요. 참고로 칸마다 반복 횟수는 \(r\)번으로 통일해요.</p>
+  <p>교호작용은 더 정확히 말하면 <b>한 요인의 효과가 다른 요인의 수준에 따라 달라지는 것</b>을 뜻해요. 한 처리를 여러 번 보면서 오차와 구분할 수 있게 되니 교호작용이 있는지 없는지 알 수 있게 되는 거예요. 교호작용은 요인 A의 효과가 B 수준에 따라 달라지거나 그 반대일 때, 즉 두 효과가 단순하게 더해지지 않을 때 나타나요.</p>
+  <p>그래서 반복 있는 이원배치법에서는 교호작용도 모델에 넣어요. 식을 보면 교호작용 \(\gamma_{ij}\)가 들어가서, 인자 A의 수준이 \(i\)이고 인자 B의 수준이 \(j\)일 때 생기는 효과를 알아봐요. 그리고 오차의 첨자가 \(ij\)가 아니라 \(ijk\)가 됐는데, 처리 하나에서 값을 여러 번 구하니까 첨자가 하나 늘어난 거예요.</p>
+</section>
+
+<section id="iplot">
+  <div class="sec-head"><h2>(이원배치법) 교호작용을 그림으로</h2><span class="slide-tag">슬라이드 20</span></div>
+  <figure class="plate wide"><img src="{{IMG:w11_inter}}" alt="interaction plot 세 개. 가로축은 복습 적음, 보통, 많음, 선은 교재 A(파랑)와 교재 B(주황). 왼쪽은 두 선이 평행(교호작용 없음), 가운데는 B가 항상 위에 있지만 간격이 점점 벌어짐(교호작용 있음), 오른쪽은 두 선이 교차(교호작용 있음)" width="2280" height="760"><figcaption>왼쪽: 평행(교호작용 없음) / 가운데: 평행 X / 오른쪽: 교차</figcaption></figure>
+  <p class="key">판단은 \(F\)검정으로!</p>
+  <p>교호작용을 그림으로 보면 이해가 쉬워요. 가로축이 복습량이라는 요인, 선 하나하나가 다른 요인인 교재 A, B의 수준, 세로축이 각 칸의 평균이라고 하면, 왼쪽 그림은 두 선이 평행해서 교재라는 요인과 복습량이라는 요인이 얽혀 있지 않으니 교호작용이 없다고 할 수 있어요. 가운데나 오른쪽 그림은 선이 평행하지 않거나 교차하는 걸 보고, 주효과 말고 교호작용도 있다는 걸 알 수 있어요.</p>
+  <p class="caution"><span class="caution-label">주의</span>교호작용이 있다는 기준은 선이 '교차하느냐'가 아니라 '평행하지 않느냐'예요. 교차는 그중 교호작용이 강한 경우일 뿐이에요.</p>
+  <p>그리고 실제 자료에서 표본평균으로 그린 선은 교호작용이 없어도 오차 때문에 완전히 평행하게 나오지는 않아요. 그래서 그림은 감을 잡는 용도이고, 판단은 \(F\)검정으로 해요.</p>
+</section>
+
+<section id="two1t">
+  <div class="sec-head"><h2>(이원배치법) 반복 있음: 분산분석표</h2><span class="slide-tag">슬라이드 21</span></div>
+  \[\underbrace{SST}_{N-1}=\underbrace{SSA}_{p-1}+\underbrace{SSB}_{q-1}+\underbrace{\htmlClass{c-red}{SS_{A\times B}}}_{(p-1)(q-1)}+\underbrace{SSE}_{pq(r-1)}\]
+  \[\htmlClass{c-mu}{N=pqr,\qquad pq(r-1)=N-pq}\]
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">요인 A</th><td>SSA</td><td>\(p-1\)</td><td>MSA</td><td>MSA / MSE</td></tr>
+      <tr><th scope="row">요인 B</th><td>SSB</td><td>\(q-1\)</td><td>MSB</td><td>MSB / MSE</td></tr>
+      <tr><th scope="row">교호작용</th><td>\(SS_{A\times B}\)</td><td>\((p-1)(q-1)\)</td><td>\(MS_{A\times B}\)</td><td>\(MS_{A\times B}\) / MSE</td></tr>
+      <tr><th scope="row">잔차</th><td>SSE</td><td>\(pq(r-1)\)</td><td>MSE</td><td></td></tr>
+      <tr><th scope="row">전체</th><td>SST</td><td>\(N-1\)</td><td></td><td></td></tr>
+    </tbody>
+  </table></div>
+  <p>반복이 있으면 SST가 SSA, SSB, 교호작용 \(SS_{A\times B}\), SSE 네 개로 쪼개져요. SSA와 SSB는 각각 A와 B의 수준별 평균들이 얼마나 흩어져 있는지를 맡고, \(SS_{A\times B}\)는 칸 평균에서 A 효과와 B 효과만으로는 설명되지 않는 부분을, SSE는 칸 안에서의 흔들림을 맡아요.</p>
+  <p>자유도는 A와 B가 각각 수준 개수에서 1을 뺀 것이고, 교호작용은 두 요인 자유도의 곱 \((p-1)(q-1)\)이에요. SSE는 칸마다 \(r-1\)씩, 칸이 \(pq\)개라서 \(pq(r-1)=N-pq\)예요. 다 더하면 \(pqr-1=N-1\)로 맞아떨어져요.</p>
+  <p>위 표처럼 \(F\)는 세 줄 모두 같은 MSE로 나눠서 구해요.</p>
+</section>
+
+<section id="order">
+  <div class="sec-head"><h2>(이원배치법) 반복 있음: 검정 순서</h2><span class="slide-tag">슬라이드 22</span></div>
+  <p><b>① 교호작용 검정</b></p>
+  \[H_0:\ \text{모든 }\gamma_{ij}=0\qquad F=\frac{MS_{A\times B}}{MSE}\]
+  <p class="chain-strong">↓ 유의하지 않으면</p>
+  <p><b class="c-mu">② 주효과 검정 (A, B)</b></p>
+  \[F_A=\frac{MSA}{MSE},\qquad F_B=\frac{MSB}{MSE}\]
+  <p class="key"><span class="c-red">교호작용이 유의하면 주효과 검정은 하지 않음</span></p>
+  <p>반복 있는 이원배치법은 \(F\)가 3개 나오는데, 검정하는 순서가 정해져 있어요.</p>
+  <p>먼저 교호작용부터 검정해요. 귀무가설을 모든 \(\gamma_{ij}=0\), 즉 교호작용이 없다로 잡고 \(F\)검정을 해요. 교호작용이 유의하지 않으면, 즉 귀무가설이 기각되지 않으면 그다음에 주효과 A, B를 각각 \(F_A=MSA/MSE\), \(F_B=MSB/MSE\)로 검정해요. 반대로 교호작용이 유의하면, 즉 귀무가설이 기각되면 두 주효과가 서로 얽혀 있다는 뜻이므로 주효과 검정은 따로 하지 않아요.</p>
+</section>
+
+<section id="fill">
+  <div class="sec-head"><h2>(정리) 분산분석표 빈칸 채우기</h2><span class="slide-tag">슬라이드 23</span></div>
+  <div class="chain">
+    <p>① 자유도: 다 더하면 \(N-1\)</p>
+    <p>② 제곱합: 다 더하면 SST</p>
+    <p>③ 평균제곱 = 제곱합 ÷ 자유도</p>
+    <p>④ \(F\) = 평균제곱 ÷ MSE</p>
+  </div>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>설계</th><th>요인 칸 자유도</th><th>잔차 자유도</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">일원배치</th><td>\(k-1\)</td><td>\(N-k\)</td></tr>
+      <tr><th scope="row">랜덤화 블록</th><td>\(k-1,\ p-1\)</td><td>\((k-1)(p-1)\)</td></tr>
+      <tr><th scope="row">이원 (반복 X)</th><td>\(p-1,\ q-1\)</td><td>\((p-1)(q-1)\)</td></tr>
+      <tr><th scope="row">이원 (반복 O)</th><td>\(p-1,\ q-1,\)<br>\((p-1)(q-1)\)</td><td>\(pq(r-1)\)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="key">\(F\)가 임계값보다 크면 기각 (오른쪽 꼬리, 단측검정)</p>
+  <p>시험에서 분산분석표 빈칸 채우기가 자주 나오는데, 위 규칙 네 개면 다 채울 수 있어요. 자유도는 위 칸들을 다 더하면 \(N-1\), 제곱합도 위 칸들을 다 더하면 SST, 평균제곱은 제곱합을 자유도로 나눈 것, \(F\)는 그 줄의 평균제곱을 MSE로 나눈 거예요.</p>
+  <p>자유도는 설계마다 위 표처럼 정리해 두면 편해요. 요인 칸은 항상 (수준 수 − 1), 교호작용은 두 요인 자유도의 곱, 잔차는 나머지예요. 빈칸 문제는 보통 평균제곱이나 \(F\)가 주어지고 제곱합을 거꾸로 구하게 하는 경우가 많아서, \(MS=SS/df\), \(F=MS/MSE\)를 거꾸로 쓸 줄 알면 돼요.</p>
+  <p>판단은 항상 \(F\)가 임계값 \(F_{0.05}(\text{분자 자유도},\ \text{분모 자유도})\)보다 크면 기각이고, 분모에는 늘 MSE가 들어가므로 분모 자유도는 항상 잔차 자유도라는 걸 기억해 두세요.</p>
+</section>
+
+<section id="map2">
+  <div class="sec-head"><h2>큰 그림 다시</h2><span class="slide-tag">슬라이드 24</span></div>
+  <div class="tree">
+    <p class="tree-root">9장: 분산분석 (여러 집단의 평균 비교)</p>
+    <div class="tree-row">
+      <div class="tree-grp">
+        <p class="tree-head">요인 1개</p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">일원배치법</p><p>요인 1개</p><p>→ 다중비교<br>(어디가 다른지)</p><p class="leaf-q"><b>연습 1번</b>, 추가 5번</p></div>
+          <div class="leaf"><p class="leaf-h">랜덤화 블록</p><p>요인 1개 + 블록</p><p class="leaf-q"><b>연습 2번</b></p></div>
+        </div>
+      </div>
+      <div class="tree-grp">
+        <p class="tree-head">이원배치법 <span class="tree-tag">요인 2개</span></p>
+        <div class="tree-leaves">
+          <div class="leaf"><p class="leaf-h">반복 없음</p><p>교호작용 X</p></div>
+          <div class="leaf"><p class="leaf-h">반복 있음</p><p>교호작용 O</p><p class="leaf-q"><b>연습 3번</b></p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p>처음에 봤던 그림에 연습문제가 어느 가지에 해당하는지 표시해 두었어요. 굵은 글씨는 수업 때 푼 문제, 나머지는 추가 문제예요.</p>
+  <p>연습 1번은 일원배치법(분산분석표와 다중비교), 연습 2번은 랜덤화 블록 빈칸 채우기와 블록 검정, 연습 3번은 반복 있는 이원배치법 빈칸 채우기와 검정 순서를 다뤄요. 추가 4번은 OX로 전체를 훑는 문제, 추가 5번은 평균과 표준편차만 주어진 일원배치법으로 간편식을 연습하는 문제예요.</p>
+</section>
+
+<section id="practice">
+  <div class="sec-head"><h2>연습문제</h2><span class="slide-tag">슬라이드 25–27</span></div>
+  <p>먼저 풀어 보고 풀이를 열어 보세요. 4번부터는 추가 문제예요.</p>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">1</span>대학생 15명을 무작위로 세 그룹에 나누어 서로 다른 암기법으로 영단어 50개를 외우게 한 뒤, 다음 날 맞힌 개수를 기록하였다. 일원배치 분산분석의 기본 가정은 모두 만족한다고 하자.</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>암기법</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">반복 읽기</th><td>28</td><td>31</td><td>25</td><td>30</td><td>26</td></tr>
+        <tr><th scope="row">백지 복습</th><td>33</td><td>36</td><td>30</td><td>34</td><td>37</td></tr>
+        <tr><th scope="row">문제 풀기</th><td>30</td><td>33</td><td>28</td><td>32</td><td>32</td></tr>
+      </tbody>
+    </table></div>
+    <ol class="q-sub">
+      <li>(1) 암기법별 표본평균과 전체 표본평균을 구하시오.</li>
+      <li>(2) 분산분석표를 완성하시오.</li>
+      <li>(3) 암기법에 따라 평균 개수에 차이가 있는지 가설을 쓰고 유의수준 5%에서 검정하시오.</li>
+      <li>(4) 다음은 세 쌍을 Tukey HSD로 비교한 결과이다. 차이가 있다고 할 수 있는 쌍은 무엇인가? 이 결과로 볼 때 백지 복습이 가장 효과적이라고 할 수 있는가?</li>
+    </ol>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th></th><th>diff</th><th>lwr</th><th>upr</th><th>p adj</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">백지 − 반복</th><td>6</td><td>1.87</td><td>10.13</td><td>0.006</td></tr>
+        <tr><th scope="row">문제 − 반복</th><td>3</td><td>−1.13</td><td>7.13</td><td>0.171</td></tr>
+        <tr><th scope="row">문제 − 백지</th><td>−3</td><td>−7.13</td><td>1.13</td><td>0.171</td></tr>
+      </tbody>
+    </table></div>
+    <p class="where">Tukey HSD (95% 동시 신뢰구간). diff: 평균 차이, lwr / upr: 신뢰구간 하한 / 상한, p adj: 보정된 p value</p>
+    <ol class="q-sub" start="5">
+      <li>(5) 세 쌍을 Bonferroni 방법으로 비교한다면 각 비교의 유의수준은 얼마로 해야 하는가?</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) \(\bar y_{1\cdot}=140/5=28,\ \bar y_{2\cdot}=170/5=34,\ \bar y_{3\cdot}=155/5=31\), \(\bar y_{\cdot\cdot}=465/15=31\)</p>
+      <p>(2) \(SStr=5\{(28-31)^2+(34-31)^2+(31-31)^2\}=5(9+9+0)=90\)</p>
+      <p>\(SSE\): 처리별 편차제곱합 \(26+30+16=72\) (반복 읽기는 편차 \(0,\ 3,\ -3,\ 2,\ -2\) → 26). 검산: \(SST=\sum\sum y_{ij}^2-N\bar y_{\cdot\cdot}^2=14577-15(31^2)=162=90+72\)</p>
+      <div class="table-scroll"><table class="plain">
+        <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">처리</th><td>90</td><td>2</td><td>45</td><td>7.5</td></tr>
+          <tr><th scope="row">잔차</th><td>72</td><td>12</td><td>6</td><td></td></tr>
+          <tr><th scope="row">전체</th><td>162</td><td>14</td><td></td><td></td></tr>
+        </tbody>
+      </table></div>
+      <p>(3) \(H_0:\alpha_1=\alpha_2=\alpha_3=0\) vs \(H_1:\) 적어도 하나의 \(\alpha_i\neq0\). \(F=45/6=7.5\gt F_{0.05}(2,\ 12)=3.89\) → 기각 (p value 약 0.008). 암기법에 따라 평균 맞힌 개수에 차이가 있다고 할 수 있다.</p>
+      <p>(4) 백지 − 반복만 신뢰구간 (1.87, 10.13)이 0을 포함하지 않고 p adj \(0.006\lt0.05\) → 이 쌍만 차이가 있다고 할 수 있다. 나머지 두 쌍은 구간이 0을 포함하고 p adj 0.171 → 차이가 있다고 할 수 없다. 백지 복습이 반복 읽기보다는 낫다고 할 수 있지만 문제 풀기보다 낫다고는 할 수 없으므로, 가장 효과적이라고 할 수는 없다.</p>
+      <p>(5) 각 비교를 \(0.05/3\approx0.0167\)로 한다.</p>
+      <p class="sol-note">처리 평균 → SStr, 처리별 편차제곱합 → SSE. 셋 중 두 개를 구하면 \(SST=SStr+SSE\)로 검산해요. 분산분석이 기각돼도 모든 쌍이 다른 건 아니에요(기각 = 적어도 하나 다름). 어느 쌍이 다른지는 다중비교로 따로 봐요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">2</span>세 가지 메뉴판 디자인(A, B, C)이 카페의 하루 매출에 주는 영향을 비교하려 한다. 매장마다 손님 수가 크게 달라서, 매장 5곳에서 세 디자인을 일주일씩(순서는 무작위) 써 보고 일평균 매출(만 원)을 기록하였다. 분석에 필요한 가정은 모두 만족한다고 하자.</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>디자인</th><th>매장 1</th><th>매장 2</th><th>매장 3</th><th>매장 4</th><th>매장 5</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">A</th><td>73</td><td>80</td><td>81</td><td>74</td><td>82</td></tr>
+        <tr><th scope="row">B</th><td>75</td><td>88</td><td>83</td><td>79</td><td>85</td></tr>
+        <tr><th scope="row">C</th><td>74</td><td>84</td><td>82</td><td>75</td><td>85</td></tr>
+      </tbody>
+    </table></div>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">처리</th><td>40</td><td>(가)</td><td>(나)</td><td>(다)</td></tr>
+        <tr><th scope="row">블록</th><td>(라)</td><td>(마)</td><td>66</td><td>(바)</td></tr>
+        <tr><th scope="row">잔차</th><td>16</td><td>(사)</td><td>(아)</td><td></td></tr>
+        <tr><th scope="row">전체</th><td>(자)</td><td>14</td><td></td><td></td></tr>
+      </tbody>
+    </table></div>
+    <ol class="q-sub">
+      <li>(1) 분산분석표의 (가)~(자)를 채우시오.</li>
+      <li>(2) 디자인에 따라 평균 매출에 차이가 있는지 가설을 쓰고 유의수준 5%에서 검정하시오.</li>
+      <li>(3) 매장별로 묶은 설계는 효과적이었는가? 가설을 쓰고 유의수준 5%에서 검정하시오.</li>
+      <li>(4) 매장을 무시하고 일원배치로 분석했다면 잔차의 제곱합, 자유도, \(F\) 값은 어떻게 되고, (2)의 결론은 어떻게 되는가?</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) 자유도: 처리 \(3-1=2\) (가), 블록 \(5-1=4\) (마), 잔차 \(14-2-4=8\) (사). (나) \(40/2=20\), (아) \(16/8=2\), (다) \(20/2=10\), (라) \(66\times4=264\), (바) \(66/2=33\), (자) \(40+264+16=320\)</p>
+      <div class="table-scroll"><table class="plain">
+        <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">처리</th><td>40</td><td>2</td><td>20</td><td>10</td></tr>
+          <tr><th scope="row">블록</th><td>264</td><td>4</td><td>66</td><td>33</td></tr>
+          <tr><th scope="row">잔차</th><td>16</td><td>8</td><td>2</td><td></td></tr>
+          <tr><th scope="row">전체</th><td>320</td><td>14</td><td></td><td></td></tr>
+        </tbody>
+      </table></div>
+      <p>(2) \(H_0:\) 디자인 효과가 모두 0 vs \(H_1:\) 적어도 하나는 0이 아님. \(F=10\gt F_{0.05}(2,\ 8)=4.46\) → 기각 (p value 약 0.007). 디자인에 따라 평균 매출이 다르다고 할 수 있다.</p>
+      <p>(3) \(H_0:\) 매장(블록) 효과가 모두 0 vs \(H_1:\) 적어도 하나는 0이 아님. \(F=33\gt F_{0.05}(4,\ 8)=3.84\) → 기각. 매장 사이 차이가 커서 매장으로 묶은 설계가 효과적이었다.</p>
+      <p>(4) 블록 몫이 잔차로 들어간다: \(SSE=264+16=280\), 자유도 \(4+8=12\), \(MSE=280/12=23.33\), \(F=20/23.33=0.86\lt F_{0.05}(2,\ 12)=3.89\) → 기각하지 못한다. 매장 차이를 걸러냈기 때문에 디자인 차이를 찾을 수 있었던 것이다.</p>
+      <p class="sol-note">빈칸은 자유도 → 평균제곱 → \(F\) 순서로. 블록 검정은 블록으로 묶은 설계가 효율적이었는지를 봐요. 블록을 무시하면 SSB가 SSE에 섞여서 MSE가 커져요(슬라이드 17과 같은 이야기).</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">3</span>조명 밝기(A: 밝음, 어두움)와 배경 음악(B: 없음, 클래식, 팝)이 집중력 점수에 주는 영향을 알아보려 한다. 학생 24명을 여섯 조합에 4명씩 무작위로 배정하여 집중력 테스트 점수를 얻었다. 교호작용을 포함한 이원배치 모형을 적용하며, 분석에 필요한 가정은 모두 만족한다고 하자.</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">조명 (A)</th><td>96</td><td>(가)</td><td>(나)</td><td>(다)</td></tr>
+        <tr><th scope="row">음악 (B)</th><td>(라)</td><td>2</td><td>152</td><td>(마)</td></tr>
+        <tr><th scope="row">교호작용</th><td>16</td><td>(바)</td><td>(사)</td><td>(아)</td></tr>
+        <tr><th scope="row">잔차</th><td>(자)</td><td>(차)</td><td>8</td><td></td></tr>
+        <tr><th scope="row">전체</th><td>560</td><td>23</td><td></td><td></td></tr>
+      </tbody>
+    </table></div>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>조합별 평균</th><th>없음</th><th>클래식</th><th>팝</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">밝음</th><td>75</td><td>74</td><td>67</td></tr>
+        <tr><th scope="row">어두움</th><td>69</td><td>72</td><td>63</td></tr>
+      </tbody>
+    </table></div>
+    <ol class="q-sub">
+      <li>(1) 분산분석표의 (가)~(차)를 채우시오.</li>
+      <li>(2) 가장 먼저 검정해야 하는 효과는 무엇인가? 가설을 쓰고 유의수준 5%에서 검정하시오.</li>
+      <li>(3) (2)의 결과를 바탕으로 조명과 배경 음악의 효과를 각각 유의수준 5%에서 검정하시오.</li>
+      <li>(4) 조합별 평균으로 interaction plot을 그리고(가로축: 음악, 선: 조명), (2)의 결론과 비교하시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) (가) \(2-1=1\), (나) \(96/1=96\), (다) \(96/8=12\), (라) \(152\times2=304\), (마) \(152/8=19\), (바) \((2-1)(3-1)=2\), (사) \(16/2=8\), (아) \(8/8=1\), (차) \(2\times3\times(4-1)=18\), (자) \(8\times18=144\). 검산: \(96+304+16+144=560\), \(1+2+2+18=23\)</p>
+      <p>(2) 교호작용부터 검정한다. \(H_0:\) 모든 \(\gamma_{ij}=0\) vs \(H_1:\) 적어도 하나는 0이 아님. \(F=1\lt F_{0.05}(2,\ 18)=3.55\) → 기각하지 못한다 (p value 약 0.39). 교호작용이 있다고 할 수 없다.</p>
+      <p>(3) 교호작용이 유의하지 않으므로 주효과를 검정한다. 조명: \(F=12\gt F_{0.05}(1,\ 18)=4.41\) → 기각 (p value 약 0.003). 음악: \(F=19\gt F_{0.05}(2,\ 18)=3.55\) → 기각 (p value \(\lt0.001\)). 조명 밝기와 배경 음악 모두 평균 점수에 영향을 준다고 할 수 있다.</p>
+      <figure class="plate narrow"><img src="{{IMG:w11_p3}}" alt="가로축 없음, 클래식, 팝. 밝음 선(75, 74, 67)과 어두움 선(69, 72, 63). 두 선 모두 팝에서 크게 떨어지고 밝음이 항상 위에 있다" width="1120" height="760"><figcaption>(4)의 interaction plot</figcaption></figure>
+      <p>(4) 두 선은 모두 팝에서 크게 떨어지는 비슷한 모양이고 밝음이 항상 위에 있다. 간격이 6, 2, 4로 완전히 평행하지는 않지만, 이 정도 차이는 오차로 설명되는 수준이라 \(F=1\)이다. 교호작용이 없다는 (2)의 결론과 맞는다.</p>
+      <p class="sol-note">검정 순서는 교호작용 → (유의하지 않으면) 주효과. 교호작용이 유의하면 주효과 검정은 하지 않아요. 표본평균 선은 교호작용이 없어도 완전히 평행하지 않을 수 있으니 판단은 \(F\)검정으로 해요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">4</span>(추가 문제) 다음 문장이 맞으면 O, 틀리면 X를 쓰시오.</p>
+    <ol class="q-sub">
+      <li>(1) 분산분석에서 귀무가설을 기각하면 모든 처리의 모평균이 서로 다르다고 할 수 있다.</li>
+      <li>(2) 처리가 2개일 때 일원배치 분산분석의 \(F\) 값은 합동분산을 쓴 \(t\)검정 통계량의 제곱과 같다.</li>
+      <li>(3) 처리 4개를 두 개씩 짝지어 각각 유의수준 5%로 \(t\)검정을 하면, 전체에서 한 번이라도 잘못 기각할 확률은 5%보다 커진다.</li>
+      <li>(4) 분산분석의 \(F\)검정은 \(F\) 값이 아주 작을 때도 귀무가설을 기각한다.</li>
+      <li>(5) 같은 자료를 랜덤화 블록으로 분석하면 일원배치로 분석할 때보다 잔차제곱합이 커진다.</li>
+      <li>(6) 반복이 없는 이원배치법에서는 교호작용을 따로 검정할 수 없다.</li>
+      <li>(7) interaction plot에서 두 선이 교차하지 않으면 교호작용은 없다.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>X O O X X O X</p>
+      <p>(1) 적어도 하나가 다를 뿐이에요.</p>
+      <p>(2) \(F=T^2\)이에요.</p>
+      <p>(3) 비교가 6쌍이라 1종 오류가 쌓여요.</p>
+      <p>(4) 오른쪽 꼬리만 봐요.</p>
+      <p>(5) 블록 몫 SSB를 빼므로 작아지거나 같아요.</p>
+      <p>(6) 칸마다 관측값이 1개라 교호작용과 오차를 구분할 수 없어요.</p>
+      <p>(7) 평행하지 않으면 교호작용이 있는 것이고, 교차는 그중 강한 경우예요.</p>
+    </details>
+  </article>
+
+  <article class="q">
+    <p class="q-stem"><span class="q-no">5</span>(추가 문제) 세 배달앱(A, B, C)으로 주문한 음식의 배달 시간(분)을 조사하여 다음 요약 통계량을 얻었다. 일원배치 분산분석의 기본 가정은 모두 만족한다고 하자.</p>
+    <div class="table-scroll"><table class="plain">
+      <thead><tr><th>배달앱</th><th>표본 수</th><th>평균</th><th>표준편차</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">A</th><td>6</td><td>30</td><td>4</td></tr>
+        <tr><th scope="row">B</th><td>6</td><td>36</td><td>4</td></tr>
+        <tr><th scope="row">C</th><td>8</td><td>33</td><td>3</td></tr>
+      </tbody>
+    </table></div>
+    <ol class="q-sub">
+      <li>(1) 전체 표본평균을 구하고, 처리제곱합과 잔차제곱합을 구하시오.</li>
+      <li>(2) 분산분석표를 완성하고, 배달앱에 따라 평균 배달 시간에 차이가 있는지 유의수준 5%에서 검정하시오.</li>
+      <li>(3) 이 분석에 필요한 가정 세 가지를 쓰고, 그중 꼭 만족해야 하는 가정은 무엇인지 쓰시오.</li>
+    </ol>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) \(\bar y_{\cdot\cdot}=(6\cdot30+6\cdot36+8\cdot33)/20=660/20=33\). \(SStr=\sum n_i(\bar y_{i\cdot}-\bar y_{\cdot\cdot})^2=6(9)+6(9)+8(0)=108\). \(SSE=\sum(n_i-1)s_i^2=5(16)+5(16)+7(9)=223\)</p>
+      <div class="table-scroll"><table class="plain">
+        <thead><tr><th>요인</th><th>제곱합</th><th>자유도</th><th>평균제곱</th><th>\(F\)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">처리</th><td>108</td><td>2</td><td>54</td><td>4.12</td></tr>
+          <tr><th scope="row">잔차</th><td>223</td><td>17</td><td>13.12</td><td></td></tr>
+          <tr><th scope="row">전체</th><td>331</td><td>19</td><td></td><td></td></tr>
+        </tbody>
+      </table></div>
+      <p>(2) \(H_0:\alpha_1=\alpha_2=\alpha_3=0\) vs \(H_1:\) 적어도 하나의 \(\alpha_i\neq0\). \(F=54/13.12=4.12\gt F_{0.05}(2,\ 17)=3.59\) → 기각 (p value 약 0.035). 배달앱에 따라 평균 배달 시간에 차이가 있다고 할 수 있다.</p>
+      <p>(3) 독립성, 정규성, 등분산성. 독립성은 꼭 만족해야 한다(정규성, 등분산성은 조금 어긋나도 결과가 크게 흔들리지 않는다).</p>
+      <p class="sol-note">원자료 없이 평균과 표준편차만 있으면 \(SStr=\sum n_i(\bar y_{i\cdot}-\bar y_{\cdot\cdot})^2\), \(SSE=\sum(n_i-1)s_i^2\). 반복 수가 다르면 전체 평균은 가중평균이에요.</p>
+    </details>
+  </article>
+</section>
+
+</main>
