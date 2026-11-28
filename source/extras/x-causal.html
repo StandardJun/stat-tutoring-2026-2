@@ -1,0 +1,453 @@
+<nav class="toc" aria-label="목차">
+  <a href="#before">시작 전에</a>
+  <a href="#corr">상관 ≠ 인과</a>
+  <a href="#struct">세 가지 구조</a>
+  <a href="#predict">예측과 인과</a>
+  <a href="#po">잠재적 결과</a>
+  <a href="#ate">ATE와 선택편향</a>
+  <a href="#rct">무작위 실험</a>
+  <a href="#obs">관찰연구</a>
+  <a href="#reg">매칭과 회귀</a>
+  <a href="#simpson">심슨의 역설</a>
+  <a href="#did">이중차분법</a>
+  <a href="#summary">정리</a>
+  <a href="#practice">확인 문제</a>
+</nav>
+
+<main>
+
+<section id="before">
+  <div class="sec-head"><h2>시작 전에</h2></div>
+  <p class="caution"><span class="caution-label">추가 자료</span>인문사회계를 위한 통계학 분반은 9장에서 분산분석 대신 <b>인과효과</b>를 배웠어요. 튜터링 시간에는 따로 다루지 않았으니, 그 내용을 직관 위주로 정리한 자료예요. 정규 분반의 9장(분산분석)은 11회차 페이지에 있어요.</p>
+  <p>이 장이 묻는 질문은 하나예요. <b>"A가 정말로 B를 바꾸는가?"</b> 지금까지 배운 검정은 "두 집단의 평균이 다른가"까지만 답해 줬어요. 평균이 다르다는 것과, 한쪽에 무언가를 해서 그 차이가 <b>생겼다</b>는 것은 다른 이야기예요. 이 장은 그 틈을 메우는 방법을 다뤄요.</p>
+  <p>필요한 배경은 많지 않아요. 1회차의 랜덤 표본, 3회차의 상관계수와 기댓값, 10회차의 회귀분석(특히 가변수)을 알면 다 읽혀요. 수식은 최소한만 쓰고, 위젯 두 개로 직접 움직여 보게 했어요.</p>
+  <p>이 페이지에서 쓰는 단어는 이 정도예요.</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>용어</th><th>한 줄 뜻</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">처치 (treatment)</th><td>효과를 알고 싶은 개입이나 변화. 약 복용, 정책 시행, 프로그램 참여 같은 것. 기호 \(T\)로 쓰고 받으면 \(T=1\), 안 받으면 \(T=0\)이에요.</td></tr>
+      <tr><th scope="row">결과 (outcome)</th><td>처치 뒤에 재는 값. 병의 호전, 고용률, 시험 점수 같은 것. 기호 \(Y\)</td></tr>
+      <tr><th scope="row">처치집단 / 통제집단</th><td>처치를 받은 사람들 / 받지 않은 사람들 (통제집단은 대조군, 비교집단이라고도 해요)</td></tr>
+      <tr><th scope="row">교란변수 (confounder)</th><td>처치와 결과 <b>둘 다</b>에 영향을 주는 제3의 변수. 자료에 따라 혼란변수라고도 써요.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="corr">
+  <div class="sec-head"><h2>상관관계와 인과관계는 다르다</h2><span class="slide-tag">3회차 상관계수와 연결</span></div>
+  <p>사회과학 질문은 대부분 인과 질문이에요. "최저임금을 올리면 고용이 줄어드나?", "부모의 소득이 자녀의 학업에 영향을 주나?", "복지정책이 빈곤율을 낮추나?" 같은 것들이죠. 이런 질문에 답하려면 원인이 결과를 <b>얼마나</b> 바꾸는지를 숫자로 나타내야 하는데, 그게 <b>인과효과</b>(causal effect)예요.</p>
+  <p class="key">인과효과 = 처치가 <b>있었을 때</b>의 결과 − 처치가 <b>없었을 때</b>의 결과</p>
+  <p>3회차에서 배운 상관계수는 두 변수가 <b>같이 움직이는</b> 정도(그중에서도 직선 관계)를 재요. 인과관계는 그보다 강한 주장이에요. \(x\)를 <b>바꾸면</b> 그 때문에 \(y\)가 바뀐다는 뜻이거든요. 상관이 있다고 인과가 있는 건 아니에요.</p>
+  <p>나라별 자료를 보면 인구 1인당 TV 대수가 많은 나라일수록 기대수명이 길어요. 그렇다고 TV가 적은 나라에 TV를 나눠 주면 수명이 늘어날까요? 아니죠. 부유한 나라는 TV도 많고 영양·의료·위생도 좋아서 수명이 긴 거예요. <b>국가의 부</b>라는 숨은 변수가 둘을 동시에 움직였어요. 이렇게 인과 없이 생긴 상관을 <b>허위 상관</b>(spurious correlation)이라고 불러요.</p>
+  <h3>인과라고 말하려면 필요한 세 가지</h3>
+  <div class="formula-grid">
+    <div><p class="fg-label"><b>시간 순서</b></p><p>원인이 결과보다 먼저 일어나야 해요.</p></div>
+    <div><p class="fg-label"><b>함께 변함</b></p><p>원인이 달라지면 결과도 달라져야 해요. 상관이 여기에 해당해요.</p></div>
+    <div><p class="fg-label"><b>다른 설명이 없음</b></p><p>제3의 변수가 원인과 결과를 동시에 움직인 게 아니어야 해요. 자료에서는 이 조건을 <b>외생성</b>이라고 불러요.</p></div>
+    <div><p class="fg-label">상관이 주는 것</p><p>둘째 조건뿐이에요. 첫째와 셋째는 자료를 어떻게 모았는지에서 나와요.</p></div>
+  </div>
+  <p>셋째 조건이 가장 까다로워요. 실험이 아닌 <b>관찰 자료</b>만으로 "A가 B를 일으켰다"고 말하기 어려운 이유가 대부분 여기에 있어요. 인과효과 추정을 방해하는 대표적인 원인은 세 가지예요.</p>
+  <ul>
+    <li><b>교란</b>: 제3의 변수가 원인과 결과에 모두 영향을 줘요. 다음 절에서 자세히 봐요.</li>
+    <li><b>자기선택 편향</b>: 처치를 받을지 말지를 사람들이 스스로 골라서 생기는 편향이에요. 학원에 다니는 학생은 원래 공부 의지가 높거나 집안 형편이 좋을 수 있어요. 그러면 학원 다닌 학생과 안 다닌 학생의 성적 차이에 학원 효과 말고 원래 있던 차이까지 섞여서, 학원 효과가 부풀려 보여요.</li>
+    <li><b>측정 오류</b>: 변수를 부정확하게 재면 효과도 틀어져요. 예를 들어 소득을 대충 재면 소득이 소비에 주는 효과가 실제와 다르게 나와요.</li>
+  </ul>
+</section>
+
+<section id="struct">
+  <div class="sec-head"><h2>두 변수의 관계를 만드는 세 가지 구조</h2></div>
+  <p>\(x\)와 \(y\) 사이에 관계가 보일 때, 그 관계가 생기는 기본 구조는 세 가지예요. 화살표는 "원인 → 결과", 점선은 "같이 움직이는 게 관찰됨(인과인지는 모름)"이에요. \(z\)는 자료에 안 보이는 숨은 변수(잠재변수)예요.</p>
+  <div class="cx-dags">
+    <figure class="cx-dag"><svg viewBox="0 0 220 160" role="img" aria-label="x에서 y로 화살표"><g class="cx-node"><rect x="10" y="105" width="80" height="40" rx="10"/><text x="50" y="122" text-anchor="middle" class="cx-l">x</text><text x="50" y="138" text-anchor="middle" class="cx-s">설명변수</text></g><g class="cx-node"><rect x="130" y="105" width="80" height="40" rx="10"/><text x="170" y="122" text-anchor="middle" class="cx-l">y</text><text x="170" y="138" text-anchor="middle" class="cx-s">반응변수</text></g><line class="cx-arrow" x1="90.0" y1="125.0" x2="122.8" y2="125.0"/><polygon class="cx-arrow-h" points="130.0,125.0 121.9,128.9 121.9,121.1"/></svg><figcaption><b>(a) 인과</b><br>\(x\)가 \(y\)를 직접 바꿔요</figcaption></figure>
+    <figure class="cx-dag"><svg viewBox="0 0 220 160" role="img" aria-label="z에서 x와 y로 화살표, x와 y는 점선으로만 연결"><g class="cx-node z"><rect x="70" y="12" width="80" height="40" rx="10"/><text x="110" y="29" text-anchor="middle" class="cx-l">z</text><text x="110" y="45" text-anchor="middle" class="cx-s">숨은 변수</text></g><g class="cx-node"><rect x="10" y="105" width="80" height="40" rx="10"/><text x="50" y="122" text-anchor="middle" class="cx-l">x</text><text x="50" y="138" text-anchor="middle" class="cx-s">설명변수</text></g><g class="cx-node"><rect x="130" y="105" width="80" height="40" rx="10"/><text x="170" y="122" text-anchor="middle" class="cx-l">y</text><text x="170" y="138" text-anchor="middle" class="cx-s">반응변수</text></g><line class="cx-arrow" x1="88.0" y1="52.0" x2="61.5" y2="98.7"/><polygon class="cx-arrow-h" points="58.0,105.0 58.6,96.0 65.4,99.9"/><line class="cx-arrow" x1="132.0" y1="52.0" x2="158.5" y2="98.7"/><polygon class="cx-arrow-h" points="162.0,105.0 154.6,99.9 161.4,96.0"/><line class="cx-assoc" x1="97.2" y1="125.0" x2="122.8" y2="125.0"/><polygon class="cx-assoc-h" points="130.0,125.0 121.9,128.9 121.9,121.1"/><polygon class="cx-assoc-h" points="90.0,125.0 98.1,121.1 98.1,128.9"/></svg><figcaption><b>(b) 공통반응</b><br>\(z\)가 둘을 같이 움직여요</figcaption></figure>
+    <figure class="cx-dag"><svg viewBox="0 0 220 160" role="img" aria-label="x에서 y로 화살표와 z에서 y로 화살표, x와 z는 점선으로 연결"><g class="cx-node z"><rect x="70" y="12" width="80" height="40" rx="10"/><text x="110" y="29" text-anchor="middle" class="cx-l">z</text><text x="110" y="45" text-anchor="middle" class="cx-s">숨은 변수</text></g><g class="cx-node"><rect x="10" y="105" width="80" height="40" rx="10"/><text x="50" y="122" text-anchor="middle" class="cx-l">x</text><text x="50" y="138" text-anchor="middle" class="cx-s">설명변수</text></g><g class="cx-node"><rect x="130" y="105" width="80" height="40" rx="10"/><text x="170" y="122" text-anchor="middle" class="cx-l">y</text><text x="170" y="138" text-anchor="middle" class="cx-s">반응변수</text></g><line class="cx-arrow" x1="132.0" y1="52.0" x2="158.5" y2="98.7"/><polygon class="cx-arrow-h" points="162.0,105.0 154.6,99.9 161.4,96.0"/><line class="cx-assoc" x1="84.5" y1="58.3" x2="61.5" y2="98.7"/><polygon class="cx-assoc-h" points="58.0,105.0 58.6,96.0 65.4,99.9"/><polygon class="cx-assoc-h" points="88.0,52.0 87.4,61.0 80.6,57.1"/><line class="cx-arrow" x1="90.0" y1="125.0" x2="122.8" y2="125.0"/><polygon class="cx-arrow-h" points="130.0,125.0 121.9,128.9 121.9,121.1"/><text x="110" y="117" text-anchor="middle" class="cx-qm">?</text></svg><figcaption><b>(c) 교란</b><br>\(x\)의 효과와 \(z\)의 효과가 섞여요</figcaption></figure>
+  </div>
+  <h3>(b) 공통반응 (common response)</h3>
+  <p>\(x\)와 \(y\)가 <b>같은 원인 \(z\)에 함께 반응</b>해서 관계가 생긴 경우예요. 여름에는 아이스크림이 많이 팔리고 물놀이 사고도 많아요. 아이스크림이 사고를 일으키는 게 아니라 <b>기온</b>이 둘을 같이 올린 거예요. 앞의 TV와 기대수명도 이 구조예요. 여기서 \(x\)는 \(y\)에 아무 영향을 주지 않아요. 보이는 관계는 전부 \(z\)가 만든 거예요.</p>
+  <h3>(c) 교란 (confounding)</h3>
+  <p>\(x\)와 \(z\)가 <b>둘 다</b> \(y\)에 영향을 줄 수 있고, 게다가 \(x\)와 \(z\)가 서로 얽혀 있는 경우예요. 커피를 많이 마시는 사람이 심장병에 더 많이 걸린다고 해 볼게요. 그런데 스트레스가 많은 사람은 커피도 많이 마시고, 스트레스 자체가 심장병 위험을 높여요. 그러면 커피가 실제보다 더 위험해 보여요. 커피가 정말 영향을 주는지, 준다면 얼마나인지를 스트레스의 영향과 <b>떼어 낼 수 없는 것</b>이 교란이에요. 그림의 물음표가 그 뜻이에요.</p>
+  <aside class="aside">
+    <p class="aside-q">공통반응과 교란은 뭐가 달라요?</p>
+    <p>둘 다 숨은 변수 \(z\) 때문에 관계가 이상해진다는 점은 같아요. 차이는 \(x\)의 역할이에요. 공통반응은 "\(x\)는 \(y\)에 아무것도 안 하는데 관계가 보인다"이고, 교란은 "\(x\)가 \(y\)에 뭔가 할 수도 있는데 \(z\)의 효과와 섞여서 <b>얼마인지 모른다</b>"예요. 어느 쪽이든 결론은 같아요. 강한 관계만 보고 인과라고 말하면 안 되고, 숨은 변수를 늘 의심해야 해요.</p>
+  </aside>
+</section>
+
+<section id="predict">
+  <div class="sec-head"><h2>예측은 인과가 없어도 된다</h2><span class="slide-tag">10회차 결정계수와 연결</span></div>
+  <p>대학이 신입생의 1학년 학점을 입학 시험 점수로 예측하려고 회귀분석을 했더니 결정계수가 \(R^2=0.27\)이 나왔다고 해 볼게요. 10회차에서 본 것처럼 이건 "학점의 변동 중 27%를 시험 점수로 설명한다"는 뜻이에요.</p>
+  <p>시험 점수가 학점을 <b>일으키는</b> 건 아니에요. 학점은 공부 습관, 자기 관리, 동기 같은 여러 요인에 달려 있고, 시험 점수는 그런 요인과 함께 움직일 뿐이에요. 그래도 <b>예측</b>에는 충분히 쓸 수 있어요. 둘이 같이 움직이는 패턴이 앞으로도 유지되기만 하면 되거든요.</p>
+  <div class="compare">
+    <div>
+      <p class="compare-label">예측</p>
+      <p>"\(x\)를 알면 \(y\)를 얼마나 맞힐 수 있나?"</p>
+      <p>상관이나 회귀만 있으면 돼요. 과거에 본 관계가 새 자료에서도 유지되는지가 중요해요.</p>
+    </div>
+    <div>
+      <p class="compare-label">인과</p>
+      <p>"\(x\)를 <b>바꾸면</b> \(y\)가 얼마나 바뀌나?"</p>
+      <p>상관만으로는 안 돼요. 교란을 막는 설계(무작위 배정)나 가정이 필요해요.</p>
+    </div>
+  </div>
+  <p>\(R^2=0.27\)의 나머지 73%에도 주의해요. 이건 "시험 점수 말고 숨은 변수 <b>하나</b>가 나머지 73%를 설명한다"는 뜻이 아니에요. 여러 요인과 우연이 섞여 있는 몫이에요.</p>
+</section>
+
+<section id="po">
+  <div class="sec-head"><h2>잠재적 결과: 인과효과를 정확히 정의하기</h2></div>
+  <p>새 학습 프로그램이 시험 점수를 올리는지 알고 싶다고 해 볼게요. 어떤 학생 한 명이 있어요.</p>
+  <ul>
+    <li>이 학생이 프로그램에 <b>참여했다면</b> 시험 점수: 90점</li>
+    <li>같은 학생이 <b>참여하지 않았다면</b> 시험 점수: 70점</li>
+  </ul>
+  <p>이 학생에게 프로그램의 효과는 \(90-70=20\)점이에요. 핵심은 <b>같은 사람</b>의 두 상황을 비교했다는 거예요. 다른 학생과 비교한 게 아니에요.</p>
+  <p>이걸 기호로 쓰면 이래요. 학생 \(i\)에 대해</p>
+  <div class="formula-grid two">
+    <div><p class="fg-label">\(Y_i(1)\)</p><p>학생 \(i\)가 처치를 <b>받았다면</b> 나왔을 결과</p></div>
+    <div><p class="fg-label">\(Y_i(0)\)</p><p>학생 \(i\)가 처치를 <b>받지 않았다면</b> 나왔을 결과</p></div>
+  </div>
+  <p>둘 다 "~했다면 나왔을" 값이라서 <b>잠재적 결과</b>(potential outcomes)라고 불러요. 학생 \(i\)의 인과효과는 둘의 차이예요.</p>
+  \[\tau_i = Y_i(1) - Y_i(0)\]
+  <p>(\(\tau\)는 "타우"라고 읽어요.)</p>
+  <h3>문제: 둘 중 하나는 영원히 볼 수 없다</h3>
+  <p>현실에서 학생은 프로그램에 참여하거나 안 하거나 둘 중 하나만 해요. 그래서 실제로 관찰되는 건 하나뿐이에요.</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>실제 처치</th><th>관찰되는 결과 (사실)</th><th>관찰되지 않는 결과 (반사실)</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">\(T_i=1\) 참여함</th><td>\(Y_i(1)\)</td><td>\(Y_i(0)=\ ?\)</td></tr>
+      <tr><th scope="row">\(T_i=0\) 참여 안 함</th><td>\(Y_i(0)\)</td><td>\(Y_i(1)=\ ?\)</td></tr>
+    </tbody>
+  </table></div>
+  <p>실제로 일어난 쪽의 결과를 <b>사실</b>(factual), 일어나지 않은 쪽의 결과를 <b>반사실</b>(counterfactual)이라고 해요. 실제로 관찰되는 값을 한 줄로 쓰면 이렇게 돼요.</p>
+  \[Y_i = T_i\,Y_i(1) + (1-T_i)\,Y_i(0)\]
+  <p>\(T_i=1\)을 넣으면 \(Y_i=Y_i(1)\), \(T_i=0\)을 넣으면 \(Y_i=Y_i(0)\)이 남아요. 처치 여부가 둘 중 어느 쪽을 볼지 골라 주는 스위치인 셈이에요.</p>
+  <p class="key">한 사람의 두 잠재적 결과를 동시에 볼 수는 없어요. 이게 인과추론의 근본 문제예요.</p>
+  <p>그래서 개인별 효과 \(\tau_i\)는 포기하고, 대신 <b>집단의 평균</b> 수준에서 효과를 추정해요. 관찰된 자료로 관찰되지 않은 반사실을 그럴듯하게 메우는 것, 그게 이 장에서 나오는 모든 방법이 하는 일이에요.</p>
+</section>
+
+<section id="ate">
+  <div class="sec-head"><h2>평균처리효과(ATE)와 선택편향</h2></div>
+  <p>모든 사람이 처치를 받았을 때의 평균 결과와, 모든 사람이 처치를 받지 않았을 때의 평균 결과의 차이를 <b>평균처리효과</b>(ATE, Average Treatment Effect)라고 해요. 3회차의 기댓값 기호로 쓰면</p>
+  \[\text{ATE} = E\big[Y(1)-Y(0)\big] = E\big[Y(1)\big]-E\big[Y(0)\big]\]
+  <p>개인별 효과 \(\tau_i\)의 평균이라고 봐도 돼요(\(\text{ATE}=E[\tau_i]\)).</p>
+  <p>가장 자연스러운 추정 방법은 처치집단 평균에서 통제집단 평균을 빼는 거예요.</p>
+  \[\widehat{\text{ATE}} = \bar Y_{T=1} - \bar Y_{T=0}\]
+  <p>그런데 이 <b>관측된 평균 차이</b>가 ATE와 같으려면 조건이 있어요. 두 집단이 처치를 받기 <b>전부터</b> 비슷해야 해요. 처치집단 평균 \(\bar Y_{T=1}\)은 처치받은 사람들의 \(Y(1)\)이고, 통제집단 평균 \(\bar Y_{T=0}\)은 <b>다른 사람들</b>의 \(Y(0)\)이에요. 사람이 다르면 원래부터 차이가 있을 수 있어요.</p>
+  <p>아래 표로 직접 확인해 볼게요. 학생 8명의 두 잠재적 결과를 전부 아는 "신의 시점"에서 시작해요.</p>
+
+  <div class="panel" id="po-w">
+    <div class="panel-head">
+      <p class="panel-title">잠재적 결과 표: 신의 시점과 현실</p>
+      <div class="seg" role="group" aria-label="보기" id="po-view">
+        <button type="button" class="on" aria-pressed="true" data-v="all">신의 시점</button>
+        <button type="button" aria-pressed="false" data-v="obs">현실</button>
+      </div>
+    </div>
+    <p class="panel-sub">\(Y(0)\) = 프로그램에 참여 안 했을 때 점수, \(Y(1)\) = 참여했을 때 점수. "신의 시점"은 두 값을 다 보여 주고, "현실"은 연구자가 실제로 보는 값만 남겨요. 관찰되는 칸은 진하게(<b class="c-xb">참여 → \(Y(1)\)</b>, <b class="c-mu">불참 → \(Y(0)\)</b>) 칠했어요. "스스로 선택"은 상위권 4명이 신청한 경우, "무작위 배정"은 8명 중 4명을 추첨한 경우예요.</p>
+    <div class="cx-ctrl">
+      <div class="seg" role="group" aria-label="누가 참여하나" id="po-asg">
+        <button type="button" class="on" aria-pressed="true" data-a="self">스스로 선택</button>
+        <button type="button" aria-pressed="false" data-a="rand">무작위 배정</button>
+      </div>
+      <button type="button" class="btn ghost" id="po-re" hidden>다시 추첨</button>
+    </div>
+    <div class="table-scroll"><table class="info cx-po" id="po-tab"></table></div>
+    <div class="w3-out" id="po-out"></div>
+    <p class="panel-note" id="po-note"></p>
+  </div>
+
+  <p>"스스로 선택"에서는 관측된 차이가 28.75점인데, 진짜 ATE는 5점이에요. 무려 23.75점이 부풀려졌어요. 상위권 학생들은 프로그램이 없어도(\(Y(0)\)) 평균 83.75점이고, 하위권 학생들은 58.75점이에요. 그 <b>원래 있던 25점 차이</b>가 프로그램 효과처럼 섞여 들어간 거예요.</p>
+  <p class="key">관측된 평균 차이 = 처치의 효과 + 처치 전부터 있던 두 집단의 차이</p>
+  <p>이렇게 처치 전부터 있던 집단 간 특성 차이 때문에 생기는 왜곡을 <b>선택편향</b>(selection bias)이라고 해요. 위 예시에서는 기초실력이 참여 여부(상위권이 신청)와 점수 모두에 영향을 줬어요. 앞에서 본 (c) 교란 구조 그대로예요.</p>
+  <details class="sol"><summary>더 정확히: 28.75 = 3.75 + 25</summary>
+    <p>관측된 차이를 잠재적 결과로 나눠 보면 이렇게 돼요.</p>
+    \[\underbrace{\bar Y_{T=1}(1)-\bar Y_{T=0}(0)}_{\text{관측된 차이}}=\underbrace{\bar Y_{T=1}(1)-\bar Y_{T=1}(0)}_{\text{참여자들이 얻은 효과}}+\underbrace{\bar Y_{T=1}(0)-\bar Y_{T=0}(0)}_{\text{선택편향}}\]
+    <p>가운데 항 \(\bar Y_{T=1}(0)\)을 한 번 빼고 한 번 더한 것뿐이에요. 숫자로는 \(87.5-58.75=(87.5-83.75)+(83.75-58.75)=3.75+25\)예요.</p>
+    <p class="sol-note">첫째 항 3.75가 ATE 5와 다른 이유는 학생마다 효과가 달라서예요. 상위권 4명의 효과(3, 4, 2, 6)는 하위권 4명(8, 6, 4, 7)보다 작아요. 참여한 사람들만의 평균 효과와 전체의 평균 효과가 다를 수 있다는 것, 이게 아래의 "처리효과의 이질성"이에요.</p>
+  </details>
+
+  <h3>처리효과의 이질성</h3>
+  <p>위 표의 \(\tau\) 열을 보면 효과가 2점인 학생도 있고 8점인 학생도 있어요. 처치의 효과가 사람마다 다른 것을 <b>처리효과의 이질성</b>(treatment effect heterogeneity)이라고 해요. ATE가 5점이라는 건 "모든 학생이 5점씩 오른다"가 아니라 "평균적으로 5점 오른다"는 뜻이에요. 그리고 개인별 \(\tau_i\)는 현실에서 관찰할 수 없으니, 누가 얼마나 효과를 보는지 직접 확인하기는 어려워요.</p>
+</section>
+
+<section id="rct">
+  <div class="sec-head"><h2>무작위 실험: 선택편향을 끊는 방법</h2><span class="slide-tag">1회차 랜덤 표본과 연결</span></div>
+  <p>인과효과를 추정하는 연구 설계는 크게 두 가지예요.</p>
+  <div class="compare">
+    <div>
+      <p class="compare-label">실험연구 (experimental study)</p>
+      <p>연구자가 처치를 <b>무작위로 배정</b>해요. 동전을 던지듯 누가 처치를 받을지 정해요.</p>
+    </div>
+    <div>
+      <p class="compare-label">관찰연구 (observational study)</p>
+      <p>처치가 무작위로 정해지지 않아요. 사람들이 스스로 고르거나 상황이 정해 준 대로 관찰만 해요.</p>
+    </div>
+  </div>
+  <p>처치집단과 통제집단을 무작위로 나누는 실험을 <b>무작위 대조 시험</b>(RCT, Randomized Controlled Trial)이라고 해요. 무작위 배정의 힘은 이거예요.</p>
+  <p class="key">무작위로 나누면 두 집단은 처치만 빼고 <b>평균적으로</b> 비슷해져요. 우리가 잰 특성뿐 아니라, 재지 못한 특성까지도요.</p>
+  <p>누가 처치를 받을지가 동전 던지기로 정해지면, 기초실력·의지·집안 형편 같은 것들이 참여 여부와 아무 관련이 없어져요. 그러면 두 집단의 평균 차이에는 처치의 효과만 남아요. 그래서 RCT에서는 단순한 평균 차이 \(\bar Y_{T=1}-\bar Y_{T=0}\)로 ATE를 추정할 수 있어요. 1회차에서 랜덤 표본이 모집단을 골고루 닮는다고 했던 것과 같은 원리예요.</p>
+  <p>위 표에서 "무작위 배정"을 골라 "다시 추첨"을 여러 번 눌러 보세요. 추정값이 5 근처에 오기도 하고 크게 빗나가기도 해요. 8명뿐이라 운 나쁘게 상위권이 한쪽에 몰릴 수 있거든요. 그럼 "무작위 배정은 맞는다"는 건 무슨 뜻일까요? 아래에서 추첨을 아주 많이 해 봐요.</p>
+
+  <div class="panel" id="ra-w">
+    <div class="panel-head">
+      <p class="panel-title">무작위 배정을 아주 많이 해 보면</p>
+      <div class="seg" role="group" aria-label="학생 수" id="ra-n">
+        <button type="button" class="on" aria-pressed="true" data-n="8">8명</button>
+        <button type="button" aria-pressed="false" data-n="80">80명</button>
+        <button type="button" aria-pressed="false" data-n="800">800명</button>
+      </div>
+    </div>
+    <p class="panel-sub">위 표의 8명과 같은 학생들이 10배, 100배 있다고 보고, 절반을 무작위로 뽑아 참여시켜요. 막대 하나하나가 추첨 결과로 나온 "관측된 평균 차이"의 분포예요. <b class="c-po">초록 선 = 진짜 ATE(5점)</b>, <b class="c-red">빨간 선 = 스스로 선택했을 때(28.75점)</b>.</p>
+    <svg id="ra-svg" viewBox="0 0 640 240" role="img" aria-label="무작위 배정 추정값의 분포"></svg>
+    <div class="w3-out" id="ra-out"></div>
+    <div class="panel-actions"><button type="button" class="btn ghost" id="ra-re">다시 돌리기</button></div>
+  </div>
+  <p>두 가지를 확인할 수 있어요. 첫째, 8명일 때 가능한 배정 70가지를 전부 해 보면 추정값의 <b>평균은 정확히 5</b>예요. 한 번 한 번은 빗나가도 평균적으로는 맞아요(5회차의 불편추정량과 같은 뜻이에요). 둘째, 사람이 많아질수록 분포가 좁아져서 한 번만 해도 5 근처가 나와요. 그래서 실제 연구에서는 추정값 하나만 말하지 않고 <b>표본오차</b>까지 고려해서 불확실성을 같이 평가해요.</p>
+  <p>반면 "스스로 선택"은 몇 명이 되든 28.75 근처에 머물러요. 사람이 많아져도 선택편향은 줄지 않아요.</p>
+  <h3>RCT의 한계</h3>
+  <ul>
+    <li><b>비용과 윤리</b>: 흡연이 폐암을 일으키는지 알려고 사람들에게 무작위로 담배를 피우게 할 수는 없어요. 최저임금도 지역을 무작위로 골라 올릴 수는 없죠.</li>
+    <li><b>현실의 실험은 깔끔하지 않다</b>: 배정받은 처치를 안 따르는 사람, 중간에 빠지는 사람, 우연히 한쪽에 몰린 특성 같은 문제가 생겨서 추가 분석이 필요할 수 있어요.</li>
+  </ul>
+  <p>그래서 사회과학에서는 관찰 자료로 인과를 추론해야 하는 경우가 많아요. 나머지 절은 전부 그 방법이에요.</p>
+</section>
+
+<section id="obs">
+  <div class="sec-head"><h2>관찰연구로 인과를 말하려면</h2></div>
+  <p>관찰연구에서는 처치가 무작위로 배정되지 않았으니 처치집단과 통제집단이 원래부터 다를 수 있어요. 이때 생기는 문제가 앞에서 본 교란과 선택편향이에요. 그래도 실험 없이 인과를 판단해야 할 때 참고하는 기준들이 있어요.</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>기준</th><th>뜻</th><th>흡연과 폐암에서는</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">강한 연관성</th><td>원인과 결과의 관계가 강해요.</td><td>흡연자의 폐암 발생률이 비흡연자보다 훨씬 높아요.</td></tr>
+      <tr><th scope="row">일관성</th><td>다른 집단, 다른 환경에서도 같은 결과가 나와요.</td><td>여러 나라, 인종, 성별에서 같은 관계가 보여요.</td></tr>
+      <tr><th scope="row">용량-반응</th><td>원인이 클수록 결과도 커져요.</td><td>많이, 오래 피울수록 위험이 커져요.</td></tr>
+      <tr><th scope="row">과학적 개연성</th><td>알려진 과학 지식과 맞는 설명이 있어요.</td><td>담배 연기의 발암물질이 암을 일으키는 과정이 밝혀졌어요.</td></tr>
+      <tr><th scope="row">시간 순서</th><td>원인이 결과보다 먼저예요.</td><td>흡연이 폐암 발생보다 먼저예요.</td></tr>
+    </tbody>
+  </table></div>
+  <p>흡연과 폐암은 사람을 대상으로 한 실험 없이도 이런 증거를 쌓아서 인과관계가 매우 강하게 뒷받침된 대표적인 사례예요. 다만 이 기준들을 다 채워도 <b>숨은 교란변수의 가능성이 0이 되지는 않아요.</b> 기준은 증거를 모으는 방법이지 증명이 아니에요.</p>
+</section>
+
+<section id="reg">
+  <div class="sec-head"><h2>교란을 통제하는 방법: 매칭과 회귀</h2><span class="slide-tag">10회차 가변수·중회귀와 연결</span></div>
+  <p>관찰 자료에서 교란을 줄이는 기본 아이디어는 하나예요. <b>비슷한 사람끼리 비교하자.</b> 기초실력이 같은 학생끼리 비교하면, 기초실력 차이가 결과에 섞여 들어올 수 없으니까요.</p>
+  <h3>매칭 (matching)</h3>
+  <p>처치집단의 사람마다 나이, 성별, 사전 성적, 가정환경 등이 <b>비슷한</b> 통제집단 사람을 짝지어 비교하는 방법이에요. 짝끼리는 관측된 특성(<b>공변량</b>, covariate)이 비슷하니 그 차이로 인한 선택편향이 줄어들어요.</p>
+  <p>한계도 분명해요. 짝을 맞출 때 쓴 건 <b>관측된</b> 특성뿐이에요. 의지나 성격처럼 자료에 없는 교란변수는 매칭으로 통제할 수 없어요. 또 비슷한 짝이 없는 사람은 매칭에서 빠질 수 있어요.</p>
+
+  <h3>회귀분석으로 보는 처치효과</h3>
+  <p>10회차에서 범주형 변수를 0과 1로 바꾼 가변수를 회귀에 넣었죠. 처치 여부 \(T_i\)가 바로 그런 가변수예요.</p>
+  \[Y_i=\beta_0+\tau\,T_i+\varepsilon_i\]
+  <p>\(T_i\)에 0과 1을 넣어 보면 두 집단의 평균이 나와요.</p>
+  <div class="formula-grid two">
+    <div><p class="fg-label">통제집단 \(T_i=0\)</p>\[E[Y_i\mid T_i=0]=\beta_0\]</div>
+    <div><p class="fg-label">처치집단 \(T_i=1\)</p>\[E[Y_i\mid T_i=1]=\beta_0+\tau\]</div>
+  </div>
+  <p>그래서 회귀계수 \(\tau\)는 두 집단 평균의 차이이고, 최소제곱 추정값은 표본평균의 차이와 정확히 같아요(\(\hat\tau=\bar Y_1-\bar Y_0\)). 가변수의 계수가 "기준 범주와의 차이"라고 했던 10회차 내용 그대로예요. 즉 이 회귀는 평균 차이를 다른 모양으로 쓴 것일 뿐이라, 앞의 선택편향 문제를 그대로 안고 있어요.</p>
+  <p>그래서 공변량 \(X_i\)(사전 성적, 나이 등)를 같이 넣어요.</p>
+  \[Y_i=\beta_0+\tau\,T_i+\beta X_i+\varepsilon_i\]
+  <p>\(X_i\)를 같은 값으로 고정하고 \(T_i\)에 0과 1을 넣어 빼면</p>
+  \[E[Y_i\mid T_i=1,X_i]-E[Y_i\mid T_i=0,X_i]=(\beta_0+\tau+\beta X_i)-(\beta_0+\beta X_i)=\tau\]
+  <p>이제 \(\tau\)는 <b>공변량이 같은 사람끼리</b> 비교한 처치집단과 통제집단의 차이예요. 10회차 중회귀에서 계수를 "다른 변수들을 고정했을 때의 효과"로 읽었던 것과 같아요.</p>
+  <p>공변량을 넣는 이유는 자료 종류에 따라 달라요.</p>
+  <ul>
+    <li><b>실험 자료</b>: 무작위 배정으로 교란은 이미 해결됐어요. 공변량은 결과의 변동 일부를 설명해 줘서 추정을 <b>더 정밀하게</b> 해요.</li>
+    <li><b>관찰 자료</b>: 관측된 교란변수를 통제해서 집단 간 차이를 보정하는 게 목적이에요.</li>
+  </ul>
+  <h3>그래도 \(\hat\tau\)를 인과효과라고 부르려면</h3>
+  <p>공변량을 넣었다고 \(\hat\tau\)가 자동으로 인과효과가 되지는 않아요. 두 가지 가정이 필요해요.</p>
+  <div class="formula-grid two">
+    <div><p class="fg-label"><b>조건부 독립성</b> (conditional ignorability)</p><p>공변량이 같은 사람들끼리는 누가 처치를 받았는지가 사실상 무작위와 같아야 해요. 다시 말해 중요한 교란변수를 <b>빠짐없이</b> 넣어야 해요. RCT는 설계 덕분에 이게 저절로 성립해요.</p></div>
+    <div><p class="fg-label"><b>공통지지영역</b> (overlap)</p><p>같은 공변량 값을 가진 사람이 처치집단과 통제집단에 <b>모두</b> 있어야 해요. 한쪽에만 있으면 비교할 상대가 없어요.</p></div>
+  </div>
+  <p>위젯의 "스스로 선택"이 공통지지영역이 깨진 예예요. 상위권은 전원 참여, 하위권은 전원 불참이니 "상위권인데 불참한 학생"이 한 명도 없어요. 기초실력을 공변량으로 넣어도 비교할 짝이 없으니 프로그램 효과와 기초실력 효과를 가를 수 없어요.</p>
+  <p>관측되지 않은 교란변수가 남아 있거나 모형을 잘못 세우면 추정값에 편향이 생겨요.</p>
+</section>
+
+<section id="simpson">
+  <div class="sec-head"><h2>심슨의 역설: 통제하면 결론이 뒤집힌다</h2></div>
+  <p>교란변수를 통제하지 않으면 결론이 단지 부풀거나 줄어드는 게 아니라 <b>정반대</b>가 될 수도 있어요. 전체 자료에서 본 관계와 하위 집단별로 나눠 본 관계가 서로 반대로 나오는 현상을 <b>심슨의 역설</b>(Simpson's paradox)이라고 해요.</p>
+  <p>학생 200명 중 100명이 주말 특강을 듣고 100명은 안 들었어요. 기말 통과율을 기초실력(하위권/상위권)별로 나눠 보면 이래요.</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>기초실력</th><th>특강 수강</th><th>미수강</th><th>어느 쪽이 높나</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">하위권</th><td>30% <span class="nw">(24/80)</span></td><td>20% <span class="nw">(4/20)</span></td><td>수강 쪽</td></tr>
+      <tr><th scope="row">상위권</th><td>90% <span class="nw">(18/20)</span></td><td>80% <span class="nw">(64/80)</span></td><td>수강 쪽</td></tr>
+      <tr><th scope="row">전체</th><td>42% <span class="nw">(42/100)</span></td><td>68% <span class="nw">(68/100)</span></td><td><b class="c-red">미수강 쪽</b></td></tr>
+    </tbody>
+  </table></div>
+  <p>하위권끼리 봐도, 상위권끼리 봐도 특강을 들은 쪽이 10%p 높아요. 그런데 합쳐 놓으면 특강을 들은 쪽이 26%p <b>낮아요</b>.</p>
+  <p>이유는 <b>누가 특강을 들었는지</b>에 있어요. 수강생 100명 중 80명이 하위권이고, 미수강생 100명 중 80명이 상위권이에요. 하위권은 원래 통과율이 낮으니, 하위권이 몰린 수강생 집단의 전체 통과율이 낮게 나온 거예요. 기초실력이 특강 수강 여부와 통과율 <b>둘 다</b>에 영향을 준 교란변수예요.</p>
+  <p class="key">기초실력이 같은 학생끼리 비교한 결과(수강 쪽이 10%p 높음)가 특강의 효과에 더 가까워요.</p>
+  <p>다중회귀 \(Y=\beta_0+\beta_1X+\beta_2Z+\varepsilon\)에 교란변수 \(Z\)를 넣는 것도 같은 일이에요. \(\beta_1\)은 "\(Z\)가 같을 때 \(X\)가 달라지면 \(Y\)의 평균이 얼마나 달라지나"를 나타내요. 위 표에서 기초실력별로 나눠 본 것을 회귀가 한꺼번에 해 준다고 보면 돼요.</p>
+  <aside class="aside">
+    <p class="aside-q">그럼 변수를 많이 나눌수록 항상 좋은가요?</p>
+    <p>아니에요. 통제해야 하는 건 처치와 결과 <b>둘 다</b>에 영향을 주는 교란변수예요. 예를 들어 특강 <b>때문에</b> 달라진 것(특강 후의 공부 시간 같은)으로 나누면, 특강의 효과 일부를 오히려 지워 버릴 수 있어요. 무엇을 통제할지는 숫자가 아니라 변수 사이의 인과 구조를 생각해서 정해요.</p>
+  </aside>
+</section>
+
+<section id="did">
+  <div class="sec-head"><h2>시간을 이용하는 방법: 전후 비교와 이중차분법</h2></div>
+  <p>정책 효과를 평가할 때는 시간에 따른 자료를 쓰는 경우가 많아요. A시가 청년 구직수당을 새로 시행했고, 이웃한 B시는 시행하지 않았다고 해 볼게요. 결과는 청년 고용률(%)이에요. 비교하는 방법이 세 가지 있어요.</p>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>방법</th><th>무엇을 빼나</th><th>효과로 읽으려면 필요한 가정</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">집단 간 비교</th><td>정책 후 A시 − 정책 후 B시</td><td>정책이 없었다면 두 시의 고용률이 <b>같았을</b> 것. 관찰 자료에서는 원래 차이가 섞여요.</td></tr>
+      <tr><th scope="row">전후 비교</th><td>정책 후 A시 − 정책 전 A시</td><td>정책이 없었다면 A시 고용률이 <b>변하지 않았을</b> 것. 경기 변동, 계절 같은 다른 시간 변화가 섞여요. 비교할 통제집단도 없어요.</td></tr>
+      <tr><th scope="row">이중차분법 (DiD)</th><td>(A시의 변화) − (B시의 변화)</td><td>정책이 없었다면 두 시가 <b>같은 폭으로</b> 변했을 것 (평행추세 가정)</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>이중차분법</b>(Difference-in-Differences, DiD)은 이름 그대로 차이를 두 번 빼요.</p>
+  \[\widehat{\text{DiD}}=\big(\bar Y^{\,A}_{\text{후}}-\bar Y^{\,A}_{\text{전}}\big)-\big(\bar Y^{\,B}_{\text{후}}-\bar Y^{\,B}_{\text{전}}\big)\]
+  <p>첫 번째 차이(전후)로 <b>두 시의 원래 격차</b>가 빠지고, 두 번째 차이(B시의 변화를 뺌)로 <b>두 시에 공통으로 일어난 시간 변화</b>가 빠져요. 집단 간 비교와 전후 비교의 약점을 서로 메워 주는 셈이에요. B시의 변화가 "A시도 정책이 없었다면 이만큼 변했을 것"이라는 반사실 역할을 해요.</p>
+
+  <div class="panel" id="dd-w">
+    <div class="panel-head"><p class="panel-title">세 가지 비교 방법, 언제 맞고 언제 틀리나</p></div>
+    <p class="panel-sub"><b class="c-xb">주황 = A시(정책 시행)</b>, <b class="c-mu">파랑 = B시(시행 안 함)</b>. 주황 점선은 A시가 정책 없이 갔을 진짜 경로(반사실), 회색 점선은 이중차분법이 가정하는 경로예요. 초록 화살표가 진짜 효과예요.</p>
+    <div class="sliders four">
+      <label class="sl"><span>진짜 정책 효과</span> <span class="val" id="dd-tv"></span><input type="range" id="dd-t" min="-3" max="5" step="1" value="2" aria-label="진짜 정책 효과"></label>
+      <label class="sl mu"><span>원래 격차 (A−B)</span> <span class="val" id="dd-gv"></span><input type="range" id="dd-g" min="0" max="10" step="1" value="6" aria-label="정책 전 두 시의 격차"></label>
+      <label class="sl mu"><span>공통 시간 변화</span> <span class="val" id="dd-cv"></span><input type="range" id="dd-c" min="-4" max="4" step="1" value="-3" aria-label="두 시에 공통인 시간 변화"></label>
+      <label class="sl"><span>A시만의 추세 차이</span> <span class="val" id="dd-dv"></span><input type="range" id="dd-d" min="-3" max="3" step="1" value="0" aria-label="A시만의 추가 추세"></label>
+    </div>
+    <svg id="dd-svg" viewBox="0 0 640 300" role="img" aria-label="정책 전후 두 시의 고용률"></svg>
+    <div class="w3-out" id="dd-out"></div>
+    <p class="panel-note" id="dd-note"></p>
+  </div>
+  <p>해 볼 것: 처음 설정에서는 경기가 나빠져서(공통 변화 −3%p) 전후 비교로는 정책이 고용률을 <b>낮춘</b> 것처럼 보이고, 집단 간 비교는 원래 격차 6%p까지 효과로 세서 8%p라고 해요. 이중차분법만 진짜 효과 2%p를 맞혀요. 그다음 "추세 차이"를 움직여 보세요. A시가 원래 B시와 다른 속도로 변하고 있었다면(평행추세 가정이 깨지면) 이중차분법도 틀려요.</p>
+  <p>이중차분법은 정책 평가처럼 무작위 실험이 어려운 관찰 자료에서 널리 쓰이는 <b>준실험적</b> 방법이에요. 이 밖에 처치에는 영향을 주지만 결과에는 직접 영향을 주지 않는 변수를 이용하는 <b>도구변수</b>(IV, instrumental variable) 방법도 있어요.</p>
+</section>
+
+<section id="summary">
+  <div class="sec-head"><h2>정리</h2></div>
+  <h3>방법 한눈에 보기</h3>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th>방법</th><th>핵심 아이디어</th><th>필요한 가정과 한계</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">무작위 실험 (RCT)</th><td>처치를 무작위로 배정해서 두 집단을 처치 말고는 평균적으로 같게 만들어요.</td><td>처치와 잠재적 결과의 독립이 설계로 보장돼요. 비용·윤리 문제로 못 할 때가 많아요.</td></tr>
+      <tr><th scope="row">매칭</th><td>공변량이 비슷한 사람끼리 짝지어 비교해요.</td><td>관측된 교란변수만 통제돼요. 조건부 독립성과 공통지지영역이 필요해요.</td></tr>
+      <tr><th scope="row">회귀분석</th><td>공변량을 모형에 넣어서 같은 공변량끼리의 차이를 봐요.</td><td>교란변수를 빠짐없이 넣고 모형을 제대로 세워야 해요.</td></tr>
+      <tr><th scope="row">이중차분법 (DiD)</th><td>두 집단의 전후 변화량의 차이를 봐요.</td><td>평행추세 가정이 필요해요.</td></tr>
+      <tr><th scope="row">도구변수 (IV)</th><td>처치에만 영향을 주는 변수를 이용해 간접적으로 추정해요.</td><td>그런 변수를 찾기가 어려워요.</td></tr>
+    </tbody>
+  </table></div>
+  <p>RCT는 무작위 배정 덕분에 인과효과를 가장 강하게 보여 주는 방법이에요. 관찰 자료에서는 매칭, 회귀분석, 이중차분법 등으로 관찰할 수 없는 반사실을 추정해요. 방법마다 기대는 가정이 다르고, <b>그 가정이 그럴듯한지</b>가 인과추론의 핵심이에요.</p>
+
+  <h3>지금까지 배운 평균 비교와 무엇이 다른가</h3>
+  <div class="table-scroll"><table class="info">
+    <thead><tr><th></th><th>두 모집단 평균 비교 (7회차)</th><th>인과추론</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">묻는 것</th><td>두 집단의 평균이 통계적으로 다른가?</td><td>처치가 결과를 바꾸는가, 얼마나?</td></tr>
+      <tr><th scope="row">필요한 것</th><td>정규성, 독립 표본, 등분산 여부 같은 분포 가정</td><td>교란이 없는 환경이나 그걸 만드는 설계·통제(무작위 배정, 매칭 등)</td></tr>
+      <tr><th scope="row">말할 수 있는 것</th><td>"두 집단의 평균이 다르다"는 기술적 비교</td><td>"A가 B에 영향을 미쳤다"는 인과적 해석</td></tr>
+      <tr><th scope="row">편향 위험</th><td>인과적으로 해석만 하지 않으면 큰 문제 없음</td><td>설계나 통제가 없으면 선택편향·교란으로 크게 왜곡될 수 있음</td></tr>
+    </tbody>
+  </table></div>
+  <p>7회차의 t-검정 계산 자체는 똑같이 쓸 수 있어요. 달라지는 건 결과를 <b>어떻게 읽어도 되는지</b>예요. 무작위 실험 자료라면 유의한 평균 차이를 처치의 효과로 읽을 수 있고, 관찰 자료라면 "평균이 다르다"까지만 말할 수 있어요.</p>
+
+  <h3>흔한 오해</h3>
+  <aside class="aside">
+    <p class="aside-q">상관계수가 아주 크면 인과관계라고 봐도 된다?</p>
+    <p>아니에요. 아이스크림 판매량과 물놀이 사고의 상관은 클 수 있지만 인과가 아니에요. 관계의 <b>세기</b>는 그 관계가 <b>어디서 왔는지</b>를 말해 주지 않아요.</p>
+  </aside>
+  <aside class="aside">
+    <p class="aside-q">표본을 많이 모으면 선택편향도 줄어든다?</p>
+    <p>아니에요. 표본이 커지면 우연에 의한 오차(표본오차)는 줄지만, 선택편향은 그대로예요. 두 번째 위젯에서 "스스로 선택"의 28.75는 800명이 되어도 그대로였죠. 편향은 표본의 <b>크기</b>가 아니라 <b>모은 방식</b>의 문제예요.</p>
+  </aside>
+  <aside class="aside">
+    <p class="aside-q">회귀에 공변량을 넣었으니 계수는 인과효과다?</p>
+    <p>아니에요. 넣은 변수만 통제돼요. 자료에 없는 교란변수가 있거나, 비교할 짝이 없거나(공통지지영역 위반), 모형이 틀리면 여전히 편향이 있어요.</p>
+  </aside>
+  <aside class="aside">
+    <p class="aside-q">ATE가 5점이면 모든 사람이 5점씩 오른다?</p>
+    <p>아니에요. ATE는 평균이에요. 사람마다 효과가 다를 수 있고(이질성), 효과가 없거나 오히려 손해인 사람이 섞여 있어도 평균은 5점일 수 있어요.</p>
+  </aside>
+</section>
+
+<section id="practice">
+  <div class="sec-head"><h2>확인 문제</h2></div>
+  <p>먼저 풀어 보고 풀이를 열어 보세요.</p>
+
+  <div class="q">
+    <p class="q-stem"><span class="q-no">1.</span>다음 각 상황은 (a) 인과, (b) 공통반응, (c) 교란 중 어느 구조에 가장 가까운지 고르고, 숨은 변수가 있다면 무엇인지 말해 보세요.</p>
+    <ul class="q-sub">
+      <li>(1) 비가 많이 온 날일수록 우산 판매량도 많고 교통사고 건수도 많다.</li>
+      <li>(2) 규칙적으로 운동하는 사람일수록 우울감 점수가 낮다. 그런데 원래 건강한 사람이 운동도 더 하고 기분도 더 좋을 수 있다.</li>
+      <li>(3) 참가자 400명을 무작위로 두 집단으로 나눠 한쪽에만 새 수면 앱을 쓰게 했더니, 앱을 쓴 집단의 평균 수면 시간이 더 길었다.</li>
+    </ul>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) <b>공통반응</b>이에요. 숨은 변수는 강수량(비)이에요. 우산이 사고를 일으키지 않아요. 비가 둘을 같이 늘렸어요.</p>
+      <p>(2) <b>교란</b>이에요. 숨은 변수는 원래의 건강 상태예요. 운동이 실제로 우울감을 낮출 수도 있지만, 건강 상태가 운동 여부와 우울감 모두에 영향을 주니 운동의 효과가 얼마인지 떼어 낼 수 없어요.</p>
+      <p>(3) <b>인과</b>로 해석할 수 있어요. 무작위 배정이라 두 집단은 앱 사용 말고는 평균적으로 비슷하니, 평균 차이를 앱의 효과로 읽을 수 있어요.</p>
+      <p class="sol-note">(1)과 (2)를 가르는 질문: "\(x\)가 \(y\)에 영향을 줄 가능성이 있나?" 우산은 없고, 운동은 있어요.</p>
+    </details>
+  </div>
+
+  <div class="q">
+    <p class="q-stem"><span class="q-no">2.</span>네 사람의 잠재적 결과가 아래와 같아요. 결과는 생활 만족도(10점 만점)이고, 처치는 상담 프로그램 참여예요.</p>
+    <div class="table-scroll"><table class="info">
+      <thead><tr><th>사람</th><th>\(Y(1)\) 참여 시</th><th>\(Y(0)\) 불참 시</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">갑</th><td>7</td><td>4</td></tr>
+        <tr><th scope="row">을</th><td>6</td><td>5</td></tr>
+        <tr><th scope="row">병</th><td>9</td><td>8</td></tr>
+        <tr><th scope="row">정</th><td>5</td><td>1</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="q-sub">
+      <li>(1) 각 사람의 인과효과 \(\tau_i\)와 ATE를 구하세요.</li>
+      <li>(2) 실제로는 을과 병만 참여했어요. 연구자가 볼 수 있는 값만으로 관측된 평균 차이를 구하세요.</li>
+      <li>(3) (2)의 값이 ATE와 다른 이유를 설명하세요.</li>
+    </ul>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) \(\tau_{갑}=7-4=3,\ \tau_{을}=6-5=1,\ \tau_{병}=9-8=1,\ \tau_{정}=5-1=4\)예요.</p>
+      \[\text{ATE}=\frac{3+1+1+4}{4}=\frac{9}{4}=2.25\]
+      <p>(2) 참여한 을, 병은 \(Y(1)\)만, 불참한 갑, 정은 \(Y(0)\)만 보여요.</p>
+      \[\bar Y_{T=1}-\bar Y_{T=0}=\frac{6+9}{2}-\frac{4+1}{2}=7.5-2.5=5\]
+      <p>(3) 참여한 을, 병은 프로그램이 없어도 만족도가 높은 사람들이었어요. 불참 시 점수 \(Y(0)\)의 평균이 참여자는 \(\frac{5+8}{2}=6.5\), 불참자는 \(\frac{4+1}{2}=2.5\)로 원래 4점 차이가 있어요. 이 차이가 효과처럼 섞여 들어갔어요(선택편향). 실제로 \(5=1+4\)로, 참여자들이 얻은 평균 효과 \(\frac{1+1}{2}=1\)에 원래 차이 4가 더해진 값이에요.</p>
+      <p class="sol-note">현실에서는 표의 절반이 ?라서 이 분해를 직접 계산할 수 없어요. 그래서 무작위 배정이나 통제가 필요해요.</p>
+    </details>
+  </div>
+
+  <div class="q">
+    <p class="q-stem"><span class="q-no">3.</span>어느 도시가 대중교통 요금을 인하했어요. 요금을 그대로 둔 이웃 도시와 비교한 월평균 대중교통 이용 횟수는 아래와 같아요.</p>
+    <div class="table-scroll"><table class="info">
+      <thead><tr><th></th><th>인하 전</th><th>인하 후</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">인하한 도시</th><td>40회</td><td>47회</td></tr>
+        <tr><th scope="row">이웃 도시</th><td>35회</td><td>39회</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="q-sub">
+      <li>(1) 집단 간 비교(인하 후만), 전후 비교(인하한 도시만), 이중차분법으로 각각 효과를 추정하세요.</li>
+      <li>(2) 이중차분법의 결과를 요금 인하의 효과로 읽으려면 어떤 가정이 필요한가요?</li>
+    </ul>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) 집단 간 비교: \(47-39=8\)회. 전후 비교: \(47-40=7\)회. 이중차분법:</p>
+      \[(47-40)-(39-35)=7-4=3\text{회}\]
+      <p>(2) <b>평행추세 가정</b>이요. 요금을 내리지 않았다면 인하한 도시도 이웃 도시처럼 4회 늘었을 거라는 가정이에요.</p>
+      <p class="sol-note">집단 간 비교의 8회에는 원래 격차 5회가, 전후 비교의 7회에는 두 도시 공통의 증가 4회가 섞여 있어요. 이중차분법은 둘 다 빼요.</p>
+    </details>
+  </div>
+
+  <div class="q">
+    <p class="q-stem"><span class="q-no">4.</span>한 회사가 관찰 자료로 회귀분석을 했더니, 사내 교육 참여 가변수의 계수가 양수이고 유의했어요. 입사 연차를 공변량으로 넣었어요. 담당자는 "연차까지 통제했으니 이 계수는 교육의 인과효과"라고 말했어요. 이 주장의 약점을 두 가지 말해 보세요.</p>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>첫째, <b>통제하지 않은 교란변수</b>가 있을 수 있어요. 교육에 스스로 신청한 직원은 원래 의욕이나 능력이 높을 수 있고, 이게 성과에도 영향을 주면 계수에 섞여요(조건부 독립성 위반).</p>
+      <p>둘째, <b>공통지지영역</b>이 필요해요. 예를 들어 어떤 연차에서는 전원이 교육에 참여했다면, 그 연차에서는 비교할 비참여자가 없어서 효과를 제대로 가를 수 없어요.</p>
+      <p class="sol-note">모형 모양(예: 연차의 효과가 직선이 아닌데 직선으로 넣음)이 틀려도 편향이 생길 수 있어요.</p>
+    </details>
+  </div>
+
+  <div class="q">
+    <p class="q-stem"><span class="q-no">5.</span>어느 앱 회사가 자료를 분석해 보니 앱을 오래 쓰는 사용자일수록 구매 금액이 컸어요.</p>
+    <ul class="q-sub">
+      <li>(1) 사용 시간으로 다음 달 구매 금액을 예측하는 데 이 관계를 써도 되나요?</li>
+      <li>(2) "알림을 많이 보내서 사용 시간을 늘리면 구매가 늘 것"이라고 결론 내려도 되나요?</li>
+    </ul>
+    <details class="sol"><summary>풀이 보기</summary>
+      <p>(1) 써도 돼요. 예측에는 인과가 필요 없고, 같이 움직이는 관계가 앞으로도 유지되기만 하면 돼요.</p>
+      <p>(2) 이 자료만으로는 안 돼요. 원래 그 상품에 관심이 많은 사람이 앱도 오래 쓰고 구매도 많이 하는 것일 수 있어요(교란). "사용 시간을 <b>바꾸면</b>"이라는 인과 질문에 답하려면, 예를 들어 사용자를 무작위로 나눠 한쪽에만 알림을 더 보내는 실험이 필요해요.</p>
+    </details>
+  </div>
+</section>
+
+</main>
