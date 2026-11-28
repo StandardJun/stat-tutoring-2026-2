@@ -365,13 +365,15 @@
                       "label": "문제",
                       "path": "files/mock-final/humsoc-1.pdf",
                       "save": "모의시험_인사통_1회.pdf",
-                      "pages": 11
+                      "pages": 11,
+                      "updated": "11/28 수정"
                     },
                     {
                       "label": "풀이",
                       "path": "files/mock-final/humsoc-1-sol.pdf",
                       "save": "모의시험_인사통_1회_풀이.pdf",
-                      "pages": 3
+                      "pages": 3,
+                      "updated": "11/28 수정"
                     }
                   ]
                 },
@@ -383,13 +385,15 @@
                       "label": "문제",
                       "path": "files/mock-final/humsoc-2.pdf",
                       "save": "모의시험_인사통_2회.pdf",
-                      "pages": 11
+                      "pages": 10,
+                      "updated": "11/28 수정"
                     },
                     {
                       "label": "풀이",
                       "path": "files/mock-final/humsoc-2-sol.pdf",
                       "save": "모의시험_인사통_2회_풀이.pdf",
-                      "pages": 3
+                      "pages": 3,
+                      "updated": "11/28 수정"
                     }
                   ]
                 },
@@ -401,13 +405,15 @@
                       "label": "문제",
                       "path": "files/mock-final/humsoc-3.pdf",
                       "save": "모의시험_인사통_3회.pdf",
-                      "pages": 10
+                      "pages": 10,
+                      "updated": "11/28 수정"
                     },
                     {
                       "label": "풀이",
                       "path": "files/mock-final/humsoc-3-sol.pdf",
                       "save": "모의시험_인사통_3회_풀이.pdf",
-                      "pages": 2
+                      "pages": 3,
+                      "updated": "11/28 수정"
                     }
                   ]
                 }
