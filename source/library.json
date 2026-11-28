@@ -203,7 +203,242 @@
       "id": "final",
       "title": "기말고사 자료실",
       "empty": "기말고사 대비 자료는 준비되는 대로 여기에 올라와요.",
-      "sections": []
+      "sections": [
+        {
+          "id": "final-mock",
+          "title": "기말고사 대비 모의고사 모음",
+          "note": "기말 범위에 따라 세 세트가 있어요. 통계학은 우리 분반의 기말 범위가 5장 모분산부터인지 6장부터인지에 맞춰 고르고, 인사통은 인사통 세트를 풀면 돼요. 공통 0회는 함께 푸는 수업용 회차예요. 문제를 먼저 풀고 나서 풀이를 내려받아 맞춰 보세요.",
+          "groups": [
+            {
+              "title": "공통",
+              "note": "범위: 6장 ~ 8장 공통, 9장은 분반별 선택",
+              "items": [
+                {
+                  "name": "공통 0회 (수업용)",
+                  "meta": "권장 풀이 시간 70분 · 100점 (공통 70 + 선택 30)",
+                  "files": [
+                    {
+                      "label": "문제",
+                      "path": "files/mock-final/common-0.pdf",
+                      "save": "모의시험_공통_0회.pdf",
+                      "pages": 11
+                    },
+                    {
+                      "label": "풀이",
+                      "path": "files/mock-final/common-0-sol.pdf",
+                      "save": "모의시험_공통_0회_풀이.pdf",
+                      "pages": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "통계학 (5장 모분산부터)",
+              "note": "범위: 5장 모분산의 추론 ~ 9장 분산분석",
+              "items": [
+                {
+                  "name": "통계학(5장부터) 제1회",
+                  "meta": "시험 시간 100분 · 100점",
+                  "files": [
+                    {
+                      "label": "문제",
+                      "path": "files/mock-final/stat5-1.pdf",
+                      "save": "모의시험_통계학(5장부터)_1회.pdf",
+                      "pages": 11
+                    },
+                    {
+                      "label": "풀이",
+                      "path": "files/mock-final/stat5-1-sol.pdf",
+                      "save": "모의시험_통계학(5장부터)_1회_풀이.pdf",
+                      "pages": 4
+                    }
+                  ]
+                },
+                {
+                  "name": "통계학(5장부터) 제2회",
+                  "meta": "시험 시간 100분 · 100점",
+                  "files": [
+                    {
+                      "label": "문제",
+                      "path": "files/mock-final/stat5-2.pdf",
+                      "save": "모의시험_통계학(5장부터)_2회.pdf",
+                      "pages": 11
+                    },
+                    {
+                      "label": "풀이",
+                      "path": "files/mock-final/stat5-2-sol.pdf",
+                      "save": "모의시험_통계학(5장부터)_2회_풀이.pdf",
+                      "pages": 3
+                    }
+                  ]
+                },
+                {
+                  "name": "통계학(5장부터) 제3회",
+                  "meta": "시험 시간 100분 · 100점",
+                  "files": [
+                    {
+                      "label": "문제",
+                      "path": "files/mock-final/stat5-3.pdf",
+                      "save": "모의시험_통계학(5장부터)_3회.pdf",
+                      "pages": 13
+                    },
+                    {
+                      "label": "풀이",
+                      "path": "files/mock-final/stat5-3-sol.pdf",
+                      "save": "모의시험_통계학(5장부터)_3회_풀이.pdf",
+                      "pages": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "통계학 (6장부터)",
+              "note": "범위: 6장 분포에 관한 추론 ~ 9장 분산분석",
+              "items": [
+                {
+                  "name": "통계학(6장부터) 제1회",
+                  "meta": "시험 시간 100분 · 100점",
+                  "files": [
+                    {
+                      "label": "문제",
+                      "path": "files/mock-final/stat6-1.pdf",
+                      "save": "모의시험_통계학(6장부터)_1회.pdf",
+                      "pages": 12
+                    },
+                    {
+                      "label": "풀이",
+                      "path": "files/mock-final/stat6-1-sol.pdf",
+                      "save": "모의시험_통계학(6장부터)_1회_풀이.pdf",
+                      "pages": 4
+                    }
+                  ]
+                },
+                {
+                  "name": "통계학(6장부터) 제2회",
+                  "meta": "시험 시간 100분 · 100점",
+                  "files": [
+                    {
+                      "label": "문제",
+                      "path": "files/mock-final/stat6-2.pdf",
+                      "save": "모의시험_통계학(6장부터)_2회.pdf",
+                      "pages": 12
+                    },
+                    {
+                      "label": "풀이",
+                      "path": "files/mock-final/stat6-2-sol.pdf",
+                      "save": "모의시험_통계학(6장부터)_2회_풀이.pdf",
+                      "pages": 3
+                    }
+                  ]
+                },
+                {
+                  "name": "통계학(6장부터) 제3회",
+                  "meta": "시험 시간 100분 · 100점",
+                  "files": [
+                    {
+                      "label": "문제",
+                      "path": "files/mock-final/stat6-3.pdf",
+                      "save": "모의시험_통계학(6장부터)_3회.pdf",
+                      "pages": 12
+                    },
+                    {
+                      "label": "풀이",
+                      "path": "files/mock-final/stat6-3-sol.pdf",
+                      "save": "모의시험_통계학(6장부터)_3회_풀이.pdf",
+                      "pages": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "인문사회계열을 위한 통계학",
+              "note": "범위: 5장 통계적 추론 ~ 9장 인과효과",
+              "items": [
+                {
+                  "name": "인사통 제1회",
+                  "meta": "시험 시간 100분 · 100점",
+                  "files": [
+                    {
+                      "label": "문제",
+                      "path": "files/mock-final/humsoc-1.pdf",
+                      "save": "모의시험_인사통_1회.pdf",
+                      "pages": 11
+                    },
+                    {
+                      "label": "풀이",
+                      "path": "files/mock-final/humsoc-1-sol.pdf",
+                      "save": "모의시험_인사통_1회_풀이.pdf",
+                      "pages": 3
+                    }
+                  ]
+                },
+                {
+                  "name": "인사통 제2회",
+                  "meta": "시험 시간 100분 · 100점",
+                  "files": [
+                    {
+                      "label": "문제",
+                      "path": "files/mock-final/humsoc-2.pdf",
+                      "save": "모의시험_인사통_2회.pdf",
+                      "pages": 11
+                    },
+                    {
+                      "label": "풀이",
+                      "path": "files/mock-final/humsoc-2-sol.pdf",
+                      "save": "모의시험_인사통_2회_풀이.pdf",
+                      "pages": 3
+                    }
+                  ]
+                },
+                {
+                  "name": "인사통 제3회",
+                  "meta": "시험 시간 100분 · 100점",
+                  "files": [
+                    {
+                      "label": "문제",
+                      "path": "files/mock-final/humsoc-3.pdf",
+                      "save": "모의시험_인사통_3회.pdf",
+                      "pages": 10
+                    },
+                    {
+                      "label": "풀이",
+                      "path": "files/mock-final/humsoc-3-sol.pdf",
+                      "save": "모의시험_인사통_3회_풀이.pdf",
+                      "pages": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "final-notes",
+          "title": "기말고사 대비 필기",
+          "note": "5장부터 기말고사 범위까지 손으로 정리한 필기예요.",
+          "groups": [
+            {
+              "items": [
+                {
+                  "name": "통계학 정리 (기말고사)",
+                  "meta": "",
+                  "files": [
+                    {
+                      "label": "PDF",
+                      "path": "files/notes/final-notes.pdf",
+                      "save": "통계학 정리_기말고사.pdf",
+                      "pages": 14
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
